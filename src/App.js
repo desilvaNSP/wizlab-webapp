@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from "react";
-import Slider from "./components/theme/Slider";
-import { withRouter } from "react-router-dom";
+import Slider from "./components/pages/Slider/Slider";
+import { Route, BrowserRouter as Router, withRouter, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import cookieHandler from "./handlers/cookieHandler";
-import { Route } from "react-router-dom";
-import BaseUrls from "./configs/baseUrls";
 import LoginPage from "./components/pages/Login/LoginPage";
 import { setAuthHeader } from "./redux/services/APIBuilder";
-import HomePage from "./components/pages/HomePage";
+import Dashboard from "./components/pages/Dashboard/Dashboard";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 import { setTokenOnStore } from "./redux/actions/auth/authActionCreator";
+import Index from "./components/pages/ClassManagement/Index";
 
 const App = props => {
-  const [SliderOpen, setSliderOpen] = useState(false);
+  const [sliderOpen, setSliderOpen] = useState(false);
 
   const redirectToManagerPortalLoginPage = () => {
     // window.location.href =
@@ -27,20 +28,47 @@ const App = props => {
       //props.setTokenOnStore(token);
       return true;
     } else {
-      redirectToManagerPortalLoginPage();
-      return false;
+      return true;
     }
   };
 
+  const handleLogout = () => {
+    alert('handle logout');
+  }
+
+  const toggleSlider = () => {
+    setSliderOpen(!sliderOpen)
+  }
+
+  const handleSlideClose = () => {
+    setSliderOpen(false)
+  }
+
   const renderContent = () => (
-    <div className="App">
-      {SliderOpen && <Slider menuVisibility={SliderOpen} />}
-      <span
-        className="fixed-menu-btn"
-        onClick={() => setSliderOpen(!SliderOpen)}
-      />
-      <Route exact path="/" component={HomePage} />
-    </div>
+    <Router>
+      {sliderOpen && (
+        <Slider handleClose={handleSlideClose} />
+      )}
+      <div className="wp-container">
+        <Header>
+          <div className="user-welcome-message">Welcome <b>Sandun</b></div>
+          <button
+            className="btn btn--danger btn-logout"
+            onClick={handleLogout}
+            type="button"
+            hint="Logout"
+          >
+            Logout
+          </button>
+        </Header>
+        <Switch>
+          <Route exact path="/" component={Dashboard} />
+          <Route exact path="/classes" component={Index} />
+        </Switch>
+        <Footer />
+      </div>
+      <span className="fixed-menu-btn" onClick={() => toggleSlider()} />
+    </Router>
   );
 
   return isTokenExists() ? renderContent() : redirectToManagerPortalLoginPage();

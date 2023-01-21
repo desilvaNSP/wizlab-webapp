@@ -1,9 +1,9 @@
-import { create } from "axios";
+import  axios  from "axios";
 import BaseUrls from "../../configs/baseUrls";
 
 const { DOMAIN } = BaseUrls;
 
-export const API = create({
+export const API = axios.create({
   baseURL: DOMAIN,
   timeout: 10000,
   headers: {
