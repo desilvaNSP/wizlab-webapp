@@ -10,7 +10,8 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 
 import { setTokenOnStore } from "./redux/actions/auth/authActionCreator";
-import Index from "./components/pages/ClassManagement/Index";
+import ClassesIndex from "./components/pages/ClassManagement/Index";
+import Instructors from "./components/pages/InstructorManagement/Instructors";
 
 const App = props => {
   const [sliderOpen, setSliderOpen] = useState(false);
@@ -63,7 +64,8 @@ const App = props => {
         </Header>
         <Switch>
           <Route exact path="/" component={Dashboard} />
-          <Route exact path="/classes" component={Index} />
+          <Route exact path="/classes" component={ClassesIndex} />
+          <Route exact path="/instructors" component={Instructors} />
         </Switch>
         <Footer />
       </div>

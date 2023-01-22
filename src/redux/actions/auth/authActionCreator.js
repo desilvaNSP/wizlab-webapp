@@ -3,7 +3,6 @@ import axios from "axios";
 import { AuthUrl } from "../../services/API_Paths";
 import cookieHandler from "../../../handlers/cookieHandler";
 import { FETCH_TOKEN } from "./authActionTypes";
-const querystring = require("querystring");
 
 export const fetchToken = (username, password) => dispatch => {
   const { HYBRIS_CLIENT_ID, HYBRIS_CLIENT_SECRET, COOKIE_DOMAIN } = BaseUrls;
@@ -15,7 +14,7 @@ export const fetchToken = (username, password) => dispatch => {
     password
   };
   axios
-    .post(AuthUrl.OATH_TOKEN_URL, querystring.stringify(payload))
+    .post(AuthUrl.OATH_TOKEN_URL)
     .then(response => {
       cookieHandler.setCookie(
         "access_token",

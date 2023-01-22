@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import makeData from '../MakeData'
-import { CommonTable } from "../Table/CommonTable";
+import { CommonTable } from "../../CommonTable/CommonTable";
 import { ReactTableFullWidthStyles } from '../../../custom/StyleComponents'
 import DropdownInput from "../../../custom/DropdownInput";
 import { NewCourse } from "./NewCourse";

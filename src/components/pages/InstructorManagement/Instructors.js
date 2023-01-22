@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import 'react-tabs/style/react-tabs.css';
-import makeData from '../MakeData'
-import { ClassesTable } from "./Table/ClassesTable";
-import { ReactTableFullWidthStyles } from '../../../custom/StyleComponents'
-import DropdownInput from "../../../custom/DropdownInput";
-import { NewClass } from "./NewClass";
+import { CommonTable } from "../CommonTable/CommonTable";
+import { ReactTableFullWidthStyles } from '../../custom/StyleComponents'
+import DropdownInput from "../../custom/DropdownInput";
+import { NewInstrcutor } from "./NewInstrcutor";
 
-const Classes = props => {
+const Instructors = props => {
 
     const [selectedClass, setSelectedClass] = useState(null)
     const [showClassCreationPopup, setShowClassCreationPopup] = useState(false)
@@ -195,13 +194,13 @@ const Classes = props => {
                 </div>
             </div>
             <ReactTableFullWidthStyles>
-                <ClassesTable columns={columns} data={data} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} rowSelection={true} />
+                <CommonTable columns={columns} data={data} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} rowSelection={true} />
             </ReactTableFullWidthStyles>
             {showClassCreationPopup &&
-                <NewClass show={showClassCreationPopup} handleReload={() => { }} handleClose={closeClassCreationPopup} selectedClass={selectedClass}></NewClass>
+                <NewInstrcutor show={showClassCreationPopup} handleReload={() => { }} handleClose={closeClassCreationPopup} selectedClass={selectedClass}></NewInstrcutor>
             }
         </div>
     );
 };
 
-export default Classes;
+export default Instructors;

@@ -5,7 +5,7 @@ import Classes from "./Classes/Classes";
 import './Index.css'
 import Courses from "./Courses/Courses";
 
-const Index = props => {
+const ClassesIndex = props => {
   return (
     <div className="main-container">
             <Tabs>
@@ -24,4 +24,4 @@ const Index = props => {
   );
 };
 
-export default Index;
+export default ClassesIndex;

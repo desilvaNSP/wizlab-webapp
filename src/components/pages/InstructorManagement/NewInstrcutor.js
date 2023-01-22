@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react'
 
-import { InfoConfirmModal } from '../../../custom/Modals';
-import CustomDropdown from '../../../custom/CustomDropdown';
-import { CustomInput } from '../../../custom/CustomInput';
+import { InfoConfirmModal } from '../../custom/Modals';
+import CustomDropdown from '../../custom/CustomDropdown';
+import { CustomInput } from '../../custom/CustomInput';
 
-export const NewClass = props => {
+export const NewInstrcutor = props => {
     const { handleReload, handleClose, show, selectedClass } = props
 
     const showHideClassName = show

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { useTable, usePagination, useGlobalFilter, useRowSelect, useFilters } from 'react-table'
-import { DefaultColumnFilter, GlobalFilter } from '../../../custom/Filters'
+import { DefaultColumnFilter, GlobalFilter } from '../../custom/Filters'
 import { matchSorter } from 'match-sorter'
 
 const IndeterminateCheckbox = React.forwardRef(
@@ -19,7 +19,6 @@ const IndeterminateCheckbox = React.forwardRef(
         )
     }
 )
-
 
 export const CommonTable = ({ columns, data, onRowSelect, hiddenColumns, rowSelection=false }) => {
 
