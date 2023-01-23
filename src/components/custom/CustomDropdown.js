@@ -1,8 +1,8 @@
 import React, { useRef, useEffect, useState } from 'react'
-import '../custom/custom.css'
-import upIcon from '../custom/icons/up.svg'
-import downIcon from '../custom/icons/down.svg'
-import closeIcon from '../custom/icons/close-icon.svg'
+import '../Custom/custom.css'
+import upIcon from '../Custom/icons/up.svg'
+import downIcon from '../Custom/icons/down.svg'
+import closeIcon from '../Custom/icons/close-icon.svg'
 
 const CustomDropdown = ({ defaultList, initValue, onItemChange, isNullable, required = false, autoComplete = true, editable = true, warningMessage = "" }) => {
   // array of drop down list

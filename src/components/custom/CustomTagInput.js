@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import closeIcon from '../custom/icons/close-icon.svg'
+import closeIcon from '../Custom/icons/close-icon.svg'
 
 export const CustomTagInput = ({ initialValue, updateTags, type, disable = false, fieldValidation, required = false }) => {
     // We need to keep and update the state of the cell normally

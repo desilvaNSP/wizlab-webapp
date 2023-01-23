@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef} from 'react'
 import TimePicker from 'react-time-picker';
 import * as dateFns from "date-fns";
-import calenderIcon from '../custom/icons/Path 79.svg'
-import closeIcon from '../custom/icons/svg-close-icon.svg'
-import backIcon from '../custom/icons/svg-back-icon.svg'
-import nextIcon from '../custom/icons/svg-next-icon.svg'
-import '../custom/custom.css'
+import calenderIcon from '../Custom/icons/Path 79.svg'
+import closeIcon from '../Custom/icons/svg-close-icon.svg'
+import backIcon from '../Custom/icons/svg-back-icon.svg'
+import nextIcon from '../Custom/icons/svg-next-icon.svg'
+import '../Custom/custom.css'
 
 
 export const DateTimePicker = ({ title, initDateTime, selection, onDateTimeChange, valid }) => {

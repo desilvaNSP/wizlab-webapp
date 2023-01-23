@@ -1,0 +1,34 @@
+.widget-group .widget-row{
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.widget-group .widget-column{
+    width: 50%;
+    padding: 20px;
+    display: flex;
+}
+
+.tile-widget {
+    width: 300px;
+    height: 100px;
+    background-color: currentColor;
+    border-radius: 8px;
+    margin: 10px;
+    text-align: center;
+    padding: 12px 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.tile-widget label {
+    color: white;
+    font-size: medium;
+    width: 100%;
+}
+
+.tile-widget span {
+    font-size: xx-large;
+    color: wheat;
+    width: 100%;
+}
