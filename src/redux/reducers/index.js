@@ -1,8 +1,15 @@
-import { combineReducers } from "redux";
-import AuthReducer from "./auth/authReducer";
-import MasterReducer from "./master/masterReducer";
+import { combineReducers } from 'redux';
+
+import CommonReducer from './Admin/CommonReducer';
+import MerchantReducer from './Admin/MerchantReducer';
+import TerminalReducer from './Admin/TerminalReducer';
+import TransactionReducer from './Payment/TransactionsReducer';
+import AuthenticationReducer from './Auth/Authentication';
 
 export default combineReducers({
-  master: MasterReducer,
-  auth: AuthReducer
+     merchants: MerchantReducer,
+     terminals: TerminalReducer,
+     transactions: TransactionReducer,
+     common: CommonReducer,
+     auth: AuthenticationReducer
 });

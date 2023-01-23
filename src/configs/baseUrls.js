@@ -1,86 +1,38 @@
-let URL,
-  HYBRIS_CLIENT_ID,
-  HYBRIS_CLIENT_SECRET,
-  COOKIE_DOMAIN,
-  MANAGER_PORTAL_BASE_END_POINT,
-  FILM_MASTER_BASE_END_POINT,
-  FILM_SCHEDULER_BASE_END_POINT,
-  FILM_CONTRACTS_BASE_END_POINT = "";
+let CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net"
 
 switch (process.env.REACT_APP_SERVER_TYPE) {
   case "dev":
-    URL = "https://cinemaswebservices-dev.savantis.cloud:9002";
-    HYBRIS_CLIENT_ID = "managerportal_client";
-    HYBRIS_CLIENT_SECRET = "Consnet01";
-    COOKIE_DOMAIN = ".savantis.cloud";
-    MANAGER_PORTAL_BASE_END_POINT =
-      "https://arcdevmanagerportal.savantis.cloud";
-    FILM_MASTER_BASE_END_POINT = "https://arcdevfilmmaster.savantis.cloud";
-    FILM_SCHEDULER_BASE_END_POINT =
-      "https://arcdevfilmscheduler.savantis.cloud";
-    FILM_CONTRACTS_BASE_END_POINT = "https://arcdevfilmcontract.savantis.cloud";
+    CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net";
     break;
   case "qa":
-    URL = "https://cinemaswebservices-qas.savantis.cloud:9002";
-    HYBRIS_CLIENT_ID = "managerportal_client";
-    HYBRIS_CLIENT_SECRET = "Consnet01";
-    COOKIE_DOMAIN = ".savantis.cloud";
-    MANAGER_PORTAL_BASE_END_POINT =
-      "https://arcqasmanagerportal.savantis.cloud";
-    FILM_MASTER_BASE_END_POINT = "https://arcqafilmmaster.savantis.cloud";
-    FILM_SCHEDULER_BASE_END_POINT = "https://arcqafilmscheduler.savantis.cloud";
-    FILM_CONTRACTS_BASE_END_POINT = "https://arcqafilmcontract.savantis.cloud";
+    CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net";
     break;
   case "prod":
-    URL = "https://cinemaswebservices.savantis.cloud:9002";
-    HYBRIS_CLIENT_ID = "filmmaster_client";
-    HYBRIS_CLIENT_SECRET = "Kb7f$5S%9b";
-    COOKIE_DOMAIN = ".savantis.cloud";
-    MANAGER_PORTAL_BASE_END_POINT =
-      "https://arclightcinemamanager.savantis.cloud";
-    FILM_MASTER_BASE_END_POINT = "https://arcprodfilmmaster.savantis.cloud";
-    FILM_SCHEDULER_BASE_END_POINT =
-      "https://arcprodfilmscheduler.savantis.cloud";
-    FILM_CONTRACTS_BASE_END_POINT =
-      "https://arcprodfilmcontract.savantis.cloud";
+    CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net";
     break;
   case "local":
-    URL = "https://cinemaswebservices-dev.savantis.cloud:9002";
-    HYBRIS_CLIENT_ID = "managerportal_client";
-    HYBRIS_CLIENT_SECRET = "Consnet01";
-    COOKIE_DOMAIN = "localhost";
-    MANAGER_PORTAL_BASE_END_POINT = "http://localhost:4200";
-    FILM_MASTER_BASE_END_POINT = "http://localhost:3000";
-    FILM_SCHEDULER_BASE_END_POINT = "http://localhost:3001";
-    FILM_CONTRACTS_BASE_END_POINT = "http://localhost:3002";
+    CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net";
     break;
   default:
-    URL = "https://cinemaswebservices-dev.savantis.cloud:9002";
-    HYBRIS_CLIENT_ID = "managerportal_client";
-    HYBRIS_CLIENT_SECRET = "Consnet01";
-    COOKIE_DOMAIN = ".savantis.cloud";
-    MANAGER_PORTAL_BASE_END_POINT =
-      "https://arcdevmanagerportal.savantis.cloud";
-    FILM_MASTER_BASE_END_POINT = "https://arcstgfilmmaster.savantis.cloud";
-    FILM_SCHEDULER_BASE_END_POINT =
-      "https://arcdevfilmscheduler.savantis.cloud";
-    FILM_CONTRACTS_BASE_END_POINT = "https://arcdevfilmcontract.savantis.cloud";
+    CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net";
     break;
 }
 
-const DOMAIN = URL;
-const OAUTH_TOKEN_URL = `${DOMAIN}/authorizationserver/oauth/token`;
-const HYBRIS_USER_PROFILE_URL = `${DOMAIN}/cinemawebservices/auth/login`;
+export const SERVICE_ENDPOINT = CLASSROOM_ADMIN_LISTENER;
 
-export default {
-  DOMAIN,
-  OAUTH_TOKEN_URL,
-  HYBRIS_USER_PROFILE_URL,
-  HYBRIS_CLIENT_ID,
-  HYBRIS_CLIENT_SECRET,
-  COOKIE_DOMAIN,
-  MANAGER_PORTAL_BASE_END_POINT,
-  FILM_MASTER_BASE_END_POINT,
-  FILM_SCHEDULER_BASE_END_POINT,
-  FILM_CONTRACTS_BASE_END_POINT
-};
+
+//Error Codes
+export const HTTP_STATUS_CODE_200_OK = 200;
+export const HTTP_STATUS_CODE_201_CREATED = 201;
+export const HTTP_STATUS_CODE_204_NO_CONTENT_SUCCESS = 204;
+export const HTTP_STATUS_CODE_400_BAD_REQUEST = 400;
+export const HTTP_STATUS_CODE_403_FORBIDDEN = 403;
+export const HTTP_STATUS_CODE_401_UNAUTHORIZED = 401;
+export const HTTP_STATUS_CODE_404_NOT_FOUND = 404;
+export const HTTP_STATUS_CODE_409_CONFLICT = 409;
+export const HTTP_STATUS_CODE_422_UNPROCESSABLE_ENTITY = 422;
+export const HTTP_STATUS_CODE_429_TOOMANYREQ = 429;
+export const HTTP_STATUS_CODE_415_UN_SUPPORTED_MEDIA_TYPE = 415;
+export const HTTP_STATUS_CODE_500_INTERNAL_SERVER_ERROR = 500;
+export const HTTP_STATUS_CODE_503_SERVICE_UNAVAILABLE = 503;
+export const HTTP_STATUS_CODE_504_GATEWAY_TIMEOUT = 504;
