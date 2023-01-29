@@ -2,7 +2,7 @@ import ViewTypes from './ViewTypes'
 import SummaryPos from './SummaryPos'
 
 export default {
-    schedulerWidth: '100%',
+    schedulerWidth: '1400',
     besidesWidth: 20,
     schedulerMaxHeight: 0,
     tableHeaderHeight: 40,
@@ -50,7 +50,7 @@ export default {
     movable: true,
     creatable: true,
     crossResourceMove: true,
-    checkConflict: false,
+    checkConflict: true,
     scrollToSpecialMomentEnabled: true,
     eventItemPopoverEnabled: true,
     calendarPopoverEnabled: true,

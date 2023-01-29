@@ -3,8 +3,8 @@ import { InfoConfirmModal } from '../../Custom/Modals';
 import { CustomTagInput } from '../../Custom/CustomTagInput';
 import { CustomInput } from '../../Custom/CustomInput';
 import { EditableInputTextCell } from '../../Custom/Editable';
-import { ReactEditableTableFullWidthStyles } from '../../Custom/StyleComponents';
-import { SubjectsTable } from './Table/SubjectsTable';
+import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
+import { NewSubjects } from './NewSubjects';
 
 export const NewCourse = props => {
     const { handleReload, handleClose, show, selectedCourse } = props
@@ -16,6 +16,8 @@ export const NewCourse = props => {
     //const auth = useSelector((state) => state.auth);
 
     const [showInfoConfirmModal, setShowInfoConfirmModal] = useState(false);
+    const [course, setCourse] = useState(null);
+    const [levels, setLevels] = useState([]);
     const [modalContents, setModalContents] = useState({
         "header": "",
         "content": ""
@@ -100,7 +102,7 @@ export const NewCourse = props => {
                         <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={() => { }} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
                     )
                 }
-            }, 
+            },
             {
                 Header: 'Subject Name',
                 accessor: 'subjectName',
@@ -110,7 +112,7 @@ export const NewCourse = props => {
                         <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={() => { }} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
                     )
                 }
-            }, 
+            },
             {
                 Header: 'Level/Grade',
                 accessor: 'level',
@@ -120,7 +122,7 @@ export const NewCourse = props => {
                         <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={() => { }} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
                     )
                 }
-            }, 
+            },
             {
                 Header: 'Age Range',
                 accessor: 'ageRange',
@@ -160,14 +162,14 @@ export const NewCourse = props => {
             "level": "Grade 03",
             "ageRange": "5-10"
         },
-        
+
         {
             "subjectCode": "G04-Maths",
             "subjectName": "Maths",
             "level": "Grade 04",
             "ageRange": "5-10"
         },
-        
+
         {
             "subjectCode": "G04-English",
             "subjectName": "English",
@@ -185,13 +187,31 @@ export const NewCourse = props => {
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef, props);
 
+
+    const levelFieldValidation = (value, callback) => {
+        callback(true, "");
+    }
+
+    const handleNewLevels = (levels) => {
+        const levelsArray = [];
+        for (const key in levels) {
+            if (Object.hasOwnProperty.call(levels, key)) {
+                const element = levels[key];
+                if (element) {
+                    levelsArray.push(key)
+                }
+            }
+        }
+        setLevels(levelsArray);
+    }
+
     return (
         <div className={showHideClassName}>
             <section className="modal-detail" ref={wrapperRef} onClick={e => e.stopPropagation()}>
                 {showInfoConfirmModal && <InfoConfirmModal continueTo={continueConfirmModal} handleClose={closeConfirmModal} show={true} children={modalContents.content} heading={modalContents.header}></InfoConfirmModal>}
                 <span className="close-icon modal-detail__close" onClick={handleClose}></span>
                 <div className="modal-detail__header modal-detail__header" style={{ fontSize: "24px", fontWeight: 600 }}>
-                    {selectedCourse == null ? <span>Start New Course</span> : <span>Update Course</span>}
+                    {selectedCourse == null ? <span>Create New Course</span> : <span>Update Course</span>}
                 </div>
                 <div className="modal-detail__content">
                     <div className='form-group'>
@@ -213,10 +233,15 @@ export const NewCourse = props => {
                             <div className='form-column'>
                                 <div className='item-name'>Levels/Grades</div>
                                 <div className='item-dropdown'>
-                                    <CustomTagInput initialValue={""} disable={false} fieldValidation={() => { }} required={true} updateTags={(value) => { }}></CustomTagInput>
+                                    <CustomTagInput initialValue={""} disable={false} fieldValidation={levelFieldValidation} required={true} updateTags={(value) => {
+                                        console.log(value)
+                                        handleNewLevels(value);
+                                    }}></CustomTagInput>
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div className='form-group'>
                         <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
                             <div className='form-column'>
                                 <label>Subjects/Modules</label>
@@ -224,26 +249,23 @@ export const NewCourse = props => {
                             <div className='form-column'>
                             </div>
                         </div>
-                        <div className='form-row'>
-                            <div className='form-column'>
-                                <div className='table-actions-box'>
-                                    <div className="table-add-row" onClick={() => addNewRow()} title="Add Terminal Network">
-                                        <img src="assets/icons/icon-add.svg" alt="Add Terminal Network" />
-                                    </div>
-                                    <div className="table-add-row" onClick={() => { }} title="Reset Data">
-                                        <img src="assets/icons/icons-reset.png" alt="Reset Data" />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <Tabs>
+                            <TabList>
+                                {levels.map((level) =>
+                                    <Tab>{level}</Tab>
+                                )}
+                            </TabList>
+                            {levels.map((level) =>
+                                <TabPanel>
+                                    <NewSubjects selectedLevel={level} selectedCourse={course}></NewSubjects>
+                                </TabPanel>
+                            )}
+                        </Tabs>
                     </div>
-                    <ReactEditableTableFullWidthStyles>
-                        <SubjectsTable columns={columns} data={data} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} updateMyData={() => { }} skipPageReset={() => { }} />
-                    </ReactEditableTableFullWidthStyles>
                 </div>
                 <div className="modal-detail__footer">
                     <button className="btn btn--success" onClick={() => { }} disabled={() => { }}>
-                        Start New Course
+                        Create New Course
                     </button>
                 </div>
             </section>

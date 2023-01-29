@@ -78,14 +78,14 @@ const Courses = props => {
         alert("load classes data")
     };
 
-    const data = React.useMemo(() => makeData(20), [])
+    const data = React.useMemo(() => makeData(5), [])
 
     return (
         <div className="classes-container">
             <div className='page-header'>
                 <div className="add-record" onClick={() => triggerStartNewClass()}>
                     <img src="/assets/icons/icon-add.svg" alt="Start New Course" />
-                    <span>Start New Course</span>
+                    <span>Create New Course</span>
                 </div>
                 <div className="add-record" onClick={() => triggerStartNewClass()} >
                     <img src="/assets/icons/update.png" alt="Update Course" style={{width:"20px", height:"20px"}}/>

@@ -880,6 +880,7 @@ export default class SchedulerData {
         let cellMaxEventsCount = this.getCellMaxEvents();        
         const cellMaxEventsCountValue = 30;
 
+        console.log("events", this.events)
         this.events.forEach((item) => {
             let resourceEventsList = initRenderData.filter(x => x.slotId === this._getEventSlotId(item));
             if(resourceEventsList.length > 0) {

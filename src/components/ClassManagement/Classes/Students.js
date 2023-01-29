@@ -5,7 +5,7 @@ import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
 import DropdownInput from "../../Custom/DropdownInput";
 import { NewClass } from "./NewClass";
 
-const Classes = props => {
+const Students = props => {
 
     const [selectedClass, setSelectedClass] = useState(null)
     const [showClassCreationPopup, setShowClassCreationPopup] = useState(false)
@@ -227,4 +227,4 @@ const Classes = props => {
     );
 };
 
-export default Classes;
+export default Students;

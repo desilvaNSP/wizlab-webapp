@@ -71,7 +71,7 @@ export const NewClass = props => {
                 {showInfoConfirmModal && <InfoConfirmModal continueTo={continueConfirmModal} handleClose={closeConfirmModal} show={true} children={modalContents.content} heading={modalContents.header}></InfoConfirmModal>}
                 <span className="close-icon modal-detail__close" onClick={handleClose}></span>
                 <div className="modal-detail__header modal-detail__header" style={{ fontSize: "24px", fontWeight: 600 }}>
-                    {selectedClass == null ? <span>Start New Class</span> : <span>Update Class</span>}
+                    {selectedClass == null ? <span>Create New Class</span> : <span>Update Class</span>}
                 </div>
                 <div className="modal-detail__content">
                     <div className='form-group'>
@@ -139,7 +139,7 @@ export const NewClass = props => {
                 </div>
                 <div className="modal-detail__footer">
                     <button className="btn btn--success" onClick={() => { }} disabled={() => { }}>
-                        Start New Class
+                        Create New Class
                     </button>
                 </div>
             </section>

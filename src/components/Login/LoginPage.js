@@ -1,25 +1,53 @@
 import React, { useState } from "react";
-import { connect } from "react-redux";
-import { fetchToken } from "../../Redux/Actions/Auth/Authentication";
+import useCookies from "react-cookie/cjs/useCookies";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { FetchAuthenticationInfo } from "../../Redux/Features/Auth/AuthenticationSlice";
 import "./login.css";
 
-const LoginPage = props => {
+const LoginPage = (props) => {
   const [UserName, setUserName] = useState("");
   const [Password, setPassword] = useState("");
 
+  // Cookies...
+  // AdminUser
+  // Token
+  // TokenExpiry
+  // Role
+  // InstituteId
+  const [adminUser, setAdminUser] = useCookies(['admin_user']);
+  const [token, setToken] = useCookies(['token']);
+  const [tokenExpiry, setTokenExpiry] = useCookies(['token_expiry']);
+  const [role, setRole] = useCookies(['role']);
+  const [instituteId, setInstituteId] = useCookies(['institute_id']);
+
+  const dispatch = useDispatch();
+  const auth = useSelector((state) => state.auth);
+
   const handleLogin = () => {
-    props.fetchToken(UserName, Password);
+    dispatch(FetchAuthenticationInfo(UserName, Password, function(response, success){
+      if(success){
+         setAdminUser('admin_user',response.firstName, { path: '/' });
+         setToken('token',response.token.accessToken, { path: '/' });
+         setTokenExpiry('token_expiry',response.token.expiryDate, { path: '/' });
+         setRole('role', response.roleId, { path: '/' });
+         setInstituteId('institute_id', response.instituteId, { path: '/' });
+      }else{
+        //error handle
+      }
+    }));
   };
+
   return (
     <div className="master-container">
       <main className="main-page login-page">
         <section className="login-section-wrapper">
           <h1 className="login-section__title" style={{ color: "black" }}>
-            Classroom Admin
+            Classroom Backoffice
           </h1>
           <div className="login-section__form">
             <div className="form-group">
-              <label className="form-group__label">Employee Number</label>
+              <label className="form-group__label">Employee User Name</label>
               <input
                 className="form-group__input"
                 type="text"
@@ -31,7 +59,7 @@ const LoginPage = props => {
             </div>
 
             <div className="form-group">
-              <label className="form-group__label">Pin</label>
+              <label className="form-group__label">Password</label>
               <input
                 className="form-group__input"
                 type="password"
@@ -58,4 +86,4 @@ const LoginPage = props => {
   );
 };
 
-export default connect(null, { fetchToken })(LoginPage);
+export default LoginPage;

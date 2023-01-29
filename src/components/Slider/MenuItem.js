@@ -1,12 +1,11 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom'
 
 const MenuItem = ({item, hideSlider}) => {
   return (
     <li class="aside-menu-content__item">
-      <Link className="link-menu" to={item.path} replace onClick={(e)=>{
+      <Link className="link-menu" to={item.path} relative="path" onClick={(e)=>{
           e.stopPropagation();
-          window.location.href = item.path
           hideSlider();
       }}>
         <div className="aside-menu-content__item-txt-block">

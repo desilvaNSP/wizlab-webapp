@@ -1641,10 +1641,6 @@ a.datatable--link:hover {
   margin-left: 200px;
 }
 
-.modal-detail__content .table-actions-box {
-  margin: 0px 0px 20px;
-}
-
 .form-group td input {
   height: 38px;
   border-radius: 5px;

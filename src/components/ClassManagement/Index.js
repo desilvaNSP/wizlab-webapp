@@ -2,9 +2,9 @@ import React from "react";
 import { Tab, Tabs, TabList, TabPanel } from 'react-tabs';
 import 'react-tabs/style/react-tabs.css';
 import Classes from "./Classes/Classes";
-import './Index.css'
 import Courses from "./Courses/Courses";
 import ClassRooms from "./ClassRooms";
+import './Index.css'
 
 const ClassesIndex = props => {
   return (

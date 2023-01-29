@@ -83,9 +83,47 @@ export const SelectColumnFilter = ({
     )
 }
 
+export const SelectActiveInactiveColumnFilter = ({
+    filterValue, setFilter, preFilteredRows, id
+}) => {
+    // Calculate the options for filtering
+    // using the preFilteredRows
+    const options = React.useMemo(() => {
+        const options = new Set()
+        preFilteredRows.forEach(row => {
+            options.add(row.values[id])
+        })
+        return [...options.values()]
+    }, [id, preFilteredRows])
+
+    var activeInactive = {
+        "1": "Active",
+        "2": "Inactive"
+    }
+    // Render a multi-select box
+    return (
+        <select
+            value={filterValue}
+            onChange={e => {
+                setFilter(e.target.value || undefined)
+            }}
+        >
+            <option value="">All</option>
+            {options.map((option, i) => (
+                <>
+                    {option != "" && <option key={i} value={option}>
+                        {option + "-" + activeInactive[option]}
+                    </option>}
+                </>
+            ))}
+        </select>
+    )
+}
+
 
 export default {
     DefaultColumnFilter,
     SelectColumnFilter,
-    GlobalFilter
+    GlobalFilter,
+    SelectActiveInactiveColumnFilter
 }
