@@ -5,6 +5,10 @@ import { CommonTable } from "../CommonTable/CommonTable";
 import { ReactEditableTableFullWidthStyles } from "../Custom/StyleComponents";
 import { EditableInputTextCell } from "../Custom/Editable";
 import { SelectActiveInactiveColumnFilter } from "../Custom/Filters";
+import { RowDetailTable } from "./Table/RowDetailTable";
+import upIcon from '../Custom/icons/up.svg'
+import downIcon from '../Custom/icons/down.svg'
+import './Payments.css'
 
 const Payments = props => {
 
@@ -12,6 +16,19 @@ const Payments = props => {
 
     const columns = React.useMemo(
         () => [
+            {
+                // Make an expander cell
+                Header: () => null, // No header
+                id: 'expander', // It needs an ID
+                Cell: ({ row }) => (
+                    // Use Cell to render an expander for each row.
+                    // We can use the getToggleRowExpandedProps prop-getter
+                    // to build the expander.
+                    <span {...row.getToggleRowExpandedProps()}>
+                        {row.isExpanded ? <img src={upIcon} alt='up'></img> : <img src={downIcon} alt='down'></img>}
+                    </span>
+                ),
+            },
             {
                 Header: 'Mobile Number',
                 accessor: 'mobile',
@@ -58,16 +75,16 @@ const Payments = props => {
                 disableFilters: true,
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
-                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={()=> {}} dropList={null}  autoComplete={false}></EditableInputTextCell>
+                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={() => { }} dropList={null} autoComplete={false}></EditableInputTextCell>
                     )
                 }
             },
             {
                 Header: 'Status',
                 accessor: 'status',
-                Filter: ({column: { filterValue, setFilter, preFilteredRows, id }}) => {
+                Filter: ({ column: { filterValue, setFilter, preFilteredRows, id } }) => {
                     return (
-                        <SelectActiveInactiveColumnFilter filterValue={filterValue} setFilter={setFilter} preFilteredRows={preFilteredRows}  id={id}></SelectActiveInactiveColumnFilter>
+                        <SelectActiveInactiveColumnFilter filterValue={filterValue} setFilter={setFilter} preFilteredRows={preFilteredRows} id={id}></SelectActiveInactiveColumnFilter>
                     )
                 },
                 filter: 'includes',
@@ -156,6 +173,34 @@ const Payments = props => {
         alert("load classes data")
     };
 
+    // Create a function that will render our row sub components
+    const renderRowSubComponent = React.useCallback(
+        ({ row }) => (
+            <DetailComponent></DetailComponent>
+        ),
+        []
+    )
+
+    const DetailComponent = (props) => {
+        return (
+            <div className='detail-container container'>
+                <div className='cont-row'>
+                    <div className='cont-3-column col-1'>
+                    </div>
+                    <div className='cont-3-column col-2'>
+                        <div>
+                            <label>Status : </label>
+                            <span>Woooooow</span>
+                        </div>
+                    </div>
+                    <div className='cont-3-column col-3'>
+                    </div>
+                </div>
+            </div>
+        )
+    }
+
+
     return (
         <div className="classes-container">
             <div className='page-header'>
@@ -211,7 +256,11 @@ const Payments = props => {
                 </div>
             </div>
             <ReactEditableTableFullWidthStyles>
-                <CommonTable columns={columns} data={data} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} rowSelection={true} />
+                <RowDetailTable
+                    columns={columns}
+                    data={data}
+                    hiddenColumns={hiddenColumns}
+                    renderRowSubComponent={renderRowSubComponent} />
             </ReactEditableTableFullWidthStyles>
         </div>
     );

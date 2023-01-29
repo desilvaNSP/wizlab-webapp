@@ -9,22 +9,23 @@ import './Index.css'
 const ClassesIndex = props => {
   return (
     <div className="main-container">
-            <Tabs>
-                <TabList>
-                    <Tab>Classes(පන්ති)</Tab>
-                    <Tab>Cources(පාඨමාලා)</Tab>
-                    <Tab>Auditoriums(දේශන ශාලා)</Tab>
-                </TabList>
-                <TabPanel>
-                  <Classes></Classes>
-                </TabPanel>
-                <TabPanel>
-                  <Courses></Courses>
-                </TabPanel>
-                <TabPanel>
-                  <ClassRooms></ClassRooms>
-                </TabPanel>
-            </Tabs>
+      <Tabs>
+        <TabList>
+
+          <Tab>Cources(පාඨමාලා)</Tab>
+          <Tab>Classes(පන්ති)</Tab>
+          <Tab>Auditoriums(දේශන ශාලා)</Tab>
+        </TabList>
+        <TabPanel>
+          <Courses></Courses>
+        </TabPanel>
+        <TabPanel>
+          <Classes></Classes>
+        </TabPanel>
+        <TabPanel>
+          <ClassRooms></ClassRooms>
+        </TabPanel>
+      </Tabs>
     </div>
   );
 };

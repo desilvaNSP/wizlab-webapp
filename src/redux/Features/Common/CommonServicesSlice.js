@@ -2,6 +2,7 @@ import { createSlice } from '@reduxjs/toolkit'
 import { METADATA_ENDPOINT, HTTP_STATUS_CODE_401_UNAUTHORIZED, HTTP_STATUS_CODE_403_FORBIDDEN } from "../../../Configs/ApgConfigs";
 import { ServiceEngine } from "../../../Services/ServiceEngine";
 
+
 export const CommonServicesSlice = createSlice({
     name: 'common',
     initialState: {
@@ -43,8 +44,7 @@ export const { UpdateMetaData } = CommonServicesSlice.actions
 // will call the thunk with the `dispatch` function as the first argument. Async
 // code can then be executed and other actions can be dispatched
 export const FetchMetaData = (callback) => (dispatch) => {
-    
-    ServiceEngine.get(METADATA_ENDPOINT + '?instituteId=2').then(response => {
+    ServiceEngine.get(METADATA_ENDPOINT).then(response => {
         dispatch(UpdateMetaData(response.data))
         callback(response.data, true);
     }).catch(

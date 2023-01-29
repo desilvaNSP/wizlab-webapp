@@ -177,3 +177,41 @@ span.global-filter {
     margin-top: 40px;
 }
 
+.classes-container .widget-group .widget-row{
+    display: flex;
+    flex-wrap: wrap;
+    margin-bottom: 10px;
+}
+
+.classes-container .tile-widget {
+    width: 300px;
+    height: 100px;
+    background-color: currentColor;
+    border-radius: 8px;
+    margin: 10px;
+    text-align: center;
+    padding: 12px 0px;
+    display: flex;
+    flex-direction: column;
+}
+
+.classes-container .tile-widget:hover {
+   cursor: pointer;
+   opacity: 0.7;
+}
+
+.classes-container .tile-widget label {
+    color: white;
+    font-size: medium;
+    width: 100%;
+}
+
+.classes-container .tile-widget span {
+    font-size: medium;
+    color: wheat;
+    width: 100%;
+}
+
+.classes-container .widget-group {
+    margin-top: 40px;
+}

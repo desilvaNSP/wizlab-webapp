@@ -1,133 +1,61 @@
 import React, { useState } from "react";
 import 'react-tabs/style/react-tabs.css';
-import makeData from '../MakeData'
-import { CommonTable } from "../../CommonTable/CommonTable";
-import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
-import DropdownInput from "../../Custom/DropdownInput";
 import { NewCourse } from "./NewCourse";
+import { useDispatch, useSelector } from "react-redux";
 
 const Courses = props => {
 
-    const [selectedClass, setSelectedClass] = useState(null)
-    const [showClassCreationPopup, setShowClassCreationPopup] = useState(false)
+    const [showCourseCreationPopup, setShowCourseCreationPopup] = useState(false)
+    const [selectedCourse, setSelectedCourse] = useState(null);
 
-    const hiddenColumns = ["id"];
+    const dispatch = useDispatch();
+    const common = useSelector((state) => state.common);
 
-    const columns = React.useMemo(
-        () => [
-            {
-                Header: 'Name',
-                columns: [
-                    {
-                        Header: 'First Name',
-                        accessor: 'firstName',
-                    },
-                    {
-                        Header: 'Last Name',
-                        accessor: 'lastName',
-                    },
-                ],
-            },
-            {
-                Header: 'Info',
-                columns: [
-                    {
-                        Header: 'Age',
-                        accessor: 'age',
-                    },
-                    {
-                        Header: 'Visits',
-                        accessor: 'visits',
-                    },
-                    {
-                        Header: 'Status',
-                        accessor: 'status',
-                    },
-                    {
-                        Header: 'Profile Progress',
-                        accessor: 'progress',
-                    },
-                ],
-            },
-        ],
-        []
-    )
-
-    /**
-     * 
-     * @param {Object} item selected item of the dropdown list
-     * @param {String} key used to selected desired dropdown component
-     */
-    const resetThenSet = (item, key) => {
-
-    };
-
-    const triggerStartNewClass = () => {
-        console.log('test');
-        setShowClassCreationPopup(true)
+    const triggerStartNewCourse = () => {
+        setShowCourseCreationPopup(true)
     }
 
-    const closeClassCreationPopup = () => {
-        setShowClassCreationPopup(false)
+    const closeCourseCreationPopup = () => {
+        setShowCourseCreationPopup(false)
     }
-
-    /**
-     * Event handling for apply filters and retrive class data.
-     */
-    const handleApplyOnClick = () => {
-        alert("load classes data")
-    };
-
-    const data = React.useMemo(() => makeData(5), [])
 
     return (
         <div className="classes-container">
             <div className='page-header'>
-                <div className="add-record" onClick={() => triggerStartNewClass()}>
+                <div className="add-record" onClick={() => triggerStartNewCourse()}>
                     <img src="/assets/icons/icon-add.svg" alt="Start New Course" />
                     <span>Create New Course</span>
                 </div>
-                <div className="add-record" onClick={() => triggerStartNewClass()} >
-                    <img src="/assets/icons/update.png" alt="Update Course" style={{width:"20px", height:"20px"}}/>
-                    <span>Update Course</span>
+            </div>
+            <div className='widget-group'>
+                {/* <div className='widget-row'>
+                    <span className='global-filter'>
+                        Search:{' '}
+                        <input
+                            value={1 || ""}
+                            onChange={e => {
+                                //setValue(e.target.value);
+                                //onChange(e.target.value);
+                            }}
+                            placeholder={`${1} records...`}
+                            style={{
+                                border: '0',
+                            }}
+                        />
+                    </span>
+                </div> */}
+                <div className='widget-row'>
+                    {common.Courses.map((course) =>
+                        <div className="tile-widget" placeholder="Class Informations">
+                            <label>{course.name}</label>
+                            <span>{course?.levels?.length} Levels</span>
+                            <span> 0 Subjects</span>
+                        </div>
+                    )}
                 </div>
             </div>
-            <div className='classes-filter-box'>
-                <div className='filter-box-row'>
-                    <div className='filter-box-column'>
-                        <DropdownInput
-                            title="Category"
-                            list={[]}
-                            resetThenSet={resetThenSet}
-                            selection={1}
-                            defaultValue={false}
-                        />
-                    </div>
-                    <div className='filter-box-column'>
-                        <DropdownInput
-                            title="Age Range"
-                            list={[]}
-                            resetThenSet={resetThenSet}
-                            selection={1}
-                            defaultValue={false}
-                        />
-                    </div>
-                    <div className='filter-box-column apply-filter'>
-                        <button
-                            onClick={() => handleApplyOnClick()}
-                            className="btn btn--primary"
-                            type="submit"
-                        >
-                            Apply
-                        </button>
-                    </div>
-                </div>
-            </div>
-            <ReactTableFullWidthStyles>
-                <CommonTable columns={columns} data={data} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} rowSelection={true} />
-            </ReactTableFullWidthStyles>
-            {showClassCreationPopup &&
-                <NewCourse show={showClassCreationPopup} handleReload={() => { }} handleClose={closeClassCreationPopup} selectedClass={selectedClass}></NewCourse>
+            {showCourseCreationPopup &&
+                <NewCourse show={showCourseCreationPopup} handleReload={() => { }} handleClose={closeCourseCreationPopup} selectedClass={selectedCourse}></NewCourse>
             }
         </div>
     );

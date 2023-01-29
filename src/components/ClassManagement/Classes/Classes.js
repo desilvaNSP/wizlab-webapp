@@ -4,17 +4,27 @@ import { ClassesTable } from "./Table/ClassesTable";
 import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
 import DropdownInput from "../../Custom/DropdownInput";
 import { NewClass } from "./NewClass";
+import { useDispatch, useSelector } from "react-redux";
 
 const Classes = props => {
+
+    const COURSE_SELECTION = "COURSE_SELECTION";
+    const LEVEL_SELECTION = "LEVEL_SELECTION";
+    const SUBJECT_SELECTION = "SUBJECT_SELECTION";
+    const TEACHER_SELECTION = "TEACHER_SELECTION";
 
     const [selectedClass, setSelectedClass] = useState(null)
     const [showClassCreationPopup, setShowClassCreationPopup] = useState(false)
 
-    const hiddenColumns = ["id"];
+    const [selectedCourse, setSelectedCourse] = useState(null);
+    const [selectedLevel, setSelectedLevel] = useState(null);
+    const [selectedSubject, setSelectedSubject] = useState(null);
+    const [selectedTeacher, setSelectedTeacher] = useState(null);
 
+    const dispatch = useDispatch();
+    const common = useSelector((state) => state.common);
 
     const triggerStartNewClass = () => {
-        console.log('test');
         setShowClassCreationPopup(true)
     }
 
@@ -29,14 +39,28 @@ const Classes = props => {
         alert("load classes data")
     };
 
-    
     /**
      * 
      * @param {Object} item selected item of the dropdown list
      * @param {String} key used to selected desired dropdown component
      */
     const resetThenSet = (item, key) => {
-
+        switch (key) {
+            case COURSE_SELECTION:
+                setSelectedCourse(item !== null ? item : null);
+                break;
+            case LEVEL_SELECTION:
+                setSelectedLevel(item !== null ? item : null)
+                break;
+            case SUBJECT_SELECTION:
+                setSelectedSubject(item !== null ? item : null)
+                break;
+            case TEACHER_SELECTION:
+                setSelectedTeacher(item !== null ? item : null)
+                break;
+            default:
+                break;
+        }
     };
 
     /**
@@ -47,6 +71,8 @@ const Classes = props => {
     const showClassDetails = (row) => {
         window.open("classes/" + row.id)
     }
+
+    const hiddenColumns = ["id"];
 
     const columns = React.useMemo(
         () => [
@@ -93,7 +119,7 @@ const Classes = props => {
 
     const data = [
         {
-            "id":1,
+            "id": 1,
             "identifier": 'Konara Sinhala Class',
             "course": "G01-Sinhala",
             "level": "Grade 01",
@@ -102,7 +128,7 @@ const Classes = props => {
             "classFee": "5-10"
         },
         {
-            "id":1,
+            "id": 1,
             "identifier": 'Aruge Art Class',
             "course": "G01-Sinhala",
             "level": "Grade 01",
@@ -111,7 +137,7 @@ const Classes = props => {
             "classFee": "5-10"
         },
         {
-            "id":1,
+            "id": 1,
             "identifier": 'SajithPremadasa-Grade01-English',
             "course": "G01-English",
             "level": "Grade 01",
@@ -120,7 +146,7 @@ const Classes = props => {
             "classFee": "5-10"
         },
         {
-            "id":1,
+            "id": 1,
             "identifier": 'Konara Sinhala Class',
             "course": "G01-Sinhala",
             "level": "Grade 01",
@@ -129,7 +155,7 @@ const Classes = props => {
             "classFee": "5-10"
         },
         {
-            "id":1,
+            "id": 1,
             "identifier": 'Konara Sinhala Class',
             "course": "G01-Sinhala",
             "level": "Grade 01",
@@ -138,7 +164,7 @@ const Classes = props => {
             "classFee": "5-10"
         },
         {
-            "id":1,
+            "id": 1,
             "identifier": 'Konara Sinhala Class',
             "course": "G01-Sinhala",
             "level": "Grade 01",
@@ -155,6 +181,47 @@ const Classes = props => {
         }
     ]
 
+    const getCoursesList = () => {
+        let coursesList = [];
+        common.Courses?.forEach((course, index) => {
+            let obj = {
+                id: course.id,
+                title: course.name,
+                description: course.name,
+                code: course.id
+            };
+            coursesList.push(obj);
+        });
+        return coursesList;
+    }
+
+    const getLevelsByCourse = () => {
+        let levelList = [];
+        selectedCourse?.levels.forEach((level, index) => {
+            let obj = {
+                id: level.id,
+                title: level.desc,
+                description: level.desc,
+                code: level.id
+            };
+            levelList.push(obj);
+        });
+        return levelList;
+    }
+
+    const getSubjectByCourseAndLevels = () => {
+        let subjectList = [];
+        selectedLevel?.subjects.forEach((subject, index) => {
+            let obj = {
+                id: subject.id,
+                title: subject.title,
+                description: selectedLevel.desc + "-" + subject.title,
+                code: subject.id
+            };
+            subjectList.push(obj);
+        });
+        return subjectList;
+    }
 
     return (
         <div className="classes-container">
@@ -173,27 +240,27 @@ const Classes = props => {
                     <div className='filter-box-column'>
                         <DropdownInput
                             title="Course"
-                            list={[]}
+                            list={getCoursesList()}
                             resetThenSet={resetThenSet}
-                            selection={1}
+                            selection={COURSE_SELECTION}
                             defaultValue={false}
                         />
                     </div>
                     <div className='filter-box-column'>
                         <DropdownInput
                             title="Level"
-                            list={[]}
+                            list={[getLevelsByCourse()]}
                             resetThenSet={resetThenSet}
-                            selection={1}
+                            selection={LEVEL_SELECTION}
                             defaultValue={false}
                         />
                     </div>
                     <div className='filter-box-column'>
                         <DropdownInput
                             title="Subject"
-                            list={[]}
+                            list={getSubjectByCourseAndLevels()}
                             resetThenSet={resetThenSet}
-                            selection={1}
+                            selection={SUBJECT_SELECTION}
                             defaultValue={false}
                         />
                     </div>
@@ -202,7 +269,7 @@ const Classes = props => {
                             title="Teacher"
                             list={[]}
                             resetThenSet={resetThenSet}
-                            selection={1}
+                            selection={TEACHER_SELECTION}
                             defaultValue={false}
                         />
                     </div>
