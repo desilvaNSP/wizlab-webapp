@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
-import '../custom/custom.css'
-import downIcon from '../custom/icons/down.svg'
-import upIcon from '../custom/icons/up.svg'
+import '../Custom/custom.css'
+import downIcon from '../Custom/icons/down.svg'
+import upIcon from '../Custom/icons/up.svg'
 
 class DropdownInput extends Component {
   constructor(props) {

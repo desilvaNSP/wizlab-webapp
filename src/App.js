@@ -1,40 +1,53 @@
 import React, { useState, useEffect } from "react";
-import Slider from "./components/pages/Slider/Slider";
-import { Route, BrowserRouter as Router, withRouter, Switch } from "react-router-dom";
-import { connect } from "react-redux";
-import cookieHandler from "./handlers/cookieHandler";
-import LoginPage from "./components/pages/Login/LoginPage";
-import { setAuthHeader } from "./redux/services/APIBuilder";
-import Dashboard from "./components/pages/Dashboard/Dashboard";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
-
-import { setTokenOnStore } from "./redux/actions/auth/authActionCreator";
-import ClassesIndex from "./components/pages/ClassManagement/Index";
-import Instructors from "./components/pages/InstructorManagement/Instructors";
+import { Outlet } from "react-router-dom";
+import LoginPage from "./Components/Login/LoginPage";
+import { SetAuthHeader } from "./Services/ServiceEngine";
+import Header from "./Components/Header";
+import Footer from "./Components/Footer";
+import Slider from "./Components/Slider/Slider";
+import { useSelector, useDispatch } from "react-redux";
+import useCookies from "react-cookie/cjs/useCookies";
+import { FetchMetaData } from "./Redux/Features/Common/CommonServicesSlice";
 
 const App = props => {
   const [sliderOpen, setSliderOpen] = useState(false);
+  const [token, setToken, removeToken] = useCookies(['token']);
+  const [tokenExpiry, setTokenExpiry] = useCookies(['token_expiry']);
+  const [instituteId, setInstituteId] = useCookies(['institute_id']);
+  
+  const dispatch = useDispatch();
+  const auth = useSelector((state) => state.auth);
 
-  const redirectToManagerPortalLoginPage = () => {
-    // window.location.href =
-    //   BaseUrls.MANAGER_PORTAL_BASE_END_POINT + "/index.html#/login";
+  useEffect(() => {
+    dispatch(FetchMetaData(function (response, success) {
+      if (success) {
+
+      } else {
+        //error handle
+      }
+    }));
+  }, [token?.token])
+
+
+  const redirectToLoginPage = () => {
     return <LoginPage />;
   };
+
   const isTokenExists = () => {
-    const token = cookieHandler.getCookie("access_token");
-    if (token !== "") {
-      // Set Auth Headers here.
-      setAuthHeader(token);
-      //props.setTokenOnStore(token);
-      return true;
+    // Check token exists in cookie
+    // TODO: Check expiry date for validation.
+    if (token?.token == "" || token?.token == undefined) {
+      return false;
     } else {
+      SetAuthHeader(token?.token, instituteId?.institute_id);
       return true;
     }
   };
 
   const handleLogout = () => {
-    alert('handle logout');
+    // remove token
+    // TODO: Remove all cookies
+    removeToken('token');
   }
 
   const toggleSlider = () => {
@@ -46,38 +59,38 @@ const App = props => {
   }
 
   const renderContent = () => (
-    <Router>
+    <div>
       {sliderOpen && (
         <Slider handleClose={handleSlideClose} />
       )}
+      <Header>
+        <div className="user-welcome-message">Welcome <b>Sandun</b></div>
+        <button
+          className="btn btn--danger btn-logout"
+          onClick={handleLogout}
+          type="button"
+          hint="Logout"
+        >
+          Logout
+        </button>
+      </Header>
       <div className="wp-container">
-        <Header>
-          <div className="user-welcome-message">Welcome <b>Sandun</b></div>
-          <button
-            className="btn btn--danger btn-logout"
-            onClick={handleLogout}
-            type="button"
-            hint="Logout"
-          >
-            Logout
-          </button>
-        </Header>
-        <Switch>
-          <Route exact path="/" component={Dashboard} />
-          <Route exact path="/classes" component={ClassesIndex} />
-          <Route exact path="/instructors" component={Instructors} />
-        </Switch>
+        <Outlet />
         <Footer />
       </div>
       <span className="fixed-menu-btn" onClick={() => toggleSlider()} />
-    </Router>
+    </div>
   );
 
-  return isTokenExists() ? renderContent() : redirectToManagerPortalLoginPage();
+  return <div className="App">
+    {/*auth.IsLoading &&
+      <div className="main-loader"  >
+        <img src="/assets/images/loading.svg" alt="loader" />
+        <div className="main-loader__txt">{auth.LoadingMessage}</div>
+      </div>
+      */}
+    {isTokenExists() ? renderContent() : redirectToLoginPage()}
+  </div>
 };
 
-const mapStateToProps = state => ({
-  access_token: state.auth.access_token
-});
-
-export default connect(mapStateToProps, { setTokenOnStore })(withRouter(App));
+export default App

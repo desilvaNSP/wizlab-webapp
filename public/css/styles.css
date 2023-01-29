@@ -1169,7 +1169,7 @@ button {
 }
 
 .wp-container {
-  margin: 0px 50px;
+  margin: 20px 50px
 }
 
 .wp-header {
@@ -1189,7 +1189,8 @@ header {
   display: inline-block;
   border-bottom: solid 1px;
   width: 100%;
-  padding: 15px 0;
+  padding: 10px 30px;
+  background-color: #ebebeb;
 }
 
 main {
@@ -1640,10 +1641,6 @@ a.datatable--link:hover {
   margin-left: 200px;
 }
 
-.modal-detail__content .table-actions-box {
-  margin: 0px 0px 20px;
-}
-
 .form-group td input {
   height: 38px;
   border-radius: 5px;
@@ -1758,11 +1755,23 @@ a.datatable--link:hover {
 }
 
 .main-container{
-  border: solid 2px;
-  border-radius: 10px;
   min-height: 800px;
   max-height: 850px;
   overflow: scroll;
-  padding: 20px;
-  background: #fffff1;
+}
+
+.transaction-table span.celltag--valid {
+  background-color: navy;
+  color: white;
+  padding: 3px;
+  border-radius: 5px;
+  margin: 0px 5px;
+}
+
+.transaction-table span.celltag--invalid {
+  background-color: rgb(128, 0, 0);
+  color: white;
+  padding: 3px;
+  border-radius: 5px;
+  margin: 0px 5px;
 }
