@@ -15,12 +15,17 @@ import Students from "./Components/ClassManagement/Classes/Students";
 import { CookiesProvider } from "react-cookie";
 import ClassesIndex from "./Components/ClassManagement/Index";
 import Institutes from "./Components/InstituteManagement/Institutes";
+import Dashboard from "./Components/Dashboard/Dashboard";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <App></App>,
     children: [
+      {
+        path: "/",
+        element: <Dashboard />,
+      },
       {
         path: "classes",
         element: <ClassesIndex />,
