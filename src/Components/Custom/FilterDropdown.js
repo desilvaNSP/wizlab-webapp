@@ -4,13 +4,9 @@ import upIcon from '../Custom/icons/up.svg'
 import downIcon from '../Custom/icons/down.svg'
 import closeIcon from '../Custom/icons/close-icon.svg'
 
-const CustomDropdown = ({ defaultList, initValue, selection, onItemChange, isNullable, required = false, autoComplete = true, editable = true, warningMessage = "" }) => {
+const FilterDropdown = ({ defaultList, title, selection, initValue, onItemChange, autoComplete = true, editable = false }) => {
   // array of drop down list
   const [dropList, setDropList] = useState(defaultList);
-
-  console.log("initValue", initValue);
-  console.log("defaultList", defaultList)
-
   //item{id, value, code, selected}
   const [item, setItem] = useState(null)
   const [listOpen, setListOpen] = useState(false);
@@ -52,6 +48,7 @@ const CustomDropdown = ({ defaultList, initValue, selection, onItemChange, isNul
   const selectItem = (item) => {
     setItem(item)
     setListOpen(false);
+    console.log(selection)
     onItemChange(item, selection)
   }
 
@@ -98,11 +95,11 @@ const CustomDropdown = ({ defaultList, initValue, selection, onItemChange, isNul
           }
         }}>
           {
-            <div className="dd-header-title">{item && item.value}</div>
+            <div className="dd-header-title">{item != null ? item.value : title}</div>
           }
           {editable && <div className="dd-header-actions">
             {
-              (item && isNullable) &&
+              item &&
               <img className="dd-input--clear" alt='clear input' src={closeIcon} onClick={(e) => {
                 e.stopPropagation();
                 clearSelectedItem(item)
@@ -123,15 +120,9 @@ const CustomDropdown = ({ defaultList, initValue, selection, onItemChange, isNul
           ))}
         </ul>}
       </div>
-      {required && item == null && <label className='required-text'>
-        {"Required"}
-      </label>}
-      {!editable && <label className='warning-text'>
-        {warningMessage}
-      </label>}
     </div>
 
   )
 }
 
-export default CustomDropdown
+export default FilterDropdown

@@ -3,11 +3,11 @@ import React, { useState, useRef, useEffect } from 'react'
 import { InfoConfirmModal } from '../../Custom/Modals';
 import CustomDropdown from '../../Custom/CustomDropdown';
 import { CustomInput } from '../../Custom/CustomInput';
-import DropdownInput from '../../Custom/DropdownInput';
 import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents';
 import { CommonTable } from '../../CommonTable/CommonTable';
 import { format } from 'date-fns'
 import { DateTimePicker } from '../../Custom/DateTimePicker';
+import FilterDropdown from '../../Custom/FilterDropdown';
 
 export const NewSession = props => {
     const { handleReload, handleClose, show, selectedClass } = props
@@ -220,114 +220,131 @@ export const NewSession = props => {
                 </div>
                 <div className="modal-detail__content">
                     <div className='form-group'>
-                        <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
-                            <div className='form-column'>
-                                <label>First Select Class</label>
-                            </div>
-                            <div className='form-column'>
+                        <div className='form-group-col2'>
+                            <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
+                                <div className='form-column'>
+                                    <label>First Select Class</label>
+                                </div>
+                                <div className='form-column'>
 
-                            </div>
-                        </div>
-                        <div className='form-row'>
-                            <div className='classes-filter-box'>
-                                <div className='filter-box-row'>
-                                    <div className='filter-box-column'>
-                                        <DropdownInput
-                                            title="Course"
-                                            list={[]}
-                                            resetThenSet={resetThenSet}
-                                            selection={1}
-                                            defaultValue={false}
-                                        />
-                                    </div>
-                                    <div className='filter-box-column'>
-                                        <DropdownInput
-                                            title="Level"
-                                            list={[]}
-                                            resetThenSet={resetThenSet}
-                                            selection={1}
-                                            defaultValue={false}
-                                        />
-                                    </div>
-                                    <div className='filter-box-column'>
-                                        <DropdownInput
-                                            title="Subject"
-                                            list={[]}
-                                            resetThenSet={resetThenSet}
-                                            selection={1}
-                                            defaultValue={false}
-                                        />
-                                    </div>
-                                    <div className='filter-box-column'>
-                                        <DropdownInput
-                                            title="Teacher"
-                                            list={[]}
-                                            resetThenSet={resetThenSet}
-                                            selection={1}
-                                            defaultValue={false}
-                                        />
-                                    </div>
-                                    <div className='filter-box-column apply-filter'>
-                                        <button
-                                            onClick={() => handleApplyOnClick()}
-                                            className="btn btn--primary"
-                                            type="submit"
-                                        >
-                                            Apply
-                                        </button>
-                                    </div>
                                 </div>
                             </div>
-                            <ReactTableFullWidthStyles>
-                                <CommonTable columns={columns} data={data} onRowSelect={(rows) => { }} rowSelection={true} hiddenColumns={hiddenColumns} pagination={false} settings={false} globalsearch={false} downloadcsv={false} />
-                            </ReactTableFullWidthStyles>
-                            <div className='form-column'>
+                            <div className='form-row'>
+                                <div className='classes-filter-box'>
+                                    <div className='filter-box-row'>
+                                        <div className='filter-box-column'>
+                                            {/** course */}
+                                            <FilterDropdown
+                                                defaultList={[]}
+                                                onItemChange={(item) => {
+                                                    console.log(item)
+                                                }}
+                                                initValue={"Teacher"}
+                                                required={true}
+                                                editable={true}
+                                                warningMessage={"Updating course is not allowed"} />
+                                        </div>
+                                        <div className='filter-box-column'>
+                                            {/** level */}
+                                            <FilterDropdown
+                                                defaultList={[]}
+                                                onItemChange={(item) => {
+                                                    console.log(item)
+                                                }}
+                                                initValue={"Teacher"}
+                                                required={true}
+                                                editable={true}
+                                                warningMessage={"Updating course is not allowed"} />
+                                        </div>
+                                        <div className='filter-box-column'>
+                                            {/** level */}
+                                            <FilterDropdown
+                                                defaultList={[]}
+                                                onItemChange={(item) => {
+                                                    console.log(item)
+                                                }}
+                                                initValue={"Teacher"}
+                                                required={true}
+                                                editable={true}
+                                                warningMessage={"Updating course is not allowed"} />
+                                        </div>
+                                        <div className='filter-box-column'>
+                                            {/** teacher */}
+                                            <FilterDropdown
+                                                defaultList={[]}
+                                                onItemChange={(item) => {
+                                                    console.log(item)
+                                                }}
+                                                initValue={"Teacher"}
+                                                required={true}
+                                                editable={true}
+                                                warningMessage={"Updating course is not allowed"} />
+                                        </div>
+                                        <div className='filter-box-column apply-filter'>
+                                            <button
+                                                onClick={() => handleApplyOnClick()}
+                                                className="btn btn--primary"
+                                                type="submit"
+                                            >
+                                                Apply
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ReactTableFullWidthStyles>
+                                    <CommonTable columns={columns} data={data} onRowSelect={(rows) => { }} rowSelection={true} hiddenColumns={hiddenColumns} pagination={false} settings={false} globalsearch={false} downloadcsv={false} />
+                                </ReactTableFullWidthStyles>
+                                <div className='form-column'>
 
+                                </div>
                             </div>
-                        </div>
-                        <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
-                            <div className='form-column'>
-                                <label>Basic Information</label>
-                            </div>
-                            <div className='form-column'>
+                            <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
+                                <div className='form-column'>
+                                    <label>Basic Information</label>
+                                </div>
+                                <div className='form-column'>
 
+                                </div>
+                            </div>
+                            <div className='form-row'>
+                                <div className='form-column'>
+                                    <div className='item-name'>Start Time</div>
+                                    <div className='item-dropdown'>
+                                        <DateTimePicker
+                                            valid={fromDate < toDate ? true : false}
+                                            title={""}
+                                            initDateTime={toDate}
+                                            onDateTimeChange={(dateTime, selection) => onDateTimeChange(dateTime, selection)}
+                                        />
+                                    </div>
+                                </div>
+                                <div className='form-column'>
+                                    <div className='item-name'>Duration (Minitues)</div>
+                                    <div className='item-dropdown'>
+                                        <CustomInput defaultList={[]} onItemChange={(item) => {
+                                        }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='form-row'>
+                                <div className='form-column'>
+                                    <div className='item-name'>Auditorium<span style={{ color: 'red', fontSize: '10px' }}> (physical/virtual)</span></div>
+                                    <div className='item-dropdown'>
+                                        <CustomDropdown defaultList={[]} onItemChange={(item) => {
+                                        }} initValue={"1231"} required={true} editable={true} warningMessage={"Updating subject is not allowed"} />
+                                    </div>
+                                </div>
+                                <div className='form-column'>
+                                    <div className='item-name'>Virtual Link</div>
+                                    <div className='item-dropdown'>
+                                        <CustomInput defaultList={[]} onItemChange={(item) => {
+                                        }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div className='form-row'>
-                            <div className='form-column'>
-                                <div className='item-name'>Start Time</div>
-                                <div className='item-dropdown'>
-                                    <DateTimePicker
-                                        valid={fromDate < toDate ? true : false}
-                                        title={""}
-                                        initDateTime={toDate}
-                                        onDateTimeChange={(dateTime, selection) => onDateTimeChange(dateTime, selection)}
-                                    />
-                                </div>
-                            </div>
-                            <div className='form-column'>
-                                <div className='item-name'>Duration (Minitues)</div>
-                                <div className='item-dropdown'>
-                                    <CustomInput defaultList={[]} onItemChange={(item) => {
-                                    }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
-                                </div>
-                            </div>
-                        </div>
-                        <div className='form-row'>
-                            <div className='form-column'>
-                                <div className='item-name'>Auditorium<span style={{color:'red', fontSize:'10px'}}> (physical/virtual)</span></div>
-                                <div className='item-dropdown'>
-                                    <CustomDropdown defaultList={[]} onItemChange={(item) => {
-                                    }} initValue={"1231"} required={true} editable={true} warningMessage={"Updating subject is not allowed"} />
-                                </div>
-                            </div>
-                            <div className='form-column'>
-                                <div className='item-name'>Virtual Link</div>
-                                <div className='item-dropdown'>
-                                    <CustomInput defaultList={[]} onItemChange={(item) => {
-                                    }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
-                                </div>
-                            </div>
+                        <div className='form-group-col2'>
+
                         </div>
                     </div>
                 </div>

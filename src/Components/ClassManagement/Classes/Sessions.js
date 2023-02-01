@@ -1,9 +1,5 @@
 import React, { useState } from "react";
 import 'react-tabs/style/react-tabs.css';
-import { ClassesTable } from "./Table/ClassesTable";
-import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
-import DropdownInput from "../../Custom/DropdownInput";
-import { NewClass } from "./NewClass";
 import { NewSession } from "./NewSession";
 import EventLayout from "./EventLayout";
 import 'react-big-calendar/lib/css/react-big-calendar.css'

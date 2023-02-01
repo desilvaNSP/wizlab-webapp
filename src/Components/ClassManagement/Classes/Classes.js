@@ -1,10 +1,10 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import { ClassesTable } from "./Table/ClassesTable";
 import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
-import DropdownInput from "../../Custom/DropdownInput";
 import { NewClass } from "./NewClass";
 import { useDispatch, useSelector } from "react-redux";
+import FilterDropdown from "../../Custom/FilterDropdown";
 
 const Classes = props => {
 
@@ -44,13 +44,26 @@ const Classes = props => {
      * @param {Object} item selected item of the dropdown list
      * @param {String} key used to selected desired dropdown component
      */
-    const resetThenSet = (item, key) => {
-        switch (key) {
+    const handleItemChange = (item, selection) => {
+        switch (selection) {
             case COURSE_SELECTION:
-                setSelectedCourse(item !== null ? item : null);
+                var courseObj = null
+                common.Courses?.forEach((course, index) => {
+                    if(course.id == item.id){
+                        courseObj = course;
+                    }
+                });
+                setSelectedCourse(courseObj !== null ? courseObj : null);
                 break;
             case LEVEL_SELECTION:
-                setSelectedLevel(item !== null ? item : null)
+                var levelObj = null
+                console.log("selectedCourse MM",selectedCourse)
+                selectedCourse?.levels.forEach((level, index) => {
+                    if(level.id == item.id){
+                        levelObj = level;
+                    }
+                });
+                setSelectedLevel(levelObj !== null ? levelObj : null)
                 break;
             case SUBJECT_SELECTION:
                 setSelectedSubject(item !== null ? item : null)
@@ -186,9 +199,9 @@ const Classes = props => {
         common.Courses?.forEach((course, index) => {
             let obj = {
                 id: course.id,
-                title: course.name,
-                description: course.name,
-                code: course.id
+                value: course.name,
+                code: course.id,
+                selected: false
             };
             coursesList.push(obj);
         });
@@ -200,9 +213,9 @@ const Classes = props => {
         selectedCourse?.levels.forEach((level, index) => {
             let obj = {
                 id: level.id,
-                title: level.desc,
-                description: level.desc,
-                code: level.id
+                value: level.desc,
+                code: level.id,
+                selected: false
             };
             levelList.push(obj);
         });
@@ -214,9 +227,9 @@ const Classes = props => {
         selectedLevel?.subjects.forEach((subject, index) => {
             let obj = {
                 id: subject.id,
-                title: subject.title,
-                description: selectedLevel.desc + "-" + subject.title,
-                code: subject.id
+                value: subject.title,
+                code: subject.id,
+                selected: false
             };
             subjectList.push(obj);
         });
@@ -238,40 +251,40 @@ const Classes = props => {
             <div className='classes-filter-box'>
                 <div className='filter-box-row'>
                     <div className='filter-box-column'>
-                        <DropdownInput
+                        <FilterDropdown
                             title="Course"
-                            list={getCoursesList()}
-                            resetThenSet={resetThenSet}
                             selection={COURSE_SELECTION}
-                            defaultValue={false}
-                        />
+                            defaultList={getCoursesList()}
+                            onItemChange={handleItemChange}
+                            initValue={""}
+                            editable={true} />
                     </div>
                     <div className='filter-box-column'>
-                        <DropdownInput
+                        <FilterDropdown
                             title="Level"
-                            list={[getLevelsByCourse()]}
-                            resetThenSet={resetThenSet}
                             selection={LEVEL_SELECTION}
-                            defaultValue={false}
-                        />
+                            defaultList={getLevelsByCourse()}
+                            onItemChange={handleItemChange}
+                            initValue={""}
+                            editable={true} />
                     </div>
                     <div className='filter-box-column'>
-                        <DropdownInput
+                        <FilterDropdown
                             title="Subject"
-                            list={getSubjectByCourseAndLevels()}
-                            resetThenSet={resetThenSet}
                             selection={SUBJECT_SELECTION}
-                            defaultValue={false}
-                        />
+                            defaultList={getSubjectByCourseAndLevels()}
+                            onItemChange={handleItemChange}
+                            initValue={""}
+                            editable={true} />
                     </div>
                     <div className='filter-box-column'>
-                        <DropdownInput
+                        <FilterDropdown
                             title="Teacher"
-                            list={[]}
-                            resetThenSet={resetThenSet}
                             selection={TEACHER_SELECTION}
-                            defaultValue={false}
-                        />
+                            defaultList={[]}
+                            onItemChange={handleItemChange}
+                            initValue={""}
+                            editable={true} />
                     </div>
                     <div className='filter-box-column apply-filter'>
                         <button

@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react'
+import update from 'react-addons-update';
 import { EditableInputTextCell } from '../../Custom/Editable';
 import { ReactEditableTableFullWidthStyles } from '../../Custom/StyleComponents';
 import { SubjectsTable } from './Table/SubjectsTable';
 
 export const NewSubjects = props => {
-    const { selectedLevel, selectedCourse } = props
+    const { selectedLevel, levelInex, updateLevel } = props
+    const [data, setData] = useState(selectedLevel.subjects)
+   
     //const auth = useSelector((state) => state.auth);
-
-
     // useDispatch() hook is equivalent of mapDispatchToProps.
     //const dispatch = useDispatch();
 
@@ -18,25 +19,41 @@ export const NewSubjects = props => {
     // listener for the add new row on the table.
     // added new row at the top of the table.
     const addNewRow = () => {
-        // var newData = [
-        //     {
-        //         "id": "PENDING",
-        //         "terminalId": 1,
-        //         "networkAppVersionId": 0,
-        //         "networkAppVersion": null,
-        //         "networkAppInstallationTriggerTypeId": 1,
-        //         "merchantNetworkProfileId": 0,
-        //         "merchantNetworkProfile": null,
-        //         "addedBy": auth.AdminUser,
-        //         "modifiedBy": auth.AdminUser,
-        //         "addedDate": "",
-        //         "modifiedDate": "",
-        //         "new": true
-        //     }
-        // ]
-        // var newDataSet = [...newData, ...data]
-        // setData(newDataSet);
+        var newData = [
+            {
+                "subjectCode": "",
+                "title": "",
+                "medium": "",
+                "credits": "",
+                "new": true
+            }
+        ]
+        var newDataSet = [...newData, ...data]
+        setData(newDataSet);
     }
+
+    // When our cell renderer calls updateMyData, we'll use
+    // the rowIndex(ex: 9), columnId(ex: merchantName) and new value to update the
+    // original data
+    const updateMyData = (rowIndex, columnId, value) => {
+        var dataUpdated = data.map((row, index) => {
+            if (index === rowIndex) {
+                var updatedRow = {
+                    ...data[rowIndex],
+                    [columnId]: value,
+                    ["updated"]: true
+                }
+                return updatedRow
+            }
+            return row
+        })
+        setData(dataUpdated)
+        updateLevel({
+            "description": selectedLevel.description,
+            "subjects": dataUpdated
+        }, levelInex)
+    }
+
 
     const hiddenColumns = ["id"];
 
@@ -48,64 +65,43 @@ export const NewSubjects = props => {
                 disableFilters: true,
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
-                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={() => { }} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
+                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
                     )
                 }
             },
             {
                 Header: 'Subject Name',
-                accessor: 'subjectName',
+                accessor: 'title',
                 disableFilters: true,
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
-                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={() => { }} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
+                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
                     )
                 }
             },
             {
-                Header: 'Level/Grade',
-                accessor: 'level',
+                Header: 'Medium',
+                accessor: 'medium',
                 disableFilters: true,
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
-                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={() => { }} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
+                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
                     )
                 }
             },
             {
-                Header: 'Age Range',
-                accessor: 'ageRange',
+                Header: 'Credits',
+                accessor: 'credits',
                 disableFilters: true,
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
-                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={() => { }} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
+                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
                     )
                 }
             },
         ],
         []
     )
-
-    const data = [
-        {
-            "subjectCode": "G01-Sinhala",
-            "subjectName": "Sinhala",
-            "level": "Grade 01",
-            "ageRange": "5-10"
-        },
-        {
-            "subjectCode": "G01-English",
-            "subjectName": "English",
-            "level": "Grade 01",
-            "ageRange": "5-10"
-        },
-        {
-            "subjectCode": "G02-Sinhala",
-            "subjectName": "Sinhala",
-            "level": "Grade 02",
-            "ageRange": "5-10"
-        }
-    ]
 
     return (
         <div className='subject-container'>
@@ -118,7 +114,7 @@ export const NewSubjects = props => {
                 </div>
             </div>
             <ReactEditableTableFullWidthStyles>
-                <SubjectsTable columns={columns} data={data} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} updateMyData={() => { }} skipPageReset={() => { }} />
+                <SubjectsTable columns={columns} data={data} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} updateMyData={updateMyData} skipPageReset={() => { }} />
             </ReactEditableTableFullWidthStyles>
         </div>
     )

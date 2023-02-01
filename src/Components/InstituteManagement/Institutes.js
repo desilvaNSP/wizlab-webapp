@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import { CommonTable } from "../CommonTable/CommonTable";
+import FilterDropdown from "../Custom/FilterDropdown";
 import { ReactTableFullWidthStyles } from '../Custom/StyleComponents'
-import DropdownInput from "../Custom/DropdownInput";
 import { NewInstitute } from "./NewInstitute";
 
 const Institutes = props => {
@@ -48,7 +48,7 @@ const Institutes = props => {
                 Header: 'Course/Program',
                 id: 'course',
                 accessor: data => {
-                    const results = data.course == null || data.course == "" ? [] : data.course.split(",") ;
+                    const results = data.course == null || data.course == "" ? [] : data.course.split(",");
                     if (results.length > 0) {
                         return results.map(function (each) {
                             return (<span className="celltag--valid">{each}</span>)
@@ -63,7 +63,7 @@ const Institutes = props => {
                 Header: 'Level/Grade',
                 id: 'level',
                 accessor: data => {
-                    const results = data.level == null || data.level == "" ? [] : data.level.split(",") ;
+                    const results = data.level == null || data.level == "" ? [] : data.level.split(",");
                     if (results.length > 0) {
                         return results.map(function (each) {
                             return (<span className="celltag--valid">{each}</span>)
@@ -78,7 +78,7 @@ const Institutes = props => {
                 Header: 'Subject',
                 id: 'subject',
                 accessor: data => {
-                    const results = data.subject == null || data.subject == "" ? [] : data.subject.split(",") ;
+                    const results = data.subject == null || data.subject == "" ? [] : data.subject.split(",");
                     if (results.length > 0) {
                         return results.map(function (each) {
                             return (<span className="celltag--valid">{each}</span>)
@@ -154,31 +154,31 @@ const Institutes = props => {
             <div className='classes-filter-box'>
                 <div className='filter-box-row'>
                     <div className='filter-box-column'>
-                        <DropdownInput
-                            title="Course"
-                            list={[]}
-                            resetThenSet={resetThenSet}
-                            selection={1}
-                            defaultValue={false}
-                        />
+                        <FilterDropdown
+                            defaultList={[]}
+                            onItemChange={(item) => {
+                                console.log(item)
+                            }}
+                            initValue={""}
+                            editable={true}/>
                     </div>
                     <div className='filter-box-column'>
-                        <DropdownInput
-                            title="Level"
-                            list={[]}
-                            resetThenSet={resetThenSet}
-                            selection={1}
-                            defaultValue={false}
-                        />
+                        <FilterDropdown
+                            defaultList={[]}
+                            onItemChange={(item) => {
+                                console.log(item)
+                            }}
+                            initValue={"Teacher"}
+                            editable={false}/>
                     </div>
                     <div className='filter-box-column'>
-                        <DropdownInput
-                            title="Subject"
-                            list={[]}
-                            resetThenSet={resetThenSet}
-                            selection={1}
-                            defaultValue={false}
-                        />
+                        <FilterDropdown
+                            defaultList={[]}
+                            onItemChange={(item) => {
+                                console.log(item)
+                            }}
+                            initValue={"Teacher"}
+                            editable={false} />
                     </div>
                     <div className='filter-box-column apply-filter'>
                         <button

@@ -17,16 +17,16 @@ export const EditableInputTextCell = ({
 }) => {
     // We need to keep and update the state of the cell normally
     const [value, setValue] = useState(initialValue)
-    const [cellValidity, setCellValidity] = useState(((initialValue == "" || initialValue == null) && required) ? true : false)
+    const [cellValidity, setCellValidity] = useState(required)
 
     const onChange = e => {
         e.stopPropagation();
         var targetValue = e.target.value
-        if ((targetValue == "" || targetValue == null) && required) {
-            setCellValidity(false)
-        } else {
-            setCellValidity(true)
-        }
+        // if (required) {
+        //     setCellValidity(false)
+        // } else {
+        //     setCellValidity(true)
+        // }
         setValue(targetValue)
     }
 
@@ -44,12 +44,10 @@ export const EditableInputTextCell = ({
     }, [initialValue])
 
     return ((original.new && original.new == true) || dbUpdate) && dbAdd ?
-        <div>
-            {cellValidity && <label className='required-text--cell'>
-                {"*"}
-            </label>}
+            // {cellValidity && <label className='required-text--cell'>
+            //     {"*"}
+            // </label>}
             <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type={type} min="1" max="20" placeholder={placeholderText}/>
-        </div>
         : isLink ?
             <a className="datatable--link" onClick={() => linkClickEvent(original, index)}>{value}</a>
             : <span>{value}</span>

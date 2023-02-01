@@ -73,62 +73,66 @@ export const NewInstitute = props => {
                 </div>
                 <div className="modal-detail__content">
                     <div className='form-group'>
-                        <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
-                            <div className='form-column'>
-                                <label>Basic Information</label>
-                            </div>
-                            <div className='form-column'>
+                        <div className='form-group-col2'>
+                            <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
+                                <div className='form-column'>
+                                    <label>Basic Information</label>
+                                </div>
+                                <div className='form-column'>
 
+                                </div>
+                            </div>
+                            <div className='form-row'>
+                                <div className='form-column'>
+                                    <div className='item-name'>First Name</div>
+                                    <div className='item-dropdown'>
+                                        <CustomInput defaultList={[]} onItemChange={(item) => {
+                                        }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
+                                    </div>
+                                </div>
+                                <div className='form-column'>
+                                    <div className='item-name'>Middle Name</div>
+                                    <div className='item-dropdown'>
+                                        <CustomInput defaultList={[]} onItemChange={(item) => {
+                                        }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='form-row'>
+                                <div className='form-column'>
+                                    <div className='item-name'>Last Name</div>
+                                    <div className='item-dropdown'>
+                                        <CustomInput defaultList={[]} onItemChange={(item) => {
+                                        }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
+                                    </div>
+                                </div>
+                                <div className='form-column'>
+                                    <div className='item-name'>Mobile Number</div>
+                                    <div className='item-dropdown'>
+                                        <CustomInput defaultList={[]} onItemChange={(item) => {
+                                        }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
+                                    </div>
+                                </div>
+                            </div>
+                            <div className='form-row'>
+                                <div className='form-column'>
+                                    <div className='item-name'>Permanant Address</div>
+                                    <div className='item-dropdown'>
+                                        <CustomInput defaultList={[]} onItemChange={(item) => {
+                                        }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
+                                    </div>
+                                </div>
+                                <div className='form-column'>
+                                    <div className='item-name'>Education Qualitification</div>
+                                    <div className='item-dropdown'>
+                                        <CustomInput defaultList={[]} onItemChange={(item) => {
+                                        }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div className='form-row'>
-                            <div className='form-column'>
-                                <div className='item-name'>First Name</div>
-                                <div className='item-dropdown'>
-                                    <CustomInput defaultList={[]} onItemChange={(item) => {
-                                    }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
-                                </div>
-                            </div>
-                            <div className='form-column'>
-                                <div className='item-name'>Middle Name</div>
-                                <div className='item-dropdown'>
-                                    <CustomInput defaultList={[]} onItemChange={(item) => {
-                                    }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
-                                </div>
-                            </div>
-                        </div>
-                        <div className='form-row'>
-                            <div className='form-column'>
-                                <div className='item-name'>Last Name</div>
-                                <div className='item-dropdown'>
-                                    <CustomInput defaultList={[]} onItemChange={(item) => {
-                                    }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
-                                </div>
-                            </div>
-                            <div className='form-column'>
-                                <div className='item-name'>Mobile Number</div>
-                                <div className='item-dropdown'>
-                                    <CustomInput defaultList={[]} onItemChange={(item) => {
-                                    }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
-                                </div>
-                            </div>
-                        </div>
+                        <div className='form-group-col2'>
 
-                        <div className='form-row'>
-                            <div className='form-column'>
-                                <div className='item-name'>Permanant Address</div>
-                                <div className='item-dropdown'>
-                                    <CustomInput defaultList={[]} onItemChange={(item) => {
-                                    }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
-                                </div>
-                            </div>
-                            <div className='form-column'>
-                                <div className='item-name'>Education Qualitification</div>
-                                <div className='item-dropdown'>
-                                    <CustomInput defaultList={[]} onItemChange={(item) => {
-                                    }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>

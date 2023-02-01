@@ -660,7 +660,6 @@ h4 {
   color: #ffffff;
   background: #38A281;
   border-radius: 60px;
-  box-shadow: 0 0 50px 20px #ffffff;
 }
 
 .btn--primary:hover {
@@ -1445,6 +1444,7 @@ header .user-welcome-message {
 }
 
 .page-header .add-record {
+  font-size: medium;
   background: #0cdf9c;
   padding: 8px;
   border-radius: 8px;
@@ -1597,6 +1597,11 @@ a.datatable--link:hover {
   box-shadow: 0 2px 5px -1px #e8e8e8;
 }
 
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: row;
+}
 
 .form-group .validation-error {
   border: 1px #ff0000 solid;
@@ -1617,8 +1622,8 @@ a.datatable--link:hover {
   padding: 5px;
 }
 
-.form-group .form-column {
-  width: 40%;
+.custom-input.custom-checkbox {
+  height: 25px;
 }
 
 .form-group .item-name {
@@ -1627,6 +1632,16 @@ a.datatable--link:hover {
   text-align: left;
   font-weight: 600;
   padding-top: 10px;
+}
+
+.form-group .form-group-col2 {
+  width: 50%;
+  padding: 0px 20px;
+}
+
+.form-group .form-group-col {
+  width: 100%;
+  padding: 0px 20px;
 }
 
 .form-group .form-row {
@@ -1674,13 +1689,12 @@ a.datatable--link:hover {
 }
 
 .editable-input--cell {
-  border: 1px #ccc solid;
+  border: 1px rgb(47, 47, 47) solid !important;
   background: #ffffff;
   height: 30px;
   border-radius: 5px;
-  padding: 5px;
-  /* margin-left: 20px; */
-  float: right;
+  width: 100%;
+  text-align: right;
 }
 
 .table-row--delete {

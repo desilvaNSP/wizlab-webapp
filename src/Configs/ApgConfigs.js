@@ -42,3 +42,6 @@ export const ERROR_MESSAGE_403_FORBIDDEN = 'You are not authorized to perform th
 //Admin Services
 export const FETCH_TOKEN_ENDPOINT = '/api/v1/admin/user/login';
 export const METADATA_ENDPOINT = '/api/v1/admin/metadata'
+export const CREATE_COURSE_ENDPOINT = '/api/v1/admin/course'
+export const CREATE_CLASS_ENDPOINT = '/api/v1/admin/class'
+export const CREATE_CLASSROOM_ENDPOINT = '/api/v1/admin/classroom'

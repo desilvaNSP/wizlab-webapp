@@ -5,6 +5,8 @@ import { CustomInput } from '../../Custom/CustomInput';
 import { EditableInputTextCell } from '../../Custom/Editable';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { NewSubjects } from './NewSubjects';
+import { CreateCourse } from '../../../Redux/Features/Common/CommonServicesSlice';
+import { useDispatch } from 'react-redux';
 
 export const NewCourse = props => {
     const { handleReload, handleClose, show, selectedCourse } = props
@@ -24,11 +26,7 @@ export const NewCourse = props => {
     });
 
     // useDispatch() hook is equivalent of mapDispatchToProps.
-    //const dispatch = useDispatch();
-
-    // useEffect(() => {
-
-    // }, [])
+    const dispatch = useDispatch();
 
     /**
      * Event for close confirm modal
@@ -66,144 +64,76 @@ export const NewCourse = props => {
         }, [ref]);
     }
 
-    // listener for the add new row on the table.
-    // added new row at the top of the table.
-    const addNewRow = () => {
-        // var newData = [
-        //     {
-        //         "id": "PENDING",
-        //         "terminalId": 1,
-        //         "networkAppVersionId": 0,
-        //         "networkAppVersion": null,
-        //         "networkAppInstallationTriggerTypeId": 1,
-        //         "merchantNetworkProfileId": 0,
-        //         "merchantNetworkProfile": null,
-        //         "addedBy": auth.AdminUser,
-        //         "modifiedBy": auth.AdminUser,
-        //         "addedDate": "",
-        //         "modifiedDate": "",
-        //         "new": true
-        //     }
-        // ]
-        // var newDataSet = [...newData, ...data]
-        // setData(newDataSet);
-    }
-
-    const hiddenColumns = ["id"];
-
-    const columns = React.useMemo(
-        () => [
-            {
-                Header: 'Subject Code',
-                accessor: 'subjectCode',
-                disableFilters: true,
-                Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
-                    return (
-                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={() => { }} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
-                    )
-                }
-            },
-            {
-                Header: 'Subject Name',
-                accessor: 'subjectName',
-                disableFilters: true,
-                Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
-                    return (
-                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={() => { }} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
-                    )
-                }
-            },
-            {
-                Header: 'Level/Grade',
-                accessor: 'level',
-                disableFilters: true,
-                Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
-                    return (
-                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={() => { }} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
-                    )
-                }
-            },
-            {
-                Header: 'Age Range',
-                accessor: 'ageRange',
-                disableFilters: true,
-                Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
-                    return (
-                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={() => { }} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
-                    )
-                }
-            },
-        ],
-        []
-    )
-
-    const data = [
-        {
-            "subjectCode": "G01-Sinhala",
-            "subjectName": "Sinhala",
-            "level": "Grade 01",
-            "ageRange": "5-10"
-        },
-        {
-            "subjectCode": "G01-English",
-            "subjectName": "English",
-            "level": "Grade 01",
-            "ageRange": "5-10"
-        },
-        {
-            "subjectCode": "G02-Sinhala",
-            "subjectName": "Sinhala",
-            "level": "Grade 02",
-            "ageRange": "5-10"
-        },
-        {
-            "subjectCode": "G03-English",
-            "subjectName": "English",
-            "level": "Grade 03",
-            "ageRange": "5-10"
-        },
-
-        {
-            "subjectCode": "G04-Maths",
-            "subjectName": "Maths",
-            "level": "Grade 04",
-            "ageRange": "5-10"
-        },
-
-        {
-            "subjectCode": "G04-English",
-            "subjectName": "English",
-            "level": "Grade 04",
-            "ageRange": "5-10"
-        },
-        {
-            "subjectCode": "G04-Art",
-            "subjectName": "Art",
-            "level": "Grade 04",
-            "ageRange": "5-10"
-        }
-    ]
-
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef, props);
 
+    const courseFieldValidation = (value, callback) => {
+        callback(true, "");
+    }
 
     const levelFieldValidation = (value, callback) => {
         callback(true, "");
     }
 
-    const handleNewLevels = (levels) => {
-        const levelsArray = [];
-        for (const key in levels) {
-            if (Object.hasOwnProperty.call(levels, key)) {
-                const element = levels[key];
-                if (element) {
-                    levelsArray.push(key)
+    //Levels
+    const checkLevelAlreadyExistsOnState = (key) => {
+        let isOk = false;
+        levels.forEach(function (item) {
+            if (item.description == key) {
+                isOk = true;
+            }
+        });
+        return isOk;
+    }
+
+    const handleNewLevels = (allLevels) => {
+        for (const key in allLevels) {
+            // if key already exists no need create one.
+            if (!checkLevelAlreadyExistsOnState(key)) {
+                if (Object.hasOwnProperty.call(allLevels, key)) {
+                    const element = allLevels[key];
+                    if (element) {
+                        var levelObj = {
+                            description: key,
+                            subjects: [
+                            ]
+                        }
+                        levels.push(levelObj)
+                    }
                 }
             }
         }
-        setLevels(levelsArray);
+        setLevels(levels.slice());
     }
+
+    const updateCorrectLevel = (levelObj, levelInex) => {
+        levels[levelInex] = levelObj;
+        setLevels(levels.slice());
+    }
+
+    //Course name
+    const updateCourseName = (value) => {
+        console.log("value", value)
+        setCourse(value)
+    }
+
+    //Trigger create new course service
+    const createNewCourse = () => {
+        console.log(course)
+        console.log(levels)
+        var payload = {
+            "course": course,
+            "levels": levels
+        }
+        dispatch(CreateCourse(payload, function (response, success) {
+            if (success) {
+
+            } else {
+                //error handle
+            }
+        }));
+    }
+
 
     return (
         <div className={showHideClassName}>
@@ -215,33 +145,40 @@ export const NewCourse = props => {
                 </div>
                 <div className="modal-detail__content">
                     <div className='form-group'>
-                        <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
-                            <div className='form-column'>
-                                <label>Basic Information</label>
-                            </div>
-                            <div className='form-column'>
+                        <div className='form-group-col2'>
+                            <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
+                                <div className='form-column'>
+                                    <label>Basic Information</label>
+                                </div>
+                                <div className='form-column'>
 
+                                </div>
+                            </div>
+                            <div className='form-row'>
+                                <div className='form-column'>
+                                    <div className='item-name'>Course Name</div>
+                                    <div className='item-dropdown'>
+                                        <CustomInput initialValue={""} type="text" disable={false} updateInput={(value) => {
+                                            updateCourseName(value)
+                                        }} fieldValidation={courseFieldValidation} required={true} placeHolder="Course Name"></CustomInput>
+                                    </div>
+                                </div>
+                                <div className='form-column'>
+                                    <div className='item-name'>Levels/Grades</div>
+                                    <div className='item-dropdown'>
+                                        <CustomTagInput initialValue={""} disable={false} fieldValidation={levelFieldValidation} required={true} updateTags={(value) => {
+                                            handleNewLevels(value);
+                                        }}></CustomTagInput>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div className='form-row'>
-                            <div className='form-column'>
-                                <div className='item-name'>Course Name</div>
-                                <div className='item-dropdown'>
-                                    <CustomInput initialValue={""} type="text" disable={false} updateInput={(value) => { }} fieldValidation={() => { }} required={true} placeHolder="Course Name"></CustomInput>
-                                </div>
-                            </div>
-                            <div className='form-column'>
-                                <div className='item-name'>Levels/Grades</div>
-                                <div className='item-dropdown'>
-                                    <CustomTagInput initialValue={""} disable={false} fieldValidation={levelFieldValidation} required={true} updateTags={(value) => {
-                                        console.log(value)
-                                        handleNewLevels(value);
-                                    }}></CustomTagInput>
-                                </div>
-                            </div>
+                        <div className='form-group-col2'>
+
                         </div>
                     </div>
                     <div className='form-group'>
+                        <div className='form-group-col'>
                         <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
                             <div className='form-column'>
                                 <label>Subjects/Modules</label>
@@ -252,19 +189,20 @@ export const NewCourse = props => {
                         <Tabs>
                             <TabList>
                                 {levels.map((level) =>
-                                    <Tab>{level}</Tab>
+                                    <Tab>{level.description}</Tab>
                                 )}
                             </TabList>
-                            {levels.map((level) =>
+                            {levels.map((level, index) =>
                                 <TabPanel>
-                                    <NewSubjects selectedLevel={level} selectedCourse={course}></NewSubjects>
+                                    <NewSubjects selectedLevel={level} selectedCourse={course} updateLevel={updateCorrectLevel} levelInex={index}></NewSubjects>
                                 </TabPanel>
                             )}
                         </Tabs>
+                        </div>
                     </div>
                 </div>
                 <div className="modal-detail__footer">
-                    <button className="btn btn--success" onClick={() => { }} disabled={() => { }}>
+                    <button className="btn btn--success" onClick={() => createNewCourse()}>
                         Create New Course
                     </button>
                 </div>

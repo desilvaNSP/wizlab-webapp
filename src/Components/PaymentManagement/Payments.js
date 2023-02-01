@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 import 'react-tabs/style/react-tabs.css';
-import DropdownInput from "../Custom/DropdownInput"
-import { CommonTable } from "../CommonTable/CommonTable";
 import { ReactEditableTableFullWidthStyles } from "../Custom/StyleComponents";
 import { EditableInputTextCell } from "../Custom/Editable";
-import { SelectActiveInactiveColumnFilter } from "../Custom/Filters";
 import { RowDetailTable } from "./Table/RowDetailTable";
 import upIcon from '../Custom/icons/up.svg'
 import downIcon from '../Custom/icons/down.svg'
 import './Payments.css'
+import FilterDropdown from "../Custom/FilterDropdown";
 
 const Payments = props => {
 
@@ -30,18 +28,18 @@ const Payments = props => {
                 ),
             },
             {
-                Header: 'Mobile Number',
-                accessor: 'mobile',
+                Header: 'Phone Number',
+                accessor: 'phoneNumber',
                 disableFilters: true
             },
             {
                 Header: 'Student Code',
-                accessor: 'studentno',
+                accessor: 'studentCode',
                 disableFilters: true
             },
             {
                 Header: 'Student Name',
-                accessor: 'studentname',
+                accessor: 'studentName',
                 disableFilters: true
             },
             {
@@ -51,27 +49,27 @@ const Payments = props => {
             },
             {
                 Header: 'Due Date',
-                accessor: 'duedate',
+                accessor: 'paymentDueDate',
                 disableFilters: true
             },
             {
                 Header: 'Class',
-                accessor: 'class',
+                accessor: 'classIdentifier',
                 disableFilters: true
             },
             {
                 Header: 'Due Amount',
-                accessor: 'dueamount',
+                accessor: 'dueAmount',
                 disableFilters: true
             },
             {
                 Header: 'Pending Amount',
-                accessor: 'pendigamount',
+                accessor: 'pendingAmount',
                 disableFilters: false
             },
             {
                 Header: 'Paying Amount',
-                id: 'pay',
+                id: 'paidAmount',
                 disableFilters: true,
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
@@ -80,14 +78,23 @@ const Payments = props => {
                 }
             },
             {
-                Header: 'Status',
-                accessor: 'status',
-                Filter: ({ column: { filterValue, setFilter, preFilteredRows, id } }) => {
+                Header: 'Is Fully Paid',
+                accessor: 'isFullyPaid',
+                disableFilters: true,
+                Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
-                        <SelectActiveInactiveColumnFilter filterValue={filterValue} setFilter={setFilter} preFilteredRows={preFilteredRows} id={id}></SelectActiveInactiveColumnFilter>
+                        <div className="payment--save">
+                            <input className='custom-checkbox' type="checkbox" onChange={() => { }} onBlur={() => { }} checked={true} disabled={false} />
+                            <button
+                                onClick={() => handleApplyOnClick()}
+                                className="btn btn--primary"
+                                type="submit"
+                            >
+                                Pay
+                            </button>
+                        </div>
                     )
-                },
-                filter: 'includes',
+                }
             }
         ],
         []
@@ -95,65 +102,88 @@ const Payments = props => {
 
     const data = [
         {
-            "id": 1,
-            "identifier": 'Konara Sinhala Class',
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "5-10",
-            "classFee": "5-10"
+            "phoneNumber": "0714268785",
+            "studentCode": "SC001",
+            "studentName": "Ape Putha",
+            "month": 6,
+            "paymentDueDate": 15,
+            "classIdentifier": "Sajithge English Class",
+            "dueAmount": 1000,
+            "paidAmount": 200,
+            "pendingAmount": 800,
+            "isFullyPaid": true,
+            "paymentStatusId": 0,
+            "payments": [
+                {
+                    "id": 1,
+                    "amount": 200,
+                    "paymentDate": "2023-06-01 10:08:11.06",
+                    "monthlyPaymentId": 1
+                }
+            ]
         },
         {
-            "id": 1,
-            "identifier": 'Aruge Art Class',
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "5-10",
-            "classFee": "5-10"
+            "phoneNumber": "0714268785",
+            "studentCode": "SC001",
+            "studentName": "Ape Putha",
+            "month": 6,
+            "paymentDueDate": 15,
+            "classIdentifier": "Sajithge English Class",
+            "dueAmount": 1000,
+            "paidAmount": 200,
+            "pendingAmount": 800,
+            "isFullyPaid": true,
+            "paymentStatusId": 0,
+            "payments": [
+                {
+                    "id": 1,
+                    "amount": 200,
+                    "paymentDate": "2023-06-01 10:08:11.06",
+                    "monthlyPaymentId": 1
+                }
+            ]
         },
         {
-            "id": 1,
-            "identifier": 'SajithPremadasa-Grade01-English',
-            "course": "G01-English",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Sajith Premadasa",
-            "classFee": "5-10"
+            "phoneNumber": "0714268785",
+            "studentCode": "SC001",
+            "studentName": "Ape Putha",
+            "month": 6,
+            "paymentDueDate": 15,
+            "classIdentifier": "Sajithge English Class",
+            "dueAmount": 1000,
+            "paidAmount": 200,
+            "pendingAmount": 800,
+            "isFullyPaid": true,
+            "paymentStatusId": 0,
+            "payments": [
+                {
+                    "id": 1,
+                    "amount": 200,
+                    "paymentDate": "2023-06-01 10:08:11.06",
+                    "monthlyPaymentId": 1
+                }
+            ]
         },
         {
-            "id": 1,
-            "identifier": 'Konara Sinhala Class',
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Konara",
-            "classFee": "5-10"
-        },
-        {
-            "id": 1,
-            "identifier": 'Konara Sinhala Class',
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Konara",
-            "classFee": "5-10"
-        },
-        {
-            "id": 1,
-            "identifier": 'Konara Sinhala Class',
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Konara",
-            "classFee": "5-10"
-        },
-        {
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Konara",
-            "classFee": "5-10"
+            "phoneNumber": "0714268785",
+            "studentCode": "SC001",
+            "studentName": "Ape Putha",
+            "month": 6,
+            "paymentDueDate": 15,
+            "classIdentifier": "Sajithge English Class",
+            "dueAmount": 1000,
+            "paidAmount": 200,
+            "pendingAmount": 800,
+            "isFullyPaid": true,
+            "paymentStatusId": 0,
+            "payments": [
+                {
+                    "id": 1,
+                    "amount": 200,
+                    "paymentDate": "2023-06-01 10:08:11.06",
+                    "monthlyPaymentId": 1
+                }
+            ]
         }
     ]
 
@@ -203,46 +233,52 @@ const Payments = props => {
 
     return (
         <div className="classes-container">
-            <div className='page-header'>
-
-            </div>
+            <div className='page-header'>Monthly Settlement</div>
             <div className='classes-filter-box'>
                 <div className='filter-box-row'>
                     <div className='filter-box-column'>
-                        <DropdownInput
-                            title="Course"
-                            list={[]}
-                            resetThenSet={resetThenSet}
-                            selection={1}
-                            defaultValue={false}
-                        />
+                        <FilterDropdown
+                            defaultList={[]}
+                            onItemChange={(item) => {
+                                console.log(item)
+                            }}
+                            initValue={"Teacher"}
+                            required={true}
+                            editable={true}
+                            warningMessage={"Updating course is not allowed"} />
                     </div>
                     <div className='filter-box-column'>
-                        <DropdownInput
-                            title="Level"
-                            list={[]}
-                            resetThenSet={resetThenSet}
-                            selection={1}
-                            defaultValue={false}
-                        />
+                        <FilterDropdown
+                            defaultList={[]}
+                            onItemChange={(item) => {
+                                console.log(item)
+                            }}
+                            initValue={"Teacher"}
+                            required={true}
+                            editable={true}
+                            warningMessage={"Updating course is not allowed"} />
                     </div>
                     <div className='filter-box-column'>
-                        <DropdownInput
-                            title="Subject"
-                            list={[]}
-                            resetThenSet={resetThenSet}
-                            selection={1}
-                            defaultValue={false}
-                        />
+                        <FilterDropdown
+                            defaultList={[]}
+                            onItemChange={(item) => {
+                                console.log(item)
+                            }}
+                            initValue={"Teacher"}
+                            required={true}
+                            editable={true}
+                            warningMessage={"Updating course is not allowed"} />
                     </div>
                     <div className='filter-box-column'>
-                        <DropdownInput
-                            title="Teacher"
-                            list={[]}
-                            resetThenSet={resetThenSet}
-                            selection={1}
-                            defaultValue={false}
-                        />
+                        <FilterDropdown
+                            defaultList={[]}
+                            onItemChange={(item) => {
+                                console.log(item)
+                            }}
+                            initValue={"Teacher"}
+                            required={true}
+                            editable={true}
+                            warningMessage={"Updating course is not allowed"} />
                     </div>
                     <div className='filter-box-column apply-filter'>
                         <button

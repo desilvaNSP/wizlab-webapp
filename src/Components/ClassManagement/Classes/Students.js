@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import { ClassesTable } from "./Table/ClassesTable";
 import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
-import DropdownInput from "../../Custom/DropdownInput";
 import { NewClass } from "./NewClass";
+import FilterDropdown from "../../Custom/FilterDropdown";
 
 const Students = props => {
 
@@ -29,7 +29,7 @@ const Students = props => {
         alert("load classes data")
     };
 
-    
+
     /**
      * 
      * @param {Object} item selected item of the dropdown list
@@ -93,7 +93,7 @@ const Students = props => {
 
     const data = [
         {
-            "id":1,
+            "id": 1,
             "identifier": 'Konara Sinhala Class',
             "course": "G01-Sinhala",
             "level": "Grade 01",
@@ -102,7 +102,7 @@ const Students = props => {
             "classFee": "5-10"
         },
         {
-            "id":1,
+            "id": 1,
             "identifier": 'Aruge Art Class',
             "course": "G01-Sinhala",
             "level": "Grade 01",
@@ -111,7 +111,7 @@ const Students = props => {
             "classFee": "5-10"
         },
         {
-            "id":1,
+            "id": 1,
             "identifier": 'SajithPremadasa-Grade01-English',
             "course": "G01-English",
             "level": "Grade 01",
@@ -120,7 +120,7 @@ const Students = props => {
             "classFee": "5-10"
         },
         {
-            "id":1,
+            "id": 1,
             "identifier": 'Konara Sinhala Class',
             "course": "G01-Sinhala",
             "level": "Grade 01",
@@ -129,7 +129,7 @@ const Students = props => {
             "classFee": "5-10"
         },
         {
-            "id":1,
+            "id": 1,
             "identifier": 'Konara Sinhala Class',
             "course": "G01-Sinhala",
             "level": "Grade 01",
@@ -138,7 +138,7 @@ const Students = props => {
             "classFee": "5-10"
         },
         {
-            "id":1,
+            "id": 1,
             "identifier": 'Konara Sinhala Class',
             "course": "G01-Sinhala",
             "level": "Grade 01",
@@ -171,40 +171,48 @@ const Students = props => {
             <div className='classes-filter-box'>
                 <div className='filter-box-row'>
                     <div className='filter-box-column'>
-                        <DropdownInput
-                            title="Course"
-                            list={[]}
-                            resetThenSet={resetThenSet}
-                            selection={1}
-                            defaultValue={false}
-                        />
+                        <FilterDropdown
+                            defaultList={[]}
+                            onItemChange={(item) => {
+                                console.log(item)
+                            }}
+                            initValue={"Teacher"}
+                            required={true}
+                            editable={true}
+                            warningMessage={"Updating course is not allowed"} />
                     </div>
                     <div className='filter-box-column'>
-                        <DropdownInput
-                            title="Level"
-                            list={[]}
-                            resetThenSet={resetThenSet}
-                            selection={1}
-                            defaultValue={false}
-                        />
+                        <FilterDropdown
+                            defaultList={[]}
+                            onItemChange={(item) => {
+                                console.log(item)
+                            }}
+                            initValue={"Teacher"}
+                            required={true}
+                            editable={true}
+                            warningMessage={"Updating course is not allowed"} />
                     </div>
                     <div className='filter-box-column'>
-                        <DropdownInput
-                            title="Subject"
-                            list={[]}
-                            resetThenSet={resetThenSet}
-                            selection={1}
-                            defaultValue={false}
-                        />
+                        <FilterDropdown
+                            defaultList={[]}
+                            onItemChange={(item) => {
+                                console.log(item)
+                            }}
+                            initValue={"Teacher"}
+                            required={true}
+                            editable={true}
+                            warningMessage={"Updating course is not allowed"} />
                     </div>
                     <div className='filter-box-column'>
-                        <DropdownInput
-                            title="Teacher"
-                            list={[]}
-                            resetThenSet={resetThenSet}
-                            selection={1}
-                            defaultValue={false}
-                        />
+                        <FilterDropdown
+                            defaultList={[]}
+                            onItemChange={(item) => {
+                                console.log(item)
+                            }}
+                            initValue={"Teacher"}
+                            required={true}
+                            editable={true}
+                            warningMessage={"Updating course is not allowed"} />
                     </div>
                     <div className='filter-box-column apply-filter'>
                         <button

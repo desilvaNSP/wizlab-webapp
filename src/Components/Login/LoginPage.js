@@ -25,14 +25,14 @@ const LoginPage = (props) => {
   const auth = useSelector((state) => state.auth);
 
   const handleLogin = () => {
-    dispatch(FetchAuthenticationInfo(UserName, Password, function(response, success){
-      if(success){
-         setAdminUser('admin_user',response.firstName, { path: '/' });
-         setToken('token',response.token.accessToken, { path: '/' });
-         setTokenExpiry('token_expiry',response.token.expiryDate, { path: '/' });
-         setRole('role', response.roleId, { path: '/' });
-         setInstituteId('institute_id', response.instituteId, { path: '/' });
-      }else{
+    dispatch(FetchAuthenticationInfo(UserName, Password, function (response, success) {
+      if (success) {
+        setAdminUser('admin_user', response.firstName, { path: '/' });
+        setToken('token', response.token.accessToken, { path: '/' });
+        setTokenExpiry('token_expiry', response.token.expiryDate, { path: '/' });
+        setRole('role', response.roleId, { path: '/' });
+        setInstituteId('institute_id', response.instituteId, { path: '/' });
+      } else {
         //error handle
       }
     }));
@@ -47,27 +47,31 @@ const LoginPage = (props) => {
           </h1>
           <div className="login-section__form">
             <div className="form-group">
-              <label className="form-group__label">Employee User Name</label>
-              <input
-                className="form-group__input"
-                type="text"
-                name="username"
-                id="defaultFormEmailEx"
-                value={UserName}
-                onChange={e => setUserName(e.target.value)}
-              />
+              <div className="form-group-col">
+                <label className="form-group__label">Employee User Name</label>
+                <input
+                  className="form-group__input"
+                  type="text"
+                  name="username"
+                  id="defaultFormEmailEx"
+                  value={UserName}
+                  onChange={e => setUserName(e.target.value)}
+                />
+              </div>
             </div>
 
             <div className="form-group">
-              <label className="form-group__label">Password</label>
-              <input
-                className="form-group__input"
-                type="password"
-                name="password"
-                id="defaultFormPasswordEx"
-                value={Password}
-                onChange={e => setPassword(e.target.value)}
-              />
+              <div className="form-group-col">
+                <label className="form-group__label">Password</label>
+                <input
+                  className="form-group__input"
+                  type="password"
+                  name="password"
+                  id="defaultFormPasswordEx"
+                  value={Password}
+                  onChange={e => setPassword(e.target.value)}
+                />
+              </div>
             </div>
 
             <div className="btn-control">
