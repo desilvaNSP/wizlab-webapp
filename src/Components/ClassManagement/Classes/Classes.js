@@ -49,7 +49,7 @@ const Classes = props => {
             case COURSE_SELECTION:
                 var courseObj = null
                 common.Courses?.forEach((course, index) => {
-                    if(course.id == item.id){
+                    if (course.id == item.id) {
                         courseObj = course;
                     }
                 });
@@ -57,9 +57,9 @@ const Classes = props => {
                 break;
             case LEVEL_SELECTION:
                 var levelObj = null
-                console.log("selectedCourse MM",selectedCourse)
+                console.log("selectedCourse MM", selectedCourse)
                 selectedCourse?.levels.forEach((level, index) => {
-                    if(level.id == item.id){
+                    if (level.id == item.id) {
                         levelObj = level;
                     }
                 });
@@ -90,8 +90,8 @@ const Classes = props => {
     const columns = React.useMemo(
         () => [
             {
-                Header: 'Identifier',
-                accessor: 'identifier',
+                Header: 'Class Name',
+                accessor: 'classIdentifier',
                 disableFilters: true,
                 Cell: row => {
                     return (
@@ -104,17 +104,26 @@ const Classes = props => {
             {
                 Header: 'Course/Program',
                 accessor: 'course',
-                disableFilters: true
+                disableFilters: true,
+                accessor: data => {
+                    return data.subject?.level?.course?.name
+                },
             },
             {
                 Header: 'Level/Grade',
-                accessor: 'level',
-                disableFilters: true
+                id: 'level',
+                disableFilters: true,
+                accessor: data => {
+                    return data.subject?.level?.desc
+                },
             },
             {
                 Header: 'Subject',
-                accessor: 'subject',
-                disableFilters: false
+                id: 'subject',
+                accessor: data => {
+                    return data.subject?.title
+                },
+                disableFilters: true
             },
             {
                 Header: 'Teacher/Lecturer',
@@ -125,74 +134,15 @@ const Classes = props => {
                 Header: 'Class Fee',
                 accessor: 'classFee',
                 disableFilters: true
+            },
+            {
+                Header: 'Payment Due Date',
+                accessor: 'paymentDueDate',
+                disableFilters: true
             }
         ],
         []
     )
-
-    const data = [
-        {
-            "id": 1,
-            "identifier": 'Konara Sinhala Class',
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "5-10",
-            "classFee": "5-10"
-        },
-        {
-            "id": 1,
-            "identifier": 'Aruge Art Class',
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "5-10",
-            "classFee": "5-10"
-        },
-        {
-            "id": 1,
-            "identifier": 'SajithPremadasa-Grade01-English',
-            "course": "G01-English",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Sajith Premadasa",
-            "classFee": "5-10"
-        },
-        {
-            "id": 1,
-            "identifier": 'Konara Sinhala Class',
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Konara",
-            "classFee": "5-10"
-        },
-        {
-            "id": 1,
-            "identifier": 'Konara Sinhala Class',
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Konara",
-            "classFee": "5-10"
-        },
-        {
-            "id": 1,
-            "identifier": 'Konara Sinhala Class',
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Konara",
-            "classFee": "5-10"
-        },
-        {
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Konara",
-            "classFee": "5-10"
-        }
-    ]
 
     const getCoursesList = () => {
         let coursesList = [];
@@ -234,6 +184,20 @@ const Classes = props => {
             subjectList.push(obj);
         });
         return subjectList;
+    }
+
+    const getTeachersList = () => {
+        let teachersList = [];
+        common.Teachers?.forEach((teacher, index) => {
+            let obj = {
+                id: teacher.id,
+                value: teacher.firstName + " " + teacher.lastName,
+                code: teacher.id,
+                selected: false
+            };
+            teachersList.push(obj);
+        });
+        return teachersList;
     }
 
     return (
@@ -281,7 +245,7 @@ const Classes = props => {
                         <FilterDropdown
                             title="Teacher"
                             selection={TEACHER_SELECTION}
-                            defaultList={[]}
+                            defaultList={getTeachersList()}
                             onItemChange={handleItemChange}
                             initValue={""}
                             editable={true} />
@@ -298,7 +262,7 @@ const Classes = props => {
                 </div>
             </div>
             <ReactTableFullWidthStyles>
-                <ClassesTable columns={columns} data={data} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} rowSelection={true} />
+                <ClassesTable columns={columns} data={common.Classes} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} rowSelection={true} />
             </ReactTableFullWidthStyles>
             {showClassCreationPopup &&
                 <NewClass show={showClassCreationPopup} handleReload={() => { }} handleClose={closeClassCreationPopup} selectedClass={selectedClass}></NewClass>

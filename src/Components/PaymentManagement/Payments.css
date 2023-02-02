@@ -37,17 +37,8 @@
     display: flex;
 }
 
-.payment--save {
-    display: flex;
-    flex-direction: row;
-}
-
 .payment--save input {
     width: 40%;
     height: 20px;
     margin-top: 8px;
-}
-
-.payment--save button {
-    width: 60%;
 }

@@ -6,7 +6,7 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 
 
 
-const Sessions = props => {
+const Sessions = ({ selectedClass }) => {
 
     const [selectedSession, setSelectedSession] = useState(null)
     const [showSessionCreationPopup, setShowSessionCreationPopup] = useState(false)
@@ -23,7 +23,6 @@ const Sessions = props => {
     };
 
     const triggerStartSession = () => {
-        console.log('test');
         setShowSessionCreationPopup(true)
     }
 
@@ -48,7 +47,7 @@ const Sessions = props => {
             </div>
             <EventLayout></EventLayout>
             {showSessionCreationPopup &&
-                <NewSession show={showSessionCreationPopup} handleReload={() => { }} handleClose={closeSessionCreationPopup} selectedClass={selectedSession}></NewSession>
+                <NewSession show={showSessionCreationPopup} handleReload={() => { }} handleClose={closeSessionCreationPopup} selectedClass={selectedClass}></NewSession>
             }
         </div>
     );

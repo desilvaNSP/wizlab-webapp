@@ -33,7 +33,6 @@ export const NewClass = props => {
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [selectedTeacher, setSelectedTeacher] = useState(null);
     const [selectedClassFee, setSelectedClassFee] = useState(0);
-    const [selectedClassRoom, setSelectedClassRoom] = useState(null);
 
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
@@ -89,15 +88,6 @@ export const NewClass = props => {
 
     const updateClassFee = (value) => {
         setSelectedClassFee(value)
-    }
-
-    const selectClassRoom = (rows) => {
-        // if any transaction is not set, then set null to selectedTransaction state.
-        if (rows.length > 0) {
-            var selectedClassRoom = rows[0].original;
-            console.log("selectedClassRoom", selectedClassRoom)
-            //setSelectedClassRoom(selectedClassRoom)
-        }
     }
 
     const getCoursesList = () => {
@@ -179,74 +169,6 @@ export const NewClass = props => {
             }
         }));
     }
-
-    const columns = [
-        {
-            Header: 'Auditorium No/Code',
-            accessor: 'audno',
-            disableFilters: true
-        },
-        {
-            Header: 'Capacity',
-            accessor: 'capacity',
-            disableFilters: true
-        },
-        {
-            Header: 'Physical/Virtual',
-            id: 'virtual',
-            disableFilters: true,
-            accessor: data => {
-                if (data.virtual) {
-                    return (<span className="celltag--invalid">VIRTUAL</span>)
-                } else {
-                    return (<span className="celltag--valid">PHYSICAL</span>)
-                }
-            }
-        },
-        {
-            Header: 'Address',
-            accessor: 'address',
-            disableFilters: true
-        }
-    ];
-
-    const data = [
-        {
-            "id": 1,
-            "audno": 'AUD01',
-            "capacity": "100",
-            "virtual": false,
-            "address": "SKYA"
-        },
-        {
-            "id": 2,
-            "audno": 'VIRTUAL ROOM 2',
-            "capacity": "100",
-            "virtual": true,
-            "address": "SKYA"
-        },
-        {
-            "id": 3,
-            "audno": 'AUD03',
-            "capacity": "100",
-            "virtual": false,
-            "address": "SKYA"
-        },
-        {
-            "id": 4,
-            "audno": 'AUD04',
-            "capacity": "100",
-            "virtual": false,
-            "address": "SKYA"
-        },
-        {
-            "id": 5,
-            "audno": 'AUD05',
-            "capacity": "100",
-            "virtual": false,
-            "address": "SKYA"
-        }
-    ]
 
     const hiddenColumns = ["selection"];
 
@@ -389,11 +311,6 @@ export const NewClass = props => {
                                     <div className='item-name'>Profile Details</div>
                                 </div>
                             </div>
-                        </div>
-                        <div className='form-group-col2'>
-                            <ReactTableFullWidthStyles>
-                                <CommonTable columns={columns} data={data} onRowSelect={selectClassRoom} rowSelection={true} hiddenColumns={hiddenColumns} pagination={false} settings={false} globalsearch={false} downloadcsv={false} />
-                            </ReactTableFullWidthStyles>
                         </div>
                     </div>
                 </div>

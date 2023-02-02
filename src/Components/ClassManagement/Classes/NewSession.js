@@ -8,6 +8,8 @@ import { CommonTable } from '../../CommonTable/CommonTable';
 import { format } from 'date-fns'
 import { DateTimePicker } from '../../Custom/DateTimePicker';
 import FilterDropdown from '../../Custom/FilterDropdown';
+import { useDispatch, useSelector } from 'react-redux';
+import { CreateSession } from '../../../Redux/Features/Common/CommonServicesSlice';
 
 export const NewSession = props => {
     const { handleReload, handleClose, show, selectedClass } = props
@@ -33,15 +35,15 @@ export const NewSession = props => {
     const [fromDate, setFromDate] = useState(today);
     const [toDate, setToDate] = useState(today);
 
+    const [startTime, setStartTime] = useState(null);
+    const [duration, setDuration] = useState(null);
+    const [virtualLink, setVirtualLink] = useState(null);
+    const [classRoom, setClassRoom] = useState(null);
 
     const hiddenColumns = ["selection"];
 
-    // useDispatch() hook is equivalent of mapDispatchToProps.
-    //const dispatch = useDispatch();
-
-    // useEffect(() => {
-
-    // }, [])
+    const dispatch = useDispatch();
+    const common = useSelector((state) => state.common);
 
     /**
      * Event for close confirm modal
@@ -99,116 +101,89 @@ export const NewSession = props => {
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef, props);
 
-
-    const columns = React.useMemo(
-        () => [
-            {
-                Header: 'Identifier',
-                accessor: 'identifier',
-                disableFilters: true
-            },
-            {
-                Header: 'Course/Program',
-                accessor: 'course',
-                disableFilters: true
-            },
-            {
-                Header: 'Level/Grade',
-                accessor: 'level',
-                disableFilters: true
-            },
-            {
-                Header: 'Subject',
-                accessor: 'subject',
-                disableFilters: false
-            },
-            {
-                Header: 'Teacher/Lecturer',
-                accessor: 'teacher',
-                disableFilters: false
-            },
-            {
-                Header: 'Class Fee',
-                accessor: 'classFee',
-                disableFilters: true
-            }
-        ],
-        []
-    )
-
-    const data = [
-        {
-            "id": 1,
-            "identifier": 'Konara Sinhala Class',
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "5-10",
-            "classFee": "5-10"
-        },
-        {
-            "id": 1,
-            "identifier": 'Aruge Art Class',
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "5-10",
-            "classFee": "5-10"
-        },
-        {
-            "id": 1,
-            "identifier": 'SajithPremadasa-Grade01-English',
-            "course": "G01-English",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Sajith Premadasa",
-            "classFee": "5-10"
-        },
-        {
-            "id": 1,
-            "identifier": 'Konara Sinhala Class',
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Konara",
-            "classFee": "5-10"
-        },
-        {
-            "id": 1,
-            "identifier": 'Konara Sinhala Class',
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Konara",
-            "classFee": "5-10"
-        },
-        {
-            "id": 1,
-            "identifier": 'Konara Sinhala Class',
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Konara",
-            "classFee": "5-10"
-        },
-        {
-            "course": "G01-Sinhala",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Konara",
-            "classFee": "5-10"
-        }
-    ]
-
     /**
     * Props event handler which is used in calender component
     * @param {Date} val selected date information
     * @param {String} selection used to selected desired calender component
     */
     const onDateTimeChange = (val, selection) => {
-
+        setStartTime(val)
     }
 
+
+    const selectClassRoom = (rows) => {
+        // if any transaction is not set, then set null to selectedTransaction state.
+        if (rows.length > 0) {
+            var selectedClassRoom = rows[0].original;
+            console.log("selectedClassRoom", selectedClassRoom)
+            //setSelectedClassRoom(selectedClassRoom)
+        }
+    }
+
+
+    //Trigger create new class service
+    const createNewSession = () => {
+        var payload = {
+            "classId": selectedClass.id,
+            "startTime": startTime,
+            "duration": duration,
+            "classRoomId": 1,
+            "link": virtualLink
+        }
+
+        dispatch(CreateSession(payload, function (response, success) {
+            if (success) {
+
+            } else {
+                //error handle
+            }
+        }));
+    }
+
+    const columns = React.useMemo(
+        () => [
+          {
+            Header: 'Auditorium No/Code',
+            accessor: 'desc',
+            disableFilters: true
+          },
+          {
+            Header: 'Capacity',
+            accessor: 'capacity',
+            disableFilters: true
+          },
+          {
+            Header: 'Physical/Virtual',
+            id: 'isVirtual',
+            disableFilters: true,
+            accessor: data => {
+              if (data.isVirtual) {
+                return (<span className="celltag--invalid">VIRTUAL</span>)
+              } else {
+                return (<span className="celltag--valid">PHYSICAL</span>)
+              }
+            }
+          },
+          {
+            Header: 'Address',
+            accessor: 'address',
+            disableFilters: true
+          }
+        ],
+        []
+      )
+    
+    const noNeedFieldValidation = (value, callback) => {
+        callback(true, "");
+    }
+
+    const updateVirtualLink = (value) => {
+        setVirtualLink(value);
+    }
+
+    const updateDuration = (value) => {
+        setDuration(value)
+    }
 
     return (
         <div className={showHideClassName}>
@@ -221,83 +196,6 @@ export const NewSession = props => {
                 <div className="modal-detail__content">
                     <div className='form-group'>
                         <div className='form-group-col2'>
-                            <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
-                                <div className='form-column'>
-                                    <label>First Select Class</label>
-                                </div>
-                                <div className='form-column'>
-
-                                </div>
-                            </div>
-                            <div className='form-row'>
-                                <div className='classes-filter-box'>
-                                    <div className='filter-box-row'>
-                                        <div className='filter-box-column'>
-                                            {/** course */}
-                                            <FilterDropdown
-                                                defaultList={[]}
-                                                onItemChange={(item) => {
-                                                    console.log(item)
-                                                }}
-                                                initValue={"Teacher"}
-                                                required={true}
-                                                editable={true}
-                                                warningMessage={"Updating course is not allowed"} />
-                                        </div>
-                                        <div className='filter-box-column'>
-                                            {/** level */}
-                                            <FilterDropdown
-                                                defaultList={[]}
-                                                onItemChange={(item) => {
-                                                    console.log(item)
-                                                }}
-                                                initValue={"Teacher"}
-                                                required={true}
-                                                editable={true}
-                                                warningMessage={"Updating course is not allowed"} />
-                                        </div>
-                                        <div className='filter-box-column'>
-                                            {/** level */}
-                                            <FilterDropdown
-                                                defaultList={[]}
-                                                onItemChange={(item) => {
-                                                    console.log(item)
-                                                }}
-                                                initValue={"Teacher"}
-                                                required={true}
-                                                editable={true}
-                                                warningMessage={"Updating course is not allowed"} />
-                                        </div>
-                                        <div className='filter-box-column'>
-                                            {/** teacher */}
-                                            <FilterDropdown
-                                                defaultList={[]}
-                                                onItemChange={(item) => {
-                                                    console.log(item)
-                                                }}
-                                                initValue={"Teacher"}
-                                                required={true}
-                                                editable={true}
-                                                warningMessage={"Updating course is not allowed"} />
-                                        </div>
-                                        <div className='filter-box-column apply-filter'>
-                                            <button
-                                                onClick={() => handleApplyOnClick()}
-                                                className="btn btn--primary"
-                                                type="submit"
-                                            >
-                                                Apply
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                                <ReactTableFullWidthStyles>
-                                    <CommonTable columns={columns} data={data} onRowSelect={(rows) => { }} rowSelection={true} hiddenColumns={hiddenColumns} pagination={false} settings={false} globalsearch={false} downloadcsv={false} />
-                                </ReactTableFullWidthStyles>
-                                <div className='form-column'>
-
-                                </div>
-                            </div>
                             <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
                                 <div className='form-column'>
                                     <label>Basic Information</label>
@@ -321,35 +219,36 @@ export const NewSession = props => {
                                 <div className='form-column'>
                                     <div className='item-name'>Duration (Minitues)</div>
                                     <div className='item-dropdown'>
-                                        <CustomInput defaultList={[]} onItemChange={(item) => {
-                                        }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
+                                        <CustomInput
+                                            initialValue={""} type="number" updateInput={(value) => {
+                                                updateDuration(value);
+                                            }} fieldValidation={noNeedFieldValidation} required={true} placeHolder="Please enter class duration"
+                                        />
                                     </div>
                                 </div>
                             </div>
                             <div className='form-row'>
                                 <div className='form-column'>
-                                    <div className='item-name'>Auditorium<span style={{ color: 'red', fontSize: '10px' }}> (physical/virtual)</span></div>
-                                    <div className='item-dropdown'>
-                                        <CustomDropdown defaultList={[]} onItemChange={(item) => {
-                                        }} initValue={"1231"} required={true} editable={true} warningMessage={"Updating subject is not allowed"} />
-                                    </div>
-                                </div>
-                                <div className='form-column'>
                                     <div className='item-name'>Virtual Link</div>
                                     <div className='item-dropdown'>
-                                        <CustomInput defaultList={[]} onItemChange={(item) => {
-                                        }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />
+                                        <CustomInput
+                                            initialValue={""} type="text" updateInput={(value) => {
+                                                updateVirtualLink(value);
+                                            }} fieldValidation={noNeedFieldValidation} required={true} placeHolder="Please paste online session link here"
+                                        />
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div className='form-group-col2'>
-
+                            <ReactTableFullWidthStyles>
+                                <CommonTable columns={columns} data={common.ClassRooms} onRowSelect={selectClassRoom} rowSelection={true} hiddenColumns={hiddenColumns} pagination={false} settings={false} globalsearch={false} downloadcsv={false} />
+                            </ReactTableFullWidthStyles>
                         </div>
                     </div>
                 </div>
                 <div className="modal-detail__footer">
-                    <button className="btn btn--success" onClick={() => { }} disabled={() => { }}>
+                    <button className="btn btn--success" onClick={() => { createNewSession() }}>
                         Create New Session
                     </button>
                 </div>
