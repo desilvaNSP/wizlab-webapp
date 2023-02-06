@@ -28,11 +28,13 @@ export const NewClass = props => {
         "content": ""
     });
 
-    const [selectedCourse, setSelectedCourse] = useState(null);
-    const [selectedLevel, setSelectedLevel] = useState(null);
-    const [selectedSubject, setSelectedSubject] = useState(null);
-    const [selectedTeacher, setSelectedTeacher] = useState(null);
-    const [selectedClassFee, setSelectedClassFee] = useState(0);
+    console.log("selectedClass", selectedClass)
+
+    const [selectedCourse, setSelectedCourse] = useState(selectedClass?.subject?.level?.course);
+    const [selectedLevel, setSelectedLevel] = useState(selectedClass?.subject?.level);
+    const [selectedSubject, setSelectedSubject] = useState(selectedClass?.subject);
+    const [selectedTeacher, setSelectedTeacher] = useState(selectedClass?.teacher);
+    const [selectedClassFee, setSelectedClassFee] = useState(selectedClass?.classFee);
 
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
@@ -93,41 +95,48 @@ export const NewClass = props => {
     const getCoursesList = () => {
         let coursesList = [];
         common.Courses?.forEach((course, index) => {
-            let obj = {
-                id: course.id,
-                value: course.name,
-                code: course.id,
-                selected: false
-            };
-            coursesList.push(obj);
+            if (course != null) {
+                let obj = {
+                    id: course.id,
+                    value: course.name,
+                    code: course.id,
+                    selected: false
+                };
+                coursesList.push(obj);
+            }
         });
         return coursesList;
     }
 
     const getLevelsByCourse = () => {
         let levelList = [];
-        selectedCourse?.levels.forEach((level, index) => {
-            let obj = {
-                id: level.id,
-                value: level.desc,
-                code: level.id,
-                selected: false
-            };
-            levelList.push(obj);
+        console.log("selectedCourse", selectedCourse)
+        selectedCourse?.levels?.forEach((level, index) => {
+            if (level != null) {
+                let obj = {
+                    id: level.id,
+                    value: level.desc,
+                    code: level.id,
+                    selected: false
+                };
+                levelList.push(obj);
+            }
         });
         return levelList;
     }
 
     const getSubjectByCourseAndLevels = () => {
         let subjectList = [];
-        selectedLevel?.subjects.forEach((subject, index) => {
-            let obj = {
-                id: subject.id,
-                value: subject.title,
-                code: subject.id,
-                selected: false
-            };
-            subjectList.push(obj);
+        selectedLevel?.subjects?.forEach((subject, index) => {
+            if (subject != null) {
+                let obj = {
+                    id: subject.id,
+                    value: subject.title,
+                    code: subject.id,
+                    selected: false
+                };
+                subjectList.push(obj);
+            }
         });
         return subjectList;
     }
@@ -136,23 +145,21 @@ export const NewClass = props => {
     const getTeachersList = () => {
         let teachersList = [];
         common.Teachers?.forEach((teacher, index) => {
-            let obj = {
-                id: teacher.id,
-                value: teacher.firstName + " " + teacher.lastName,
-                code: teacher.id,
-                selected: false
-            };
-            teachersList.push(obj);
+            if (teacher != null) {
+                let obj = {
+                    id: teacher.id,
+                    value: teacher.firstName + " " + teacher.lastName,
+                    code: teacher.id,
+                    selected: false
+                };
+                teachersList.push(obj);
+            }
         });
         return teachersList;
     }
 
     //Trigger create new class service
     const createNewClass = () => {
-        console.log("selectedClass", selectedClass);
-        console.log("selectedSubject", selectedSubject)
-        console.log("selectedClassFee", selectedClassFee)
-        console.log("selectedTeacher", selectedTeacher)
         var payload = {
             "courseId": selectedCourse.id,
             "classRoomId": 1,
@@ -168,6 +175,10 @@ export const NewClass = props => {
                 //error handle
             }
         }));
+    }
+
+    const updateExistingClass = () => {
+        console.log(selectedClass)
     }
 
     const hiddenColumns = ["selection"];
@@ -243,7 +254,7 @@ export const NewClass = props => {
                                             defaultList={getCoursesList()}
                                             selection={COURSE_SELECTION}
                                             onItemChange={handleItemChange}
-                                            initValue={""}
+                                            initValue={selectedCourse?.id}
                                             editable={true}
                                         />
                                     </div>
@@ -255,7 +266,7 @@ export const NewClass = props => {
                                             defaultList={getLevelsByCourse()}
                                             selection={LEVEL_SELECTION}
                                             onItemChange={handleItemChange}
-                                            initValue={""}
+                                            initValue={selectedLevel?.id}
                                             editable={true}
                                         />
                                     </div>
@@ -269,7 +280,7 @@ export const NewClass = props => {
                                             defaultList={getSubjectByCourseAndLevels()}
                                             selection={SUBJECT_SELECTION}
                                             onItemChange={handleItemChange}
-                                            initValue={""}
+                                            initValue={selectedSubject?.id}
                                             editable={true}
                                         />
                                     </div>
@@ -278,8 +289,8 @@ export const NewClass = props => {
                                     <div className='item-name'>Course Fee</div>
                                     <div className='item-dropdown'>
                                         <CustomInput
-                                            initialValue={""} type="number" updateInput={(value) => {
-                                                console.log("updateClassFee",value)
+                                            initialValue={selectedClassFee} type="number" updateInput={(value) => {
+                                                console.log("updateClassFee", value)
                                                 updateClassFee(value);
                                             }} fieldValidation={courseFeeFieldValidation} required={true} placeHolder="Please enter course fee in ruppees"
                                         />
@@ -315,9 +326,14 @@ export const NewClass = props => {
                     </div>
                 </div>
                 <div className="modal-detail__footer">
-                    <button className="btn btn--success" onClick={() => { createNewClass() }}>
+                    {selectedClass == null ? <button className="btn btn--success" onClick={() => { createNewClass() }}>
                         Create New Class
-                    </button>
+                    </button> :
+                        <button className="btn btn--success" onClick={() => { updateExistingClass() }}>
+                            Update Class
+                        </button>
+                    }
+
                 </div>
             </section>
         </div>

@@ -16,6 +16,7 @@ import { CookiesProvider } from "react-cookie";
 import ClassesIndex from "./Components/ClassManagement/Index";
 import Institutes from "./Components/InstituteManagement/Institutes";
 import Dashboard from "./Components/Dashboard/Dashboard";
+import StudentsTest from "./Components/StudentManagment/Students";
 
 const router = createBrowserRouter([
   {
@@ -44,7 +45,7 @@ const router = createBrowserRouter([
       },
       {
         path: "students",
-        element: <Students />,
+        element: <StudentsTest index={123} />,
       },
       {
         path: "institutes",

@@ -95,7 +95,7 @@ export const NewSubjects = props => {
                 disableFilters: true,
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
-                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
+                        <EditableInputTextCell type='number' initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData} dbUpdate={false} isLink={true} linkClickEvent={() => { }}></EditableInputTextCell>
                     )
                 }
             },

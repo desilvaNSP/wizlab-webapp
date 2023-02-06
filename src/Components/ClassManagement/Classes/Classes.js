@@ -14,6 +14,7 @@ const Classes = props => {
     const TEACHER_SELECTION = "TEACHER_SELECTION";
 
     const [selectedClass, setSelectedClass] = useState(null)
+    const [selectedRowOnTable, setSelectedRowOnTable] = useState(null)
     const [showClassCreationPopup, setShowClassCreationPopup] = useState(false)
 
     const [selectedCourse, setSelectedCourse] = useState(null);
@@ -25,6 +26,12 @@ const Classes = props => {
     const common = useSelector((state) => state.common);
 
     const triggerStartNewClass = () => {
+        setSelectedClass(null)
+        setShowClassCreationPopup(true)
+    }
+
+    const triggerUpdateClass = () => {
+        setSelectedClass(selectedRowOnTable)
         setShowClassCreationPopup(true)
     }
 
@@ -127,7 +134,10 @@ const Classes = props => {
             },
             {
                 Header: 'Teacher/Lecturer',
-                accessor: 'teacher',
+                id: 'teacher',
+                accessor: data => {
+                    return data.teacher?.firstName + " " + data.teacher?.lastName
+                },
                 disableFilters: false
             },
             {
@@ -200,6 +210,15 @@ const Classes = props => {
         return teachersList;
     }
 
+    const classSelectionOnTable = (rows) => {
+        if (rows.length > 0) {
+            console.log(rows[0].original)
+            setSelectedRowOnTable(rows[0].original)
+        } else {
+            setSelectedRowOnTable(null)
+        }
+    }
+
     return (
         <div className="classes-container">
             <div className='page-header'>
@@ -207,8 +226,8 @@ const Classes = props => {
                     <img src="/assets/icons/icon-add.svg" alt="Start New Class" />
                     <span>Create new Class</span>
                 </div>
-                <div className="add-record" onClick={() => triggerStartNewClass()} >
-                    <img src="/assets/icons/update.png" alt="Update Class" style={{ width: "20px", height: "20px" }} />
+                <div className={selectedRowOnTable != null ? "add-record" : "add-record--disabled"} onClick={() => triggerUpdateClass()} >
+                    <img src="/assets/icons/update.png" alt="Update Class" style={{ width: "20px", height: "20px", marginRight:"8px"}} />
                     <span>Update Class</span>
                 </div>
             </div>
@@ -262,7 +281,7 @@ const Classes = props => {
                 </div>
             </div>
             <ReactTableFullWidthStyles>
-                <ClassesTable columns={columns} data={common.Classes} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} rowSelection={true} />
+                <ClassesTable columns={columns} data={common.Classes} onRowSelect={(rows) => { classSelectionOnTable(rows) }} hiddenColumns={hiddenColumns} rowSelection={true} />
             </ReactTableFullWidthStyles>
             {showClassCreationPopup &&
                 <NewClass show={showClassCreationPopup} handleReload={() => { }} handleClose={closeClassCreationPopup} selectedClass={selectedClass}></NewClass>

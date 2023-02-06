@@ -1,7 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { METADATA_ENDPOINT, CREATE_COURSE_ENDPOINT, HTTP_STATUS_CODE_401_UNAUTHORIZED, HTTP_STATUS_CODE_403_FORBIDDEN, CREATE_CLASS_ENDPOINT, CREATE_CLASSROOM_ENDPOINT, CREATE_SESSION_ENDPOINT } from "../../../Configs/ApgConfigs";
+import { METADATA_ENDPOINT, CREATE_COURSE_ENDPOINT, HTTP_STATUS_CODE_401_UNAUTHORIZED, HTTP_STATUS_CODE_403_FORBIDDEN, CREATE_CLASS_ENDPOINT, CREATE_CLASSROOM_ENDPOINT, CREATE_SESSION_ENDPOINT, PAYMENT_SEARCH_ENDPOINT, PAYMENT_SUBMIT_ENDPOINT } from "../../../Configs/ApgConfigs";
 import { ServiceEngine } from "../../../Services/ServiceEngine";
-
 
 export const CommonServicesSlice = createSlice({
     name: 'common',
@@ -156,5 +155,6 @@ export const CreateSession = (sessionPayload, callback) => (dispatch) => {
             //callback(error.response.data, false);
         })
 }
+
 
 export default CommonServicesSlice.reducer

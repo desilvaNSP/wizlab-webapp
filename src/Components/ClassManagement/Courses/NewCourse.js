@@ -11,6 +11,8 @@ import { useDispatch } from 'react-redux';
 export const NewCourse = props => {
     const { handleReload, handleClose, show, selectedCourse } = props
 
+    console.log("selectedCourse", selectedCourse)
+
     const showHideClassName = show
         ? "modal display-block"
         : "modal display-none";
@@ -18,8 +20,8 @@ export const NewCourse = props => {
     //const auth = useSelector((state) => state.auth);
 
     const [showInfoConfirmModal, setShowInfoConfirmModal] = useState(false);
-    const [course, setCourse] = useState(null);
-    const [levels, setLevels] = useState([]);
+    const [course, setCourse] = useState(selectedCourse);
+    const [levels, setLevels] = useState(selectedCourse?.levels == null ? [] : selectedCourse.levels );
     const [modalContents, setModalContents] = useState({
         "header": "",
         "content": ""
@@ -119,8 +121,6 @@ export const NewCourse = props => {
 
     //Trigger create new course service
     const createNewCourse = () => {
-        console.log(course)
-        console.log(levels)
         var payload = {
             "course": course,
             "levels": levels
@@ -132,6 +132,10 @@ export const NewCourse = props => {
                 //error handle
             }
         }));
+    }
+
+    const updateExistingCourse = () => {
+
     }
 
 
@@ -158,7 +162,7 @@ export const NewCourse = props => {
                                 <div className='form-column'>
                                     <div className='item-name'>Course Name</div>
                                     <div className='item-dropdown'>
-                                        <CustomInput initialValue={""} type="text" disable={false} updateInput={(value) => {
+                                        <CustomInput initialValue={course?.name} type="text" disable={false} updateInput={(value) => {
                                             updateCourseName(value)
                                         }} fieldValidation={courseFieldValidation} required={true} placeHolder="Course Name"></CustomInput>
                                     </div>
@@ -166,7 +170,13 @@ export const NewCourse = props => {
                                 <div className='form-column'>
                                     <div className='item-name'>Levels/Grades</div>
                                     <div className='item-dropdown'>
-                                        <CustomTagInput initialValue={""} disable={false} fieldValidation={levelFieldValidation} required={true} updateTags={(value) => {
+                                        <CustomTagInput initialTags={() => {
+                                            var tags = []
+                                            levels.forEach((element) => {
+                                                tags.push(element.desc);
+                                            });
+                                            return tags
+                                        }} disable={false} fieldValidation={levelFieldValidation} required={true} updateTags={(value) => {
                                             handleNewLevels(value);
                                         }}></CustomTagInput>
                                     </div>
@@ -179,32 +189,37 @@ export const NewCourse = props => {
                     </div>
                     <div className='form-group'>
                         <div className='form-group-col'>
-                        <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
-                            <div className='form-column'>
-                                <label>Subjects/Modules</label>
+                            <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
+                                <div className='form-column'>
+                                    <label>Subjects/Modules</label>
+                                </div>
+                                <div className='form-column'>
+                                </div>
                             </div>
-                            <div className='form-column'>
-                            </div>
-                        </div>
-                        <Tabs>
-                            <TabList>
-                                {levels.map((level) =>
-                                    <Tab>{level.description}</Tab>
+                            <Tabs>
+                                <TabList>
+                                    {levels.map((level) =>
+                                        <Tab>{level.description}</Tab>
+                                    )}
+                                </TabList>
+                                {levels.map((level, index) =>
+                                    <TabPanel>
+                                        <NewSubjects selectedLevel={level} selectedCourse={course} updateLevel={updateCorrectLevel} levelInex={index}></NewSubjects>
+                                    </TabPanel>
                                 )}
-                            </TabList>
-                            {levels.map((level, index) =>
-                                <TabPanel>
-                                    <NewSubjects selectedLevel={level} selectedCourse={course} updateLevel={updateCorrectLevel} levelInex={index}></NewSubjects>
-                                </TabPanel>
-                            )}
-                        </Tabs>
+                            </Tabs>
                         </div>
                     </div>
                 </div>
                 <div className="modal-detail__footer">
-                    <button className="btn btn--success" onClick={() => createNewCourse()}>
-                        Create New Course
-                    </button>
+                    {selectedCourse == null ?
+                        <button className="btn btn--success" onClick={() => createNewCourse()}>
+                            Create New Course
+                        </button> :
+                        <button className="btn btn--success" onClick={updateExistingCourse}>
+                            Update Course
+                        </button>
+                    }
                 </div>
             </section>
         </div>

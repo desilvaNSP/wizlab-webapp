@@ -19,7 +19,7 @@ export const AuthenticateSlice = createSlice({
                 Token: obj.token.accessToken,
                 TokenExpiry: obj.token.expiryDate,
                 Role: obj.roleId,
-                Institute: obj.instituteId,
+                InstituteId: obj.instituteId,
                 AdminUser: obj.firstName
             };
         },

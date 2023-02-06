@@ -42,3 +42,20 @@
     height: 20px;
     margin-top: 8px;
 }
+
+
+span.isvalid:after {
+    content: '✓';
+    color: green;
+    font-size: x-large;
+    font-weight: bold;
+    margin-left: 15px;
+}
+
+span.notvalid:after {
+    content: 'X';
+    color: red;
+    font-size: x-large;
+    font-weight: bold;
+    margin-left: 15px;
+}

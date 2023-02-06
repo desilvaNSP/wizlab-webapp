@@ -12,21 +12,14 @@ export const EditableInputTextCell = ({
     dbUpdate = true,
     dbAdd = true,
     type = "text",
-    required = false,
-    placeholderText=""
+    placeholderText = ""
 }) => {
     // We need to keep and update the state of the cell normally
     const [value, setValue] = useState(initialValue)
-    const [cellValidity, setCellValidity] = useState(required)
 
     const onChange = e => {
         e.stopPropagation();
         var targetValue = e.target.value
-        // if (required) {
-        //     setCellValidity(false)
-        // } else {
-        //     setCellValidity(true)
-        // }
         setValue(targetValue)
     }
 
@@ -34,7 +27,7 @@ export const EditableInputTextCell = ({
     const onBlur = (e) => {
         e.stopPropagation();
         if (value !== initialValue) {
-            updateMyData(index, columnId, value, id, cellValidity)
+            updateMyData(index, columnId, value, id)
         }
     }
 
@@ -44,13 +37,97 @@ export const EditableInputTextCell = ({
     }, [initialValue])
 
     return ((original.new && original.new == true) || dbUpdate) && dbAdd ?
-            // {cellValidity && <label className='required-text--cell'>
-            //     {"*"}
-            // </label>}
-            <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type={type} min="1" max="20" placeholder={placeholderText}/>
+        <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type={type} min="1" max="20" placeholder={placeholderText} />
         : isLink ?
             <a className="datatable--link" onClick={() => linkClickEvent(original, index)}>{value}</a>
             : <span>{value}</span>
+}
+
+// Create an editable cell renderer
+export const EditableInputCurrencyCell = ({
+    initialValue,
+    row: { index, original, id },
+    columnId,
+    updateMyData,
+    isLink = false,
+    linkClickEvent,
+    dbUpdate = true,
+    dbAdd = true,
+    type = "text",
+    placeholderText = ""
+}) => {
+    // We need to keep and update the state of the cell normally
+    let start = 0;
+    const [value, setValue] = useState(initialValue)
+
+    const onChange = e => {
+        e.stopPropagation();
+        start = e.target.selectionStart;
+        let val = e.target.value;
+        val = val.replace(/([^0-9.]+)/, "");
+        val = val.replace(/^(0|\.)/, "");
+        const match = /(\d{0,7})[^.]*((?:\.\d{0,2})?)/g.exec(val);
+        const value = match[1] + match[2];
+        e.target.value = value;
+        setValue(value)
+        if (val.length > 0) {
+          e.target.value = Number(value).toFixed(2);
+          e.target.setSelectionRange(start, start);
+          setValue(Number(value).toFixed(2))
+        }
+    }
+
+    // We'll only update the external data when the input is blurred
+    const onBlur = (e) => {
+        e.stopPropagation();
+        if (value !== initialValue) {
+            updateMyData(index, columnId, value, id)
+        }
+    }
+
+    // If the initialValue is changed external, sync it up with our state
+    useEffect(() => {
+        setValue(initialValue)
+    }, [initialValue])
+
+    return ((original.new && original.new == true) || dbUpdate) && dbAdd ?
+        <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type={type} min="1" max="20" placeholder={placeholderText} />
+        : isLink ?
+            <a className="datatable--link" onClick={() => linkClickEvent(original, index)}>{value}</a>
+            : <span>{value}</span>
+}
+
+// Create an editable cell renderer
+export const EditableCheckBoxCell = ({
+    initialValue,
+    row: { index, original, id },
+    columnId,
+    updateMyData
+}) => {
+    // We need to keep and update the state of the cell normally
+    const [value, setValue] = useState(initialValue)
+
+    const onChange = e => {
+        e.stopPropagation();
+        var targetValue = e.target.checked
+        console.log(targetValue)
+        setValue(targetValue)
+    }
+
+    // We'll only update the external data when the input is blurred
+    const onBlur = (e) => {
+        e.stopPropagation();
+        if (value !== initialValue) {
+            updateMyData(index, columnId, value, id)
+        }
+    }
+
+    // If the initialValue is changed external, sync it up with our state
+    useEffect(() => {
+        setValue(initialValue)
+    }, [initialValue])
+
+    return <input className='custom-input custom-checkbox' checked={value} onChange={onChange} onBlur={onBlur} type="checkbox" />
 }
 
 export const EditableInputNumberCell = ({
@@ -138,5 +215,6 @@ export const EditableDropdownCell = ({
 
 export default {
     EditableInputTextCell,
-    EditableDropdownCell
+    EditableDropdownCell,
+    EditableCheckBoxCell
 }

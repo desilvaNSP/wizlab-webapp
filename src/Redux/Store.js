@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit'
 import AuthenticationReducer from '../Redux/Features/Auth/AuthenticationSlice';
-import CommonServicesReducer from '../Redux/Features/Common/CommonServicesSlice'; 
+import CommonServicesReducer from './Features/Common/CommonServicesSlice';
+import PaymentServicesReducer from './Features/Payment/PaymentServicesSlice';
 
 export default configureStore({
   reducer: {
     auth: AuthenticationReducer,
-    common:CommonServicesReducer
+    common: CommonServicesReducer,
+    payment: PaymentServicesReducer
   },
 })

@@ -46,3 +46,6 @@ export const CREATE_COURSE_ENDPOINT = '/api/v1/admin/course'
 export const CREATE_CLASS_ENDPOINT = '/api/v1/admin/class'
 export const CREATE_CLASSROOM_ENDPOINT = '/api/v1/admin/classroom'
 export const CREATE_SESSION_ENDPOINT = '/api/v1/admin/session'
+
+export const PAYMENT_SUBMIT_ENDPOINT = '/api/v1/payment/submit'
+export const PAYMENT_SEARCH_ENDPOINT = '/api/v1/payment/search'

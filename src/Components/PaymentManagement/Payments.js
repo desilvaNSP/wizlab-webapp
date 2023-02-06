@@ -1,13 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import { ReactEditableTableFullWidthStyles } from "../Custom/StyleComponents";
-import { EditableInputTextCell } from "../Custom/Editable";
+import { EditableCheckBoxCell, EditableInputCurrencyCell, EditableInputTextCell } from "../Custom/Editable";
 import { RowDetailTable } from "./Table/RowDetailTable";
 import upIcon from '../Custom/icons/up.svg'
 import downIcon from '../Custom/icons/down.svg'
 import './Payments.css'
 import FilterDropdown from "../Custom/FilterDropdown";
 import { useDispatch, useSelector } from "react-redux";
+import { CustomCheckBox } from "../Custom/CustomCheckBox ";
+import { MonthPicker } from "../Custom/MonthPicker";
+import { DateTimePicker } from "../Custom/DateTimePicker";
+import { PaymentSubmit, SearchPayments } from "../../Redux/Features/Payment/PaymentServicesSlice";
 
 const Payments = props => {
 
@@ -15,6 +19,7 @@ const Payments = props => {
     const LEVEL_SELECTION = "LEVEL_SELECTION";
     const SUBJECT_SELECTION = "SUBJECT_SELECTION";
     const TEACHER_SELECTION = "TEACHER_SELECTION";
+    const PAYMENT_STATUS_SELECTION = "PAYMENT_STATUS_SELECTION";
 
     const hiddenColumns = ["id"];
 
@@ -22,9 +27,37 @@ const Payments = props => {
     const [selectedLevel, setSelectedLevel] = useState(null);
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [selectedTeacher, setSelectedTeacher] = useState(null);
+    const [selectedKeyValue, setSelectedKeyValue] = useState(null);
+    const [selectedPaymentStatus, setSelectedPaymentStatus] = useState(null);
+
+    const [data, setData] = useState([]);
 
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
+    const auth = useSelector((state) => state.auth);
+    const payment = useSelector((state) => state.payment);
+
+    useEffect(() => {
+        setData(payment.FilteredPayments)
+    }, [payment.FilteredPayments])
+
+    // When our cell renderer calls updateMyData, we'll use
+    // the rowIndex(ex: 9), columnId(ex: merchantName) and new value to update the
+    // original data
+    const updateMyData = (rowIndex, columnId, value, validity) => {
+        var dataUpdated = data.map((row, index) => {
+            if (index === rowIndex) {
+                var updatedRow = {
+                    ...data[rowIndex],
+                    [columnId]: value,
+                    ["updated"]: true
+                }
+                return updatedRow
+            }
+            return row
+        })
+        setData(dataUpdated)
+    }
 
     const columns = React.useMemo(
         () => [
@@ -32,6 +65,7 @@ const Payments = props => {
                 // Make an expander cell
                 Header: () => null, // No header
                 id: 'expander', // It needs an ID
+                width:"5%",
                 Cell: ({ row }) => (
                     // Use Cell to render an expander for each row.
                     // We can use the getToggleRowExpandedProps prop-getter
@@ -44,50 +78,59 @@ const Payments = props => {
             {
                 Header: 'Phone Number',
                 accessor: 'phoneNumber',
+                width:"10%",
                 disableFilters: false
             },
             {
                 Header: 'Student Code',
                 accessor: 'studentCode',
+                width:"10%",
                 disableFilters: false
             },
             {
                 Header: 'Student Name',
                 accessor: 'studentName',
+                width:"10%",
                 disableFilters: false
             },
             {
                 Header: 'Class',
                 accessor: 'classIdentifier',
+                width:"15%",
                 disableFilters: false
             },
             {
                 Header: 'Month',
                 accessor: 'month',
+                width:"5%",
                 disableFilters: true
             },
             {
                 Header: 'Due Date',
                 accessor: 'paymentDueDate',
+                width:"5%",
                 disableFilters: true
             },
             {
                 Header: 'Due Amount',
                 accessor: 'dueAmount',
+                width:"10%",
                 disableFilters: true
             },
             {
                 Header: 'Pending Amount',
                 accessor: 'pendingAmount',
+                width:"10%",
                 disableFilters: true
             },
             {
                 Header: 'Paying Amount',
-                id: 'paidAmount',
+                accessor: 'payingAmount',
                 disableFilters: true,
+                width:"10%",
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
-                        <EditableInputTextCell initialValue={initialValue} row={row} columnId={id} updateMyData={() => { }} dropList={null} autoComplete={false}></EditableInputTextCell>
+                        <EditableInputCurrencyCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData}></EditableInputCurrencyCell>
                     )
                 }
             },
@@ -95,10 +138,11 @@ const Payments = props => {
                 Header: 'Is Fully Paid',
                 accessor: 'isFullyPaid',
                 disableFilters: true,
+                width:"5%",
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
                         <div className="payment--save">
-                            <input className='custom-checkbox' type="checkbox" onChange={() => { }} onBlur={() => { }} checked={true} disabled={false} />
+                            <EditableCheckBoxCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData}></EditableCheckBoxCell>
                         </div>
                     )
                 }
@@ -108,21 +152,44 @@ const Payments = props => {
                 Header: '',
                 accessor: 'pay',
                 disableFilters: true,
-                Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
+                width:"5%",
+                Cell: ({ value: initialValue, row: row, column: { id } }) => {
                     return (
-                        <button
-                            onClick={() => handleApplyOnClick()}
-                            className="btn btn--primary"
-                            type="submit"
-                        >
-                            Pay
-                        </button>
+                        <div>
+                            <button
+                                onClick={() => payPayment(row)}
+                                className="btn btn--primary"
+                                type="submit"
+                            >
+                                Pay
+                            </button>
+                            <span className="isvalid"></span>
+                        </div>
                     )
                 }
             }
         ],
         []
     )
+
+    const payPayment = (row) => {
+        console.log(row.original)
+        var payload = {
+            "enrollmentId": row.original?.enrollmentId,
+            "year": 0,
+            "month": 1,
+            //"paidAmount": row.original?.payingAmount,
+            "paidAmount": 10,
+            "isFullyPaid": row.original?.isFullyPaid
+        }
+        dispatch(PaymentSubmit(payload, function (response, success) {
+            if (success) {
+
+            } else {
+                //error handle
+            }
+        }));
+    }
 
     /**
  * 
@@ -156,97 +223,14 @@ const Payments = props => {
             case TEACHER_SELECTION:
                 setSelectedTeacher(item !== null ? item : null)
                 break;
+            case PAYMENT_STATUS_SELECTION:
+                selectedPaymentStatus(item !== null ? item : null)
+                break;
             default:
                 break;
         }
     };
 
-    const data = [
-        {
-            "phoneNumber": "0714268785",
-            "studentCode": "SC001",
-            "studentName": "Ape Putha",
-            "month": 6,
-            "paymentDueDate": 15,
-            "classIdentifier": "Sajithge English Class",
-            "dueAmount": 1000,
-            "paidAmount": 200,
-            "pendingAmount": 800,
-            "isFullyPaid": true,
-            "paymentStatusId": 0,
-            "payments": [
-                {
-                    "id": 1,
-                    "amount": 200,
-                    "paymentDate": "2023-06-01 10:08:11.06",
-                    "monthlyPaymentId": 1
-                }
-            ]
-        },
-        {
-            "phoneNumber": "0714268785",
-            "studentCode": "SC001",
-            "studentName": "Ape Putha",
-            "month": 6,
-            "paymentDueDate": 15,
-            "classIdentifier": "Sajithge English Class",
-            "dueAmount": 1000,
-            "paidAmount": 200,
-            "pendingAmount": 800,
-            "isFullyPaid": true,
-            "paymentStatusId": 0,
-            "payments": [
-                {
-                    "id": 1,
-                    "amount": 200,
-                    "paymentDate": "2023-06-01 10:08:11.06",
-                    "monthlyPaymentId": 1
-                }
-            ]
-        },
-        {
-            "phoneNumber": "0714268785",
-            "studentCode": "SC001",
-            "studentName": "Ape Putha",
-            "month": 6,
-            "paymentDueDate": 15,
-            "classIdentifier": "Sajithge English Class",
-            "dueAmount": 1000,
-            "paidAmount": 200,
-            "pendingAmount": 800,
-            "isFullyPaid": true,
-            "paymentStatusId": 0,
-            "payments": [
-                {
-                    "id": 1,
-                    "amount": 200,
-                    "paymentDate": "2023-06-01 10:08:11.06",
-                    "monthlyPaymentId": 1
-                }
-            ]
-        },
-        {
-            "phoneNumber": "0714268785",
-            "studentCode": "SC001",
-            "studentName": "Ape Putha",
-            "month": 6,
-            "paymentDueDate": 15,
-            "classIdentifier": "Sajithge English Class",
-            "dueAmount": 1000,
-            "paidAmount": 200,
-            "pendingAmount": 800,
-            "isFullyPaid": true,
-            "paymentStatusId": 0,
-            "payments": [
-                {
-                    "id": 1,
-                    "amount": 200,
-                    "paymentDate": "2023-06-01 10:08:11.06",
-                    "monthlyPaymentId": 1
-                }
-            ]
-        }
-    ]
 
     /**
      * 
@@ -261,7 +245,25 @@ const Payments = props => {
      * Event handling for apply filters and retrive class data.
      */
     const handleApplyOnClick = () => {
-        alert("load classes data")
+        console.log(auth)
+        var payload = {
+            "instituteId": auth.InstituteId,
+            //"courseId": selectedCourse?.id,
+            //"subjectId": selectedSubject?.id,
+            //"teacherId": selectedTeacher?.id,
+            "month": 1,
+            //"paymentStatus": 0,
+            "keyWord": selectedKeyValue,
+            "pageSize": 10,
+            "pageNumber": 1
+        }
+        dispatch(SearchPayments(payload, function (response, success) {
+            if (success) {
+
+            } else {
+                //error handle
+            }
+        }));
     };
 
     // Create a function that will render our row sub components
@@ -348,11 +350,72 @@ const Payments = props => {
         return teachersList;
     }
 
+    const getPaymentStatuesList = () => {
+        let statusList = [];
+        common.PaymentStatus?.forEach((status, index) => {
+            let obj = {
+                id: status.key,
+                value: status.name,
+                code: status.id,
+                selected: false
+            };
+            statusList.push(obj);
+        });
+        return statusList;
+    }
+
+
 
     return (
         <div className="classes-container">
             <div className='page-header'>Monthly Settlement</div>
             <div className='classes-filter-box'>
+                <div className='filter-box-row'>
+                    <div className='filter-box-column' >
+                        <span className='global-filter'>
+                            <input
+                                value={selectedKeyValue}
+                                onChange={e => {
+                                    setSelectedKeyValue(e.target.value);
+                                    //onChange(e.target.value);
+                                }}
+                                placeholder={`Search by Phone number or Name`}
+                                style={{
+                                    border: '0', width: "100%"
+                                }}
+                            />
+                        </span>
+                    </div>
+
+                    <div className='filter-box-column'>
+                        <DateTimePicker
+                            valid={true}
+                            title={"Select Month"}
+                            initDateTime={new Date()}
+                            onDateTimeChange={(dateTime, selection) => { }}
+                        />
+                    </div>
+                    <div className='filter-box-column'>
+                        <FilterDropdown
+                            title="Payment Status"
+                            selection={SUBJECT_SELECTION}
+                            defaultList={getPaymentStatuesList()}
+                            onItemChange={handleItemChange}
+                            initValue={""}
+                            editable={true}
+                            autoComplete={false} />
+                    </div>
+
+                    <div className='filter-box-column'>
+                        <FilterDropdown
+                            title="Teacher"
+                            selection={TEACHER_SELECTION}
+                            defaultList={getTeachersList()}
+                            onItemChange={handleItemChange}
+                            initValue={""}
+                            editable={true} />
+                    </div>
+                </div>
                 <div className='filter-box-row'>
                     <div className='filter-box-column'>
                         <FilterDropdown
@@ -381,15 +444,6 @@ const Payments = props => {
                             initValue={""}
                             editable={true} />
                     </div>
-                    <div className='filter-box-column'>
-                        <FilterDropdown
-                            title="Teacher"
-                            selection={TEACHER_SELECTION}
-                            defaultList={getTeachersList()}
-                            onItemChange={handleItemChange}
-                            initValue={""}
-                            editable={true} />
-                    </div>
                     <div className='filter-box-column apply-filter'>
                         <button
                             onClick={() => handleApplyOnClick()}
@@ -406,6 +460,7 @@ const Payments = props => {
                     columns={columns}
                     data={data}
                     hiddenColumns={hiddenColumns}
+                    updateMyData={updateMyData}
                     renderRowSubComponent={renderRowSubComponent} />
             </ReactEditableTableFullWidthStyles>
         </div>

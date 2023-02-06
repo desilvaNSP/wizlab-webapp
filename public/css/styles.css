@@ -1453,6 +1453,16 @@ header .user-welcome-message {
   margin-right: 10px;
 }
 
+.page-header .add-record--disabled {
+  font-size: medium;
+  background: #9f9f9f;
+  padding: 8px;
+  border-radius: 8px;
+  width: 220px;
+  pointer-events:none;
+  margin-right: 10px;
+}
+
 .page-header .add-record img{
   margin-right: 10px;
 }

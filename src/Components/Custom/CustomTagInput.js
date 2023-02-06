@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import closeIcon from '../Custom/icons/close-icon.svg'
 
-export const CustomTagInput = ({ initialValue, updateTags, type, disable = false, fieldValidation, required = false }) => {
+export const CustomTagInput = ({ initialValue = "", initialTags = [], updateTags, type, disable = false, fieldValidation, required = false }) => {
     // We need to keep and update the state of the cell normally
     const [input, setInput] = useState(initialValue);
-    const [tags, setTags] = useState([]);
+    const [tags, setTags] = useState(initialTags);
     const [isKeyReleased, setIsKeyReleased] = useState(false);
     const [invalidMessageKeyValue, setInvalidMessageKeyValue] = useState({})
     const [tagsWithValidy, setTagsWithValidity] = useState({})
@@ -21,7 +21,7 @@ export const CustomTagInput = ({ initialValue, updateTags, type, disable = false
     const onKeyDown = (e) => {
         const { key } = e;
         const trimmedInput = input.trim();
-        if (key === ',' && trimmedInput.length && !tags.includes(trimmedInput)) {
+        if (key === ',' && trimmedInput.length && !tags?.includes(trimmedInput)) {
             e.preventDefault();
             setTags(prevState => [...prevState, trimmedInput]);
             var updatedInvalidErrorMessage = invalidMessageKeyValue
@@ -43,9 +43,9 @@ export const CustomTagInput = ({ initialValue, updateTags, type, disable = false
             setInput('');
         }
 
-        if (key === "Backspace" && !input.length && tags.length && isKeyReleased) {
-            delete invalidMessageKeyValue[tags[tags.length - 1]];
-            delete tagsWithValidy[tags[tags.length - 1]];
+        if (key === "Backspace" && !input.length && tags?.length && isKeyReleased) {
+            delete invalidMessageKeyValue[tags[tags?.length - 1]];
+            delete tagsWithValidy[tags[tags?.length - 1]];
             const tagsCopy = [...tags];
             const poppedTag = tagsCopy.pop();
             e.preventDefault();
@@ -110,7 +110,7 @@ export const CustomTagInput = ({ initialValue, updateTags, type, disable = false
     return (
         <div style={{ textAlign: 'left' }}>
             <div className="taginput-container">
-                {tags.map((tag, index) => (
+                {tags?.map((tag, index) => (
                     <div className={tag in invalidMessageKeyValue ? "tag tag--invalid" : "tag"}>
                         {tag}
                         <img className="tag--clear" alt='clear input' src={closeIcon} onClick={(e) => {deleteTag(index)}
@@ -132,7 +132,7 @@ export const CustomTagInput = ({ initialValue, updateTags, type, disable = false
                    validationErrorMessage().error 
                 }
             </label>}
-            {(validationErrorMessage().validity && ((input == "" || input == null) && tags.length < 1) && required) && <label className='required-text' style={{ marginLeft: '200px' }}>
+            {(validationErrorMessage().validity && ((input == "" || input == null) && tags?.length < 1) && required) && <label className='required-text' style={{ marginLeft: '200px' }}>
                 {"Required"}
             </label>}
         </div>

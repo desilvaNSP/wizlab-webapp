@@ -19,6 +19,11 @@ const Courses = props => {
         setShowCourseCreationPopup(false)
     }
 
+    const triggerUpdateCourse = (course) => {
+        setSelectedCourse(course)
+        setShowCourseCreationPopup(true)
+    }
+
     return (
         <div className="classes-container">
             <div className='page-header'>
@@ -46,7 +51,7 @@ const Courses = props => {
                 </div> */}
                 <div className='widget-row'>
                     {common.Courses.map((course) =>
-                        <div className="tile-widget" placeholder="Class Informations">
+                        <div className="tile-widget" placeholder="Class Informations" onClick={() => { triggerUpdateCourse(course) }}>
                             <label>{course.name}</label>
                             <span>{course?.levels?.length} Levels</span>
                             <span> 0 Subjects</span>
@@ -55,7 +60,7 @@ const Courses = props => {
                 </div>
             </div>
             {showCourseCreationPopup &&
-                <NewCourse show={showCourseCreationPopup} handleReload={() => { }} handleClose={closeCourseCreationPopup} selectedClass={selectedCourse}></NewCourse>
+                <NewCourse show={showCourseCreationPopup} handleReload={() => { }} handleClose={closeCourseCreationPopup} selectedCourse={selectedCourse}></NewCourse>
             }
         </div>
     );
