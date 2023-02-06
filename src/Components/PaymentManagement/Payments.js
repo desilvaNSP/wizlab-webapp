@@ -22,8 +22,8 @@ const PaymentSubmitComponent = ({ rowRecord }) => {
         setIsLoading(true)
         var payload = {
             "enrollmentId": row.original?.enrollmentId,
-            "year": 2023,
-            "month": 1,
+            "year": row.original?.year,
+            "month": row.original?.month,
             "paidAmount": row.original?.payingAmount,
             "isFullyPaid": row.original?.isFullyPaid
         }
@@ -166,7 +166,7 @@ const Payments = props => {
                 accessor: 'month',
                 width: "5%",
                 accessor: data => {
-                    return monthNames[data.month] + "(" + data.month + ")";
+                    return monthNames[data.month] + "(" + data.year + ")";
                 },
                 disableFilters: true
             },
