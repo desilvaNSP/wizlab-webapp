@@ -8,10 +8,63 @@ import downIcon from '../Custom/icons/down.svg'
 import './Payments.css'
 import FilterDropdown from "../Custom/FilterDropdown";
 import { useDispatch, useSelector } from "react-redux";
-import { CustomCheckBox } from "../Custom/CustomCheckBox ";
 import { MonthPicker } from "../Custom/MonthPicker";
-import { DateTimePicker } from "../Custom/DateTimePicker";
 import { PaymentSubmit, SearchPayments } from "../../Redux/Features/Payment/PaymentServicesSlice";
+
+const PaymentSubmitComponent = ({ rowRecord }) => {
+
+    const [callback, setCallback] = useState(0)
+    const [isLoading, setIsLoading] = useState(false)
+
+    const dispatch = useDispatch();
+
+    const payPayment = (row) => {
+        setIsLoading(true)
+        var payload = {
+            "enrollmentId": row.original?.enrollmentId,
+            "year": 2023,
+            "month": 1,
+            "paidAmount": row.original?.payingAmount,
+            "isFullyPaid": row.original?.isFullyPaid
+        }
+        dispatch(PaymentSubmit(payload, function (response, success) {
+            setIsLoading(false)
+            if (success) {
+                setCallback(1)
+            } else {
+                setCallback(2)
+            }
+            setTimeout(function () {
+                setCallback(0)
+            }, 3000)
+        }));
+    }
+
+    var loaderClassName = isLoading ? "loader" : ""
+    var messageClassName = "";
+    if (callback == 1) {
+        messageClassName = "isvalid"
+    } else if (callback == 2) {
+        messageClassName = "notvalid"
+    } else {
+        messageClassName = ""
+    }
+
+    return (
+        <div className="payment-sumbit--container">
+            <button
+                onClick={() => payPayment(rowRecord)}
+                className="btn btn--primary"
+                type="submit"
+            >
+                Pay
+            </button>
+            <div class={loaderClassName}></div>
+            <div class={messageClassName}></div>
+        </div>
+    )
+}
+
 
 const Payments = props => {
 
@@ -21,7 +74,14 @@ const Payments = props => {
     const TEACHER_SELECTION = "TEACHER_SELECTION";
     const PAYMENT_STATUS_SELECTION = "PAYMENT_STATUS_SELECTION";
 
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+
     const hiddenColumns = ["id"];
+
+    var today = new Date()
 
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedLevel, setSelectedLevel] = useState(null);
@@ -29,6 +89,8 @@ const Payments = props => {
     const [selectedTeacher, setSelectedTeacher] = useState(null);
     const [selectedKeyValue, setSelectedKeyValue] = useState(null);
     const [selectedPaymentStatus, setSelectedPaymentStatus] = useState(null);
+    const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
+    const [selectedYear, setSelectedYear] = useState(today.getFullYear());
 
     const [data, setData] = useState([]);
 
@@ -65,7 +127,7 @@ const Payments = props => {
                 // Make an expander cell
                 Header: () => null, // No header
                 id: 'expander', // It needs an ID
-                width:"5%",
+                width: "5%",
                 Cell: ({ row }) => (
                     // Use Cell to render an expander for each row.
                     // We can use the getToggleRowExpandedProps prop-getter
@@ -78,56 +140,74 @@ const Payments = props => {
             {
                 Header: 'Phone Number',
                 accessor: 'phoneNumber',
-                width:"10%",
+                width: "10%",
                 disableFilters: false
             },
             {
                 Header: 'Student Code',
                 accessor: 'studentCode',
-                width:"10%",
+                width: "10%",
                 disableFilters: false
             },
             {
                 Header: 'Student Name',
                 accessor: 'studentName',
-                width:"10%",
+                width: "10%",
                 disableFilters: false
             },
             {
                 Header: 'Class',
                 accessor: 'classIdentifier',
-                width:"15%",
+                width: "15%",
                 disableFilters: false
             },
             {
                 Header: 'Month',
                 accessor: 'month',
-                width:"5%",
+                width: "5%",
+                accessor: data => {
+                    return monthNames[data.month] + "(" + data.month + ")";
+                },
                 disableFilters: true
             },
             {
                 Header: 'Due Date',
                 accessor: 'paymentDueDate',
-                width:"5%",
+                width: "5%",
                 disableFilters: true
             },
             {
                 Header: 'Due Amount',
-                accessor: 'dueAmount',
-                width:"10%",
+                id: 'dueAmount',
+                width: "10%",
+                accessor: data => {
+                    return data.dueAmount.toFixed(2);
+                },
+                disableFilters: true
+            },
+            {
+                Header: 'Paid Amount',
+                id: 'paidAmount',
+                width: "10%",
+                accessor: data => {
+                    return data.paidAmount.toFixed(2);
+                },
                 disableFilters: true
             },
             {
                 Header: 'Pending Amount',
-                accessor: 'pendingAmount',
-                width:"10%",
+                id: 'pendingAmount',
+                width: "10%",
+                accessor: data => {
+                    return data.pendingAmount.toFixed(2);
+                },
                 disableFilters: true
             },
             {
                 Header: 'Paying Amount',
                 accessor: 'payingAmount',
                 disableFilters: true,
-                width:"10%",
+                width: "10%",
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
                         <EditableInputCurrencyCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData}></EditableInputCurrencyCell>
@@ -138,7 +218,7 @@ const Payments = props => {
                 Header: 'Is Fully Paid',
                 accessor: 'isFullyPaid',
                 disableFilters: true,
-                width:"5%",
+                width: "5%",
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
                         <div className="payment--save">
@@ -152,19 +232,10 @@ const Payments = props => {
                 Header: '',
                 accessor: 'pay',
                 disableFilters: true,
-                width:"5%",
+                width: "5%",
                 Cell: ({ value: initialValue, row: row, column: { id } }) => {
                     return (
-                        <div>
-                            <button
-                                onClick={() => payPayment(row)}
-                                className="btn btn--primary"
-                                type="submit"
-                            >
-                                Pay
-                            </button>
-                            <span className="isvalid"></span>
-                        </div>
+                        <PaymentSubmitComponent rowRecord={row}></PaymentSubmitComponent>
                     )
                 }
             }
@@ -172,24 +243,6 @@ const Payments = props => {
         []
     )
 
-    const payPayment = (row) => {
-        console.log(row.original)
-        var payload = {
-            "enrollmentId": row.original?.enrollmentId,
-            "year": 0,
-            "month": 1,
-            //"paidAmount": row.original?.payingAmount,
-            "paidAmount": 10,
-            "isFullyPaid": row.original?.isFullyPaid
-        }
-        dispatch(PaymentSubmit(payload, function (response, success) {
-            if (success) {
-
-            } else {
-                //error handle
-            }
-        }));
-    }
 
     /**
  * 
@@ -233,6 +286,17 @@ const Payments = props => {
 
 
     /**
+    * Props event handler which is used in calender component
+    * @param {Date} val selected date information
+    * @param {String} selection used to selected desired calender component
+    */
+    const onDateTimeChange = (val) => {
+        setSelectedMonth(val.getMonth());
+        setSelectedYear(val.getFullYear())
+    }
+
+
+    /**
      * 
      * @param {Object} item selected item of the dropdown list
      * @param {String} key used to selected desired dropdown component
@@ -251,12 +315,14 @@ const Payments = props => {
             //"courseId": selectedCourse?.id,
             //"subjectId": selectedSubject?.id,
             //"teacherId": selectedTeacher?.id,
-            "month": 1,
-            //"paymentStatus": 0,
+            "year": selectedYear,
+            "month": selectedMonth,
+            "paymentStatus": selectedPaymentStatus?.key,
             "keyWord": selectedKeyValue,
             "pageSize": 10,
             "pageNumber": 1
         }
+
         dispatch(SearchPayments(payload, function (response, success) {
             if (success) {
 
@@ -388,11 +454,11 @@ const Payments = props => {
                     </div>
 
                     <div className='filter-box-column'>
-                        <DateTimePicker
+                        <MonthPicker
                             valid={true}
                             title={"Select Month"}
-                            initDateTime={new Date()}
-                            onDateTimeChange={(dateTime, selection) => { }}
+                            initDateTime={today}
+                            onDateTimeChange={onDateTimeChange}
                         />
                     </div>
                     <div className='filter-box-column'>

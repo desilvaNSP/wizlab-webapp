@@ -97,6 +97,23 @@
   margin-right: 30px;
 }
 
+/* monthly picker*/
+.month--picker.dd-header {
+  flex-direction: row;
+} 
+
+.month--picker .date-info {
+  width: 80%;
+} 
+
+.month--picker .date-back {
+  width: 10%;
+} 
+
+.month--picker .date-next {
+  width: 10%;
+} 
+
 img.dd-input--clear{
   margin-right: 8px;
   margin-top: 2px;

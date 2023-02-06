@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, current } from '@reduxjs/toolkit'
 import { HTTP_STATUS_CODE_401_UNAUTHORIZED, HTTP_STATUS_CODE_403_FORBIDDEN, PAYMENT_SEARCH_ENDPOINT, PAYMENT_SUBMIT_ENDPOINT } from "../../../Configs/ApgConfigs";
 import { ServiceEngine } from "../../../Services/ServiceEngine";
 
@@ -8,30 +8,26 @@ export const PaymentServicesSlice = createSlice({
         FilteredPayments: []
     },
     reducers: {
-        UpdateFilteredPayments: (state, action) => {
+        UpdateFilteredPayments(state, action) {
             let obj = action.payload;
             return {
                 ...state,
                 FilteredPayments: obj.studentPaymentHistoryResults
             };
         },
-        UpdatePaymentStatus: (state, action) => {
-            var existingPayments = [...state.FilteredPayments]
-            console.log("existingPayments", existingPayments)
-            var obj = action.payload?.paymentHistoryEntry;
+        UpdatePaymentStatus(state, action) {
+            var existingPayments = current(state).FilteredPayments
+            var obj = action.payload;
             const updatedFilteredPayments = existingPayments.map(x => {
-                const item = null;
                 if (obj.enrollmentId == x.enrollmentId) {
-                    item = obj;
+                    return obj
+                } else {
+                    return x;
                 }
-                console.log(item)
-                return item != null ? item : x;
             });
             return {
                 ...state,
-                FilteredPayments: () => {
-                    
-                }
+                FilteredPayments: updatedFilteredPayments
             };
         }
     },
@@ -64,9 +60,8 @@ export const SearchPayments = (paymentSearchPayload, callback) => (dispatch) => 
 
 export const PaymentSubmit = (paymentSubmitPayload, callback) => (dispatch) => {
     ServiceEngine.post(PAYMENT_SUBMIT_ENDPOINT, paymentSubmitPayload).then(response => {
-        //response.data
-        console.log("response.data", response.data)
-        dispatch(UpdatePaymentStatus(response.data))
+        var response = response.data.paymentHistoryEntry;
+        dispatch(UpdatePaymentStatus(response))
         callback(response.data, true);
     }).catch(
         error => {
@@ -81,7 +76,7 @@ export const PaymentSubmit = (paymentSubmitPayload, callback) => (dispatch) => {
             } else {
                 //toast.error("Check your internet connection or network connectivity issue between servers");
             }
-            //callback(error.response.data, false);
+            callback(null, false);
         })
 }
 
