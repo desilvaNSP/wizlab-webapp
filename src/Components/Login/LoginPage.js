@@ -6,8 +6,8 @@ import { FetchAuthenticationInfo } from "../../Redux/Features/Auth/Authenticatio
 import "./login.css";
 
 const LoginPage = (props) => {
-  const [UserName, setUserName] = useState("");
-  const [Password, setPassword] = useState("");
+  const [UserName, setUserName] = useState("sandunp");
+  const [Password, setPassword] = useState("Npriyanka");
 
   // Cookies...
   // AdminUser
