@@ -14,9 +14,10 @@ const App = props => {
   const [token, setToken, removeToken] = useCookies(['token']);
   const [tokenExpiry, setTokenExpiry] = useCookies(['token_expiry']);
   const [instituteId, setInstituteId] = useCookies(['institute_id']);
-  
+
   const dispatch = useDispatch();
   const auth = useSelector((state) => state.auth);
+  const common = useSelector((state) => state.common);
 
   useEffect(() => {
     dispatch(FetchMetaData(function (response, success) {

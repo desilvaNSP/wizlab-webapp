@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import 'react-tabs/style/react-tabs.css';
 import { CommonTable } from "../CommonTable/CommonTable";
 import FilterDropdown from "../Custom/FilterDropdown";
@@ -12,6 +13,7 @@ const Institutes = props => {
 
     const hiddenColumns = ["id"];
 
+    const common = useSelector((state) => state.common);
     /**
      * 
      * @param {Object} item selected item of the dropdown list
@@ -141,6 +143,12 @@ const Institutes = props => {
 
     return (
         <div className="classes-container">
+            {common.IsLoading &&
+                <div className="main-loader"  >
+                    <img src="assets/images/loading.svg" alt="loader" />
+                    <div className="main-loader__txt">{common.LoadingMessage}</div>
+                </div>
+            }
             <div className='page-header'>
                 <div className="add-record" onClick={() => triggerStartNewClass()}>
                     <img src="/assets/icons/icon-add.svg" alt="Start New Class" />
@@ -160,7 +168,7 @@ const Institutes = props => {
                                 console.log(item)
                             }}
                             initValue={""}
-                            editable={true}/>
+                            editable={true} />
                     </div>
                     <div className='filter-box-column'>
                         <FilterDropdown
@@ -169,7 +177,7 @@ const Institutes = props => {
                                 console.log(item)
                             }}
                             initValue={"Teacher"}
-                            editable={false}/>
+                            editable={false} />
                     </div>
                     <div className='filter-box-column'>
                         <FilterDropdown

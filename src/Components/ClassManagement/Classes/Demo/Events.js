@@ -28,7 +28,6 @@ export default [
     start: new Date(2016, 10, 6, 0, 0, 0),
     end: new Date(2016, 10, 13, 0, 0, 0),
   },
-
   {
     id: 4,
     title: 'Some Event',

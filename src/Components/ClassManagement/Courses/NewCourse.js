@@ -5,13 +5,11 @@ import { CustomInput } from '../../Custom/CustomInput';
 import { EditableInputTextCell } from '../../Custom/Editable';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { NewSubjects } from './NewSubjects';
-import { CreateCourse } from '../../../Redux/Features/Common/CommonServicesSlice';
+import { CreateCourse, StartLoading, StopLoading } from '../../../Redux/Features/Common/CommonServicesSlice';
 import { useDispatch } from 'react-redux';
 
 export const NewCourse = props => {
     const { handleReload, handleClose, show, selectedCourse } = props
-
-    console.log("selectedCourse", selectedCourse)
 
     const showHideClassName = show
         ? "modal display-block"
@@ -125,13 +123,16 @@ export const NewCourse = props => {
             "course": course,
             "levels": levels
         }
+        dispatch(StartLoading("Creating New Course.."))
         dispatch(CreateCourse(payload, function (response, success) {
             if (success) {
 
             } else {
                 //error handle
             }
+            dispatch(StopLoading())
         }));
+        closeConfirmModal();
     }
 
     const updateExistingCourse = () => {

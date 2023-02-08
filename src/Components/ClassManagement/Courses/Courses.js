@@ -26,6 +26,12 @@ const Courses = props => {
 
     return (
         <div className="classes-container">
+            {common.IsLoading &&
+                <div className="main-loader"  >
+                    <img src="/assets/images/loading.svg" alt="loader" />
+                    <div className="main-loader__txt">{common.LoadingMessage}</div>
+                </div>
+            }
             <div className='page-header'>
                 <div className="add-record" onClick={() => triggerStartNewCourse()}>
                     <img src="/assets/icons/icon-add.svg" alt="Start New Course" />

@@ -9,40 +9,43 @@ import Students from "./Students";
 
 const ClassDetails = props => {
   let { classId } = useParams();
-
   const [selectedClass, setSelectedClass] = useState(null);
 
-  const dispatch = useDispatch();
   const common = useSelector((state) => state.common);
 
-  const selectClassById = () => {
+  const SelectClassById = () => {
+    var selectedClass = null;
     var filteredClass = common.Classes.filter(function (val) {
       return val.id == classId;
     });
-    if(filteredClass.length > 0){
-      console.log("filteredClass", filteredClass[0])
-      setSelectedClass(filteredClass[0])
+    if (filteredClass.length > 0) {
+      selectedClass = filteredClass[0]
     }
+    return selectedClass;
   }
 
   useEffect(() => {
-    selectClassById();
+    let filteredClass = SelectClassById();
+    if (filteredClass != null) {
+      setSelectedClass(filteredClass)
+    }
   }, [common.Classes])
 
   return (
     <div className="main-container">
-      <Tabs>
-        <TabList>
-          <Tab>Sessions</Tab>
-          <Tab>Students</Tab>
-        </TabList>
-        <TabPanel>
-          <Sessions selectedClass={selectedClass}></Sessions>
-        </TabPanel>
-        <TabPanel>
-          <Students selectedClass={selectedClass}></Students>
-        </TabPanel>
-      </Tabs>
+      {selectedClass &&
+        <Tabs>
+          <TabList>
+            <Tab>Sessions</Tab>
+            <Tab>Students</Tab>
+          </TabList>
+          <TabPanel>
+            <Sessions selectedClass={selectedClass}></Sessions>
+          </TabPanel>
+          <TabPanel>
+            <Students selectedClass={selectedClass}></Students>
+          </TabPanel>
+        </Tabs>}
     </div>
   );
 };

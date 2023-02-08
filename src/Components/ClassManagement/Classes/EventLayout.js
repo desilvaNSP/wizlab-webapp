@@ -1,65 +1,60 @@
-import React, { Fragment, useMemo } from 'react'
-import PropTypes from 'prop-types'
-import moment from 'moment'
-import {
-  Calendar,
-  Views,
-  DateLocalizer,
-  momentLocalizer,
-} from 'react-big-calendar'
-import DemoLink from './Demo/DemoLink.component'
-import events from './Demo/Events'
-import * as dates from './Utils/Dates'
+import React, { Fragment, useEffect, useMemo, useState } from 'react'
+import { Calendar, dateFnsLocalizer } from 'react-big-calendar'
+import format from 'date-fns/format'
+import parse from 'date-fns/parse'
+import startOfWeek from 'date-fns/startOfWeek'
+import getDay from 'date-fns/getDay'
+import enUS from 'date-fns/locale/en-US'
+import * as dateFns from "date-fns";
 
-const mLocalizer = momentLocalizer(moment)
+const locales = {
+  'en-US': enUS,
+}
 
-const ColoredDateCellWrapper = ({ children }) =>
-  React.cloneElement(React.Children.only(children), {
-    style: {
-      backgroundColor: 'lightblue',
-    },
-  })
+const localizer = dateFnsLocalizer({
+  format,
+  parse,
+  startOfWeek,
+  getDay,
+  locales,
+})
 
 /**
  * We are defaulting the localizer here because we are using this same
  * example on the main 'About' page in Storybook
  */
-export default function EventLayout({
-  localizer = mLocalizer,
-  showDemoLink = true,
-  ...props
-}) {
-  const { components, defaultDate, max, views } = useMemo(
-    () => ({
-      components: {
-        timeSlotWrapper: ColoredDateCellWrapper,
-      },
-      defaultDate: new Date(2015, 3, 1),
-      max: dates.add(dates.endOf(new Date(2015, 17, 1), 'day'), -1, 'hours'),
-      views: Object.keys(Views).map((k) => Views[k]),
-    }),
-    []
-  )
+export default function EventLayout({ data = [] }) {
+
+  const [events, setEvents] = useState([])
+
+  useEffect(() => {
+    var eventsArray = [];
+    if (data != null) {
+      data.forEach(element => {
+        var startTime = new Date(element.startTime);
+        var item = {
+          id: element.id,
+          title: element.classRoom.desc,
+          start: startTime,
+          end: dateFns.addMinutes(startTime, element.duration)
+        }
+        eventsArray.push(item);
+      });
+      setEvents(eventsArray);
+    }
+  }, [data])
 
   return (
     <Fragment>
-      {showDemoLink ? <DemoLink fileName="EventLayout" /> : null}
-      <div className="height600" {...props}>
+      <div className="height600">
         <Calendar
-          components={components}
-          defaultDate={defaultDate}
-          events={events}
           localizer={localizer}
-          max={max}
-          showMultiDayTimes
-          step={60}
-          views={views}
+          events={events}
+          startAccessor="start"
+          endAccessor="end"
+          style={{ height: 500 }}
         />
       </div>
     </Fragment>
   )
-}
-EventLayout.propTypes = {
-  localizer: PropTypes.instanceOf(DateLocalizer),
-  showDemoLink: PropTypes.bool,
 }

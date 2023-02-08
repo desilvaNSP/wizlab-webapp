@@ -5,10 +5,20 @@ import Classes from "./Classes/Classes";
 import Courses from "./Courses/Courses";
 import ClassRooms from "./ClassRooms";
 import './Index.css'
+import { useSelector } from "react-redux";
 
 const ClassesIndex = props => {
+
+  const common = useSelector((state) => state.common);
+
   return (
     <div className="main-container">
+      {common.IsLoading &&
+        <div className="main-loader"  >
+          <img src="assets/images/loading.svg" alt="loader" />
+          <div className="main-loader__txt">{common.LoadingMessage}</div>
+        </div>
+      }
       <Tabs>
         <TabList>
 

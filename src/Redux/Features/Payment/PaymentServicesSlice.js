@@ -1,6 +1,7 @@
 import { createSlice, current } from '@reduxjs/toolkit'
 import { HTTP_STATUS_CODE_401_UNAUTHORIZED, HTTP_STATUS_CODE_403_FORBIDDEN, PAYMENT_SEARCH_ENDPOINT, PAYMENT_SUBMIT_ENDPOINT } from "../../../Configs/ApgConfigs";
 import { ServiceEngine } from "../../../Services/ServiceEngine";
+import CommonServicesSlice from '../Common/CommonServicesSlice';
 
 export const PaymentServicesSlice = createSlice({
     name: 'payment',
@@ -34,7 +35,6 @@ export const PaymentServicesSlice = createSlice({
 })
 
 export const { UpdateFilteredPayments, UpdatePaymentStatus } = PaymentServicesSlice.actions
-
 
 export const SearchPayments = (paymentSearchPayload, callback) => (dispatch) => {
     ServiceEngine.post(PAYMENT_SEARCH_ENDPOINT, paymentSearchPayload).then(response => {

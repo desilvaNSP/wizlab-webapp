@@ -11,12 +11,11 @@ import Store from "./Redux/Store";
 import ClassDetails from "./Components/ClassManagement/Classes/ClassDetails";
 import Payments from "./Components/PaymentManagement/Payments";
 import Instructors from "./Components/InstructorManagement/Instructors";
-import Students from "./Components/ClassManagement/Classes/Students";
 import { CookiesProvider } from "react-cookie";
 import ClassesIndex from "./Components/ClassManagement/Index";
 import Institutes from "./Components/InstituteManagement/Institutes";
 import Dashboard from "./Components/Dashboard/Dashboard";
-import StudentsTest from "./Components/StudentManagment/Students";
+import AllStudents from "./Components/StudentManagment/AllStudents";
 
 const router = createBrowserRouter([
   {
@@ -45,7 +44,7 @@ const router = createBrowserRouter([
       },
       {
         path: "students",
-        element: <StudentsTest index={123} />,
+        element: <AllStudents/>,
       },
       {
         path: "institutes",

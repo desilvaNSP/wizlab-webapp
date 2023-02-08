@@ -21,7 +21,7 @@ const IndeterminateCheckbox = React.forwardRef(
 )
 
 
-export const ClassesTable = ({ columns, data, onRowSelect, hiddenColumns, rowSelection=false }) => {
+export const EnrollmentTable = ({ columns, data, onRowSelect, hiddenColumns, updateMyData, rowSelection = false }) => {
 
     const [showContextMenu, setShowContextMenu] = useState(false);
 
@@ -103,6 +103,7 @@ export const ClassesTable = ({ columns, data, onRowSelect, hiddenColumns, rowSel
             defaultColumn, // Be sure to pass the defaultColumn option
             initialState,
             filterTypes,
+            updateMyData
         },
         useFilters, // useFilters!
         useGlobalFilter, // useGlobalFilter!
@@ -133,11 +134,11 @@ export const ClassesTable = ({ columns, data, onRowSelect, hiddenColumns, rowSel
     )
 
     React.useEffect(() => {
-        if(rowSelection){
+        if (rowSelection) {
             onRowSelect(selectedFlatRows);
         }
     }, [selectedFlatRows]);
-    
+
     const downloadFile = ({ data, fileName, fileType }) => {
         const blob = new Blob([data], { type: fileType })
 
@@ -157,7 +158,7 @@ export const ClassesTable = ({ columns, data, onRowSelect, hiddenColumns, rowSel
         e.preventDefault()
 
         // Headers for each column
-        let arrayOfheaders= allColumns.map((value) => {
+        let arrayOfheaders = allColumns.map((value) => {
             if (value.isVisible && value.id != 'selection') {
                 return value.id
             }
@@ -191,7 +192,7 @@ export const ClassesTable = ({ columns, data, onRowSelect, hiddenColumns, rowSel
                 <img src='/assets/images/settings-icon.png' />
             </div>
             <div className="table-setting-icon" onClick={(e) => exportToCsv(e)}>
-                <img src='/assets/images/download-icon.png'  alt='Export'/>
+                <img src='/assets/images/download-icon.png' alt='Export' />
             </div>
             {showContextMenu && <div className='column-hiding-contextmenu'>
                 <div>

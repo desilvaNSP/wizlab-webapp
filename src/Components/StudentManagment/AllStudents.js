@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
-import { ClassesTable } from "./Table/ClassesTable";
-import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
-import { GetStudentsByClassId, StartLoading, StopLoading } from "../../../Redux/Features/Common/CommonServicesSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { EditableInputCurrencyCell, EditableInputNumberCell } from "../../Custom/Editable";
-import { GetEnrollmentsById, UpdateEnrollment, UpdateEnrollmentById } from "../../../Redux/Features/Enrollments/EnrollmentServicesSlice";
-import { EnrollmentTable } from "./Table/EnrollmentTable";
+import { ReactTableFullWidthStyles } from "../Custom/StyleComponents";
+import { EditableInputCurrencyCell, EditableInputNumberCell } from "../Custom/Editable";
+import { EnrollmentTable } from "../ClassManagement/Classes/Table/EnrollmentTable";
+import { GetEnrollmentsById, UpdateEnrollmentById } from "../../Redux/Features/Enrollments/EnrollmentServicesSlice";
+import { StartLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
 
 
 const EnrollmentUpdateComponent = ({ rowRecord }) => {
@@ -68,7 +67,7 @@ const EnrollmentUpdateComponent = ({ rowRecord }) => {
     )
 }
 
-const Students = ({ selectedClass }) => {
+const AllStudents = ({ }) => {
 
     const [data, setData] = useState([])
 
@@ -85,23 +84,21 @@ const Students = ({ selectedClass }) => {
     }, [enrollments.Enrollments])
 
     useEffect(() => {
-        if (selectedClass != null) {
-            var payload = {
-                "classId": selectedClass.id,
-                "pageSize": 100,
-                "pageNumber": 1
-            }
-            dispatch(StartLoading("Get Enrollments for Class '" + selectedClass.classIdentifier +"'"))
-            dispatch(GetEnrollmentsById(payload, function (data, success) {
-                if (success) {
-
-                } else {
-                    //error handle
-                }
-                dispatch(StopLoading())
-            }));
+        var payload = {
+            "classId": 1,
+            "pageSize": 100,
+            "pageNumber": 1
         }
-    }, [selectedClass]);
+        dispatch(StartLoading("Get All Students"))
+        dispatch(GetEnrollmentsById(payload, function (data, success) {
+            if (success) {
+
+            } else {
+                //error handle
+            }
+            dispatch(StopLoading());
+        }));
+    }, []);
 
     // When our cell renderer calls updateMyData, we'll use
     // the rowIndex(ex: 9), columnId(ex: merchantName) and new value to update the
@@ -224,7 +221,7 @@ const Students = ({ selectedClass }) => {
         <div className="classes-container">
             {common.IsLoading &&
                 <div className="main-loader"  >
-                    <img src="/assets/images/loading.svg" alt="loader" />
+                    <img src="assets/images/loading.svg" alt="loader" />
                     <div className="main-loader__txt">{common.LoadingMessage}</div>
                 </div>
             }
@@ -295,4 +292,4 @@ const Students = ({ selectedClass }) => {
     );
 };
 
-export default Students;
+export default AllStudents;

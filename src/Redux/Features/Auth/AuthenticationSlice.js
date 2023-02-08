@@ -1,6 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 import { FETCH_TOKEN_ENDPOINT, HTTP_STATUS_CODE_401_UNAUTHORIZED, HTTP_STATUS_CODE_403_FORBIDDEN } from "../../../Configs/ApgConfigs";
 import { ServiceEngine } from "../../../Services/ServiceEngine";
+import CommonServicesSlice from '../Common/CommonServicesSlice';
 
 export const AuthenticateSlice = createSlice({
     name: 'auth',
@@ -33,7 +34,6 @@ export const { updateAuthInfo } = AuthenticateSlice.actions
 // will call the thunk with the `dispatch` function as the first argument. Async
 // code can then be executed and other actions can be dispatched
 export const FetchAuthenticationInfo = (username, password, callback) => (dispatch) => {
-    console.log(username)
     let userData = {
         "username": username,
         "password": password

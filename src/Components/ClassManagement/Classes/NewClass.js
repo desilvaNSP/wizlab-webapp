@@ -4,9 +4,7 @@ import { InfoConfirmModal } from '../../Custom/Modals';
 import CustomDropdown from '../../Custom/CustomDropdown';
 import { CustomInput } from '../../Custom/CustomInput';
 import { useDispatch, useSelector } from 'react-redux';
-import { CreateClass } from '../../../Redux/Features/Common/CommonServicesSlice';
-import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents';
-import { CommonTable } from '../../CommonTable/CommonTable';
+import { CreateClass, ShowLoading, StopLoading, UpdateClass } from '../../../Redux/Features/Common/CommonServicesSlice';
 
 export const NewClass = props => {
     const { handleReload, handleClose, show, selectedClass } = props
@@ -35,9 +33,16 @@ export const NewClass = props => {
     const [selectedSubject, setSelectedSubject] = useState(selectedClass?.subject);
     const [selectedTeacher, setSelectedTeacher] = useState(selectedClass?.teacher);
     const [selectedClassFee, setSelectedClassFee] = useState(selectedClass?.classFee);
+    const [selectedClassIdentifier, setSelectedClassIdentifier] = useState(selectedClass?.classIdentifier);
+    const [indentifiers, setIdentifiers] = useState([]);
 
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
+    
+    useEffect(() => {
+        var string = indentifiers.join('-');
+        setSelectedClassIdentifier(string)
+    }, [indentifiers])
 
     /**
      * 
@@ -53,8 +58,11 @@ export const NewClass = props => {
                         courseObj = course;
                     }
                 });
-                console.log("courseObj", courseObj)
+                var array = [courseObj.name]
+                setIdentifiers(array)
                 setSelectedCourse(courseObj !== null ? courseObj : null);
+                setSelectedLevel(null)
+                setSelectedSubject(null)
                 break;
             case LEVEL_SELECTION:
                 var levelObj = null
@@ -63,6 +71,9 @@ export const NewClass = props => {
                         levelObj = level;
                     }
                 });
+                var array = [...indentifiers]
+                array.push(levelObj.desc);
+                setIdentifiers(array)
                 setSelectedLevel(levelObj !== null ? levelObj : null)
                 break;
             case SUBJECT_SELECTION:
@@ -72,6 +83,9 @@ export const NewClass = props => {
                         subjectObj = subject;
                     }
                 });
+                var array = [...indentifiers]
+                array.push(subjectObj.title);
+                setIdentifiers(array)
                 setSelectedSubject(subjectObj !== null ? subjectObj : null)
                 break;
             case TEACHER_SELECTION:
@@ -81,6 +95,9 @@ export const NewClass = props => {
                         teacherObj = teacher;
                     }
                 });
+                var array = [...indentifiers]
+                array.push(teacherObj.firstName);
+                setIdentifiers(array)
                 setSelectedTeacher(teacherObj !== null ? teacherObj : null);
                 break;
             default:
@@ -90,6 +107,10 @@ export const NewClass = props => {
 
     const updateClassFee = (value) => {
         setSelectedClassFee(value)
+    }
+
+    const updateClassIdentifier = (value) => {
+        setSelectedClassIdentifier(value)
     }
 
     const getCoursesList = () => {
@@ -161,24 +182,39 @@ export const NewClass = props => {
     //Trigger create new class service
     const createNewClass = () => {
         var payload = {
-            "courseId": selectedCourse.id,
-            "classRoomId": 1,
+            "identifier": selectedClassIdentifier,
             "subjectId": selectedSubject.id,
             "classfee": selectedClassFee,
             "teacherId": selectedTeacher.id
         }
-        console.log(payload)
+        dispatch(ShowLoading("Creating New Class.."))
         dispatch(CreateClass(payload, function (response, success) {
             if (success) {
 
             } else {
                 //error handle
             }
+            dispatch(StopLoading())
         }));
     }
 
     const updateExistingClass = () => {
-        console.log(selectedClass)
+        var payload = {
+            "id":selectedClass.id,
+            "identifier": selectedClassIdentifier,
+            "subjectId": selectedSubject.id,
+            "classfee": selectedClassFee,
+            "teacherId": selectedTeacher.id
+        }
+        dispatch(ShowLoading("Updating Class.."))
+        dispatch(UpdateClass(payload, function (response, success) {
+            if (success) {
+
+            } else {
+                //error handle
+            }
+            dispatch(StopLoading())
+        }));
     }
 
     const hiddenColumns = ["selection"];
@@ -222,6 +258,8 @@ export const NewClass = props => {
             };
         }, [ref]);
     }
+
+    console.log("indentifiers", indentifiers)
 
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef, props);
@@ -319,7 +357,14 @@ export const NewClass = props => {
                                     </div>
                                 </div>
                                 <div className='form-column'>
-                                    <div className='item-name'>Profile Details</div>
+                                    <div className='item-name'>Indetifier<span style={{color:'yellowgreen'}}>(you can change!)</span></div>
+                                    <div className='item-dropdown'>
+                                        <CustomInput
+                                            initialValue={selectedClassIdentifier} type="text" updateInput={(value) => {
+                                                updateClassIdentifier(value);
+                                            }} fieldValidation={courseFeeFieldValidation} required={true} placeHolder=""
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>

@@ -130,7 +130,6 @@ export const NewSession = props => {
             "classRoomId": 1,
             "link": virtualLink
         }
-
         dispatch(CreateSession(payload, function (response, success) {
             if (success) {
 
@@ -209,7 +208,6 @@ export const NewSession = props => {
                                     <div className='item-name'>Start Time</div>
                                     <div className='item-dropdown'>
                                         <DateTimePicker
-                                            valid={fromDate < toDate ? true : false}
                                             title={""}
                                             initDateTime={toDate}
                                             onDateTimeChange={(dateTime, selection) => onDateTimeChange(dateTime, selection)}

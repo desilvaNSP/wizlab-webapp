@@ -10,6 +10,7 @@ import FilterDropdown from "../Custom/FilterDropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { MonthPicker } from "../Custom/MonthPicker";
 import { PaymentSubmit, SearchPayments } from "../../Redux/Features/Payment/PaymentServicesSlice";
+import { ShowLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
 
 const PaymentSubmitComponent = ({ rowRecord }) => {
 
@@ -227,9 +228,8 @@ const Payments = props => {
                     )
                 }
             },
-
             {
-                Header: '',
+                Header: 'Pay',
                 accessor: 'pay',
                 disableFilters: true,
                 width: "5%",
@@ -323,12 +323,14 @@ const Payments = props => {
             "pageNumber": 1
         }
 
+        dispatch(ShowLoading("Loading Payment Records.."))
         dispatch(SearchPayments(payload, function (response, success) {
             if (success) {
 
             } else {
                 //error handle
             }
+            dispatch(StopLoading())
         }));
     };
 
@@ -434,6 +436,12 @@ const Payments = props => {
 
     return (
         <div className="classes-container">
+            {common.IsLoading &&
+                <div className="main-loader"  >
+                    <img src="assets/images/loading.svg" alt="loader" />
+                    <div className="main-loader__txt">{common.LoadingMessage}</div>
+                </div>
+            }
             <div className='page-header'>Monthly Settlement</div>
             <div className='classes-filter-box'>
                 <div className='filter-box-row'>
