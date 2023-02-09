@@ -7,7 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { CreateClass, ShowLoading, StopLoading, UpdateClass } from '../../../Redux/Features/Common/CommonServicesSlice';
 
 export const NewClass = props => {
-    const { handleReload, handleClose, show, selectedClass } = props
+    const { handleClose, show, selectedClass } = props
 
     const COURSE_SELECTION = "COURSE_SELECTION";
     const LEVEL_SELECTION = "LEVEL_SELECTION";
@@ -25,8 +25,6 @@ export const NewClass = props => {
         "header": "",
         "content": ""
     });
-
-    console.log("selectedClass", selectedClass)
 
     const [selectedCourse, setSelectedCourse] = useState(selectedClass?.subject?.level?.course);
     const [selectedLevel, setSelectedLevel] = useState(selectedClass?.subject?.level);
@@ -131,7 +129,6 @@ export const NewClass = props => {
 
     const getLevelsByCourse = () => {
         let levelList = [];
-        console.log("selectedCourse", selectedCourse)
         selectedCourse?.levels?.forEach((level, index) => {
             if (level != null) {
                 let obj = {
@@ -217,8 +214,6 @@ export const NewClass = props => {
         }));
     }
 
-    const hiddenColumns = ["selection"];
-
     const courseFeeFieldValidation = (value, callback) => {
         callback(true, "");
     }
@@ -258,8 +253,6 @@ export const NewClass = props => {
             };
         }, [ref]);
     }
-
-    console.log("indentifiers", indentifiers)
 
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef, props);

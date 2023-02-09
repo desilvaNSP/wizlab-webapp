@@ -72,8 +72,6 @@ const Students = ({ selectedClass }) => {
 
     const [data, setData] = useState([])
 
-    const hiddenColumns = ["id", "parentName"];
-
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
     const enrollments = useSelector((state) => state.enrollments);
@@ -102,6 +100,8 @@ const Students = ({ selectedClass }) => {
             }));
         }
     }, [selectedClass]);
+
+    const hiddenColumns = ["id", "parentName"];
 
     // When our cell renderer calls updateMyData, we'll use
     // the rowIndex(ex: 9), columnId(ex: merchantName) and new value to update the
@@ -218,8 +218,6 @@ const Students = ({ selectedClass }) => {
         []
     )
 
-    console.log("data", data)
-
     return (
         <div className="classes-container">
             {common.IsLoading &&
@@ -231,63 +229,6 @@ const Students = ({ selectedClass }) => {
             <div className='page-header'>
                 Students
             </div>
-            {/* <div className='classes-filter-box'>
-                <div className='filter-box-row'>
-                    <div className='filter-box-column'>
-                        <FilterDropdown
-                            defaultList={[]}
-                            onItemChange={(item) => {
-                                console.log(item)
-                            }}
-                            initValue={"Teacher"}
-                            required={true}
-                            editable={true}
-                            warningMessage={"Updating course is not allowed"} />
-                    </div>
-                    <div className='filter-box-column'>
-                        <FilterDropdown
-                            defaultList={[]}
-                            onItemChange={(item) => {
-                                console.log(item)
-                            }}
-                            initValue={"Teacher"}
-                            required={true}
-                            editable={true}
-                            warningMessage={"Updating course is not allowed"} />
-                    </div>
-                    <div className='filter-box-column'>
-                        <FilterDropdown
-                            defaultList={[]}
-                            onItemChange={(item) => {
-                                console.log(item)
-                            }}
-                            initValue={"Teacher"}
-                            required={true}
-                            editable={true}
-                            warningMessage={"Updating course is not allowed"} />
-                    </div>
-                    <div className='filter-box-column'>
-                        <FilterDropdown
-                            defaultList={[]}
-                            onItemChange={(item) => {
-                                console.log(item)
-                            }}
-                            initValue={"Teacher"}
-                            required={true}
-                            editable={true}
-                            warningMessage={"Updating course is not allowed"} />
-                    </div>
-                    <div className='filter-box-column apply-filter'>
-                        <button
-                            onClick={() => handleApplyOnClick()}
-                            className="btn btn--primary"
-                            type="submit"
-                        >
-                            Apply
-                        </button>
-                    </div>
-                </div>
-            </div> */}
             <ReactTableFullWidthStyles>
                 <EnrollmentTable columns={columns} data={data} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} rowSelection={true} updateMyData={updateMyData} />
             </ReactTableFullWidthStyles>

@@ -10,8 +10,6 @@ import { ClassesTable } from "./Table/ClassesTable";
 import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
 import * as dateFns from "date-fns";
 
-
-
 const Sessions = ({ selectedClass }) => {
 
     const [data, setData] = useState([])
@@ -31,15 +29,6 @@ const Sessions = ({ selectedClass }) => {
             }));
         }
     }, [selectedClass]);
-
-    /**
-     * 
-     * @param {Object} item selected item of the dropdown list
-     * @param {String} key used to selected desired dropdown component
-     */
-    const resetThenSet = (item, key) => {
-
-    };
 
     const triggerStartSession = () => {
         setShowSessionCreationPopup(true)
@@ -100,13 +89,6 @@ const Sessions = ({ selectedClass }) => {
         ],
         []
     )
-
-    /**
-     * Event handling for apply filters and retrive class data.
-     */
-    const handleApplyOnClick = () => {
-        alert("load classes data")
-    };
 
     return (
         <div className="classes-container">

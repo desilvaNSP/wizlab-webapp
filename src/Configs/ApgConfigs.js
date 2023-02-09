@@ -64,6 +64,7 @@ export const GET_SESSIONS_BY_CLASSID_ENDPOINT = '/api/v1/admin/sessionByClassId'
 //student's enrollments
 export const GET_ENROLLMENTS_BY_CLASSID_ENDPOINT = '/api/v1/admin/class/enrollments'
 export const UPDATE_ENROLLMENT_ENDPOINT = '/api/v1/admin/enrollment'
+export const GET_ALL_STUDENTS_ENDPOINT = '/api/v1/admin/students/search'
 //payments
 export const PAYMENT_SUBMIT_ENDPOINT = '/api/v1/payment/submit'
 export const PAYMENT_SEARCH_ENDPOINT = '/api/v1/payment/search'

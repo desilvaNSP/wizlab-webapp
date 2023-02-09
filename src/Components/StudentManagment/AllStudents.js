@@ -4,9 +4,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { ReactTableFullWidthStyles } from "../Custom/StyleComponents";
 import { EditableInputCurrencyCell, EditableInputNumberCell } from "../Custom/Editable";
 import { EnrollmentTable } from "../ClassManagement/Classes/Table/EnrollmentTable";
-import { GetEnrollmentsById, UpdateEnrollmentById } from "../../Redux/Features/Enrollments/EnrollmentServicesSlice";
+import { GetAllEnrollments, GetEnrollmentsById, UpdateEnrollmentById } from "../../Redux/Features/Enrollments/EnrollmentServicesSlice";
 import { StartLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
-
+import { useCookies } from "react-cookie";
 
 const EnrollmentUpdateComponent = ({ rowRecord }) => {
 
@@ -70,6 +70,7 @@ const EnrollmentUpdateComponent = ({ rowRecord }) => {
 const AllStudents = ({ }) => {
 
     const [data, setData] = useState([])
+    const [instituteId, setInstituteId] = useCookies(['institute_id']);
 
     const hiddenColumns = ["id", "parentName"];
 
@@ -85,12 +86,13 @@ const AllStudents = ({ }) => {
 
     useEffect(() => {
         var payload = {
-            "classId": 1,
-            "pageSize": 100,
+            "instituteId": instituteId?.institute_id,
+            "keyWord": "",
+            "pageSize": 10,
             "pageNumber": 1
         }
         dispatch(StartLoading("Get All Students"))
-        dispatch(GetEnrollmentsById(payload, function (data, success) {
+        dispatch(GetAllEnrollments(payload, function (data, success) {
             if (success) {
 
             } else {

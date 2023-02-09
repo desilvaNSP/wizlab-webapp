@@ -26,7 +26,6 @@ const ClassRooms = props => {
       "auditoriumNo": audNo,
       "address": address
     }
-    console.log(payload)
     dispatch(CreateClassRoom(payload, function (response, success) {
       if (success) {
 

@@ -11,6 +11,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { MonthPicker } from "../Custom/MonthPicker";
 import { PaymentSubmit, SearchPayments } from "../../Redux/Features/Payment/PaymentServicesSlice";
 import { ShowLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
+import { useCookies } from "react-cookie";
+import { format } from "date-fns";
 
 const PaymentSubmitComponent = ({ rowRecord }) => {
 
@@ -79,7 +81,6 @@ const Payments = props => {
         "July", "August", "September", "October", "November", "December"
     ];
 
-
     const hiddenColumns = ["id"];
 
     var today = new Date()
@@ -93,6 +94,8 @@ const Payments = props => {
     const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
     const [selectedYear, setSelectedYear] = useState(today.getFullYear());
 
+    const [instituteId, setInstituteId] = useCookies(['institute_id']);
+
     const [data, setData] = useState([]);
 
     const dispatch = useDispatch();
@@ -103,6 +106,8 @@ const Payments = props => {
     useEffect(() => {
         setData(payment.FilteredPayments)
     }, [payment.FilteredPayments])
+
+    var formatDate = "yyyy-MM-dd HH:mm:ss";
 
     // When our cell renderer calls updateMyData, we'll use
     // the rowIndex(ex: 9), columnId(ex: merchantName) and new value to update the
@@ -295,23 +300,12 @@ const Payments = props => {
         setSelectedYear(val.getFullYear())
     }
 
-
-    /**
-     * 
-     * @param {Object} item selected item of the dropdown list
-     * @param {String} key used to selected desired dropdown component
-     */
-    const resetThenSet = (item, key) => {
-
-    };
-
     /**
      * Event handling for apply filters and retrive class data.
      */
     const handleApplyOnClick = () => {
-        console.log(auth)
         var payload = {
-            "instituteId": auth.InstituteId,
+            "instituteId": instituteId?.institute_id,
             //"courseId": selectedCourse?.id,
             //"subjectId": selectedSubject?.id,
             //"teacherId": selectedTeacher?.id,
@@ -326,7 +320,7 @@ const Payments = props => {
         dispatch(ShowLoading("Loading Payment Records.."))
         dispatch(SearchPayments(payload, function (response, success) {
             if (success) {
-
+                //success handle
             } else {
                 //error handle
             }
@@ -337,22 +331,31 @@ const Payments = props => {
     // Create a function that will render our row sub components
     const renderRowSubComponent = React.useCallback(
         ({ row }) => (
-            <DetailComponent></DetailComponent>
+            <DetailComponent row={row}></DetailComponent>
         ),
         []
     )
 
-    const DetailComponent = (props) => {
+    const DetailComponent = ({ row }) => {
+        console.log(row.original)
+        var details = row.original;
         return (
             <div className='detail-container container'>
                 <div className='cont-row'>
                     <div className='cont-3-column col-1'>
+                        {details?.payments.length > 0 ? details?.payments.map((logHistory, index) =>
+                            <div>
+                                <label>Payment Date : </label>
+                                <span>{format(new Date(logHistory.paymentDate), formatDate)}</span>
+                                <label>Amount: </label>
+                                <span>{logHistory.amount}</span>
+                            </div>
+
+                        ) : <div>
+                            <label>No payment history records.</label>
+                        </div>}
                     </div>
                     <div className='cont-3-column col-2'>
-                        <div>
-                            <label>Status : </label>
-                            <span>Woooooow</span>
-                        </div>
                     </div>
                     <div className='cont-3-column col-3'>
                     </div>
@@ -431,8 +434,6 @@ const Payments = props => {
         });
         return statusList;
     }
-
-
 
     return (
         <div className="classes-container">

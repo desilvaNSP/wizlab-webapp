@@ -1,8 +1,13 @@
 import { createSlice, current } from '@reduxjs/toolkit'
 import update from 'react-addons-update';
-import { GET_ENROLLMENTS_BY_CLASSID_ENDPOINT, HTTP_STATUS_CODE_401_UNAUTHORIZED, HTTP_STATUS_CODE_403_FORBIDDEN, PAYMENT_SEARCH_ENDPOINT, PAYMENT_SUBMIT_ENDPOINT, UPDATE_ENROLLMENT_ENDPOINT } from "../../../Configs/ApgConfigs";
 import { ServiceEngine } from "../../../Services/ServiceEngine";
-import CommonServicesSlice from '../Common/CommonServicesSlice';
+import { 
+    GET_ALL_STUDENTS_ENDPOINT,
+    GET_ENROLLMENTS_BY_CLASSID_ENDPOINT, 
+    HTTP_STATUS_CODE_401_UNAUTHORIZED, 
+    HTTP_STATUS_CODE_403_FORBIDDEN,
+    UPDATE_ENROLLMENT_ENDPOINT } from "../../../Configs/ApgConfigs";
+
 
 export const EnrollmentServicesSlice = createSlice({
     name: 'enrollments',
@@ -62,7 +67,7 @@ export const GetEnrollmentsById = (payload, callback) => (dispatch) => {
 
 
 export const GetAllEnrollments = (payload, callback) => (dispatch) => {
-    ServiceEngine.post(GET_ENROLLMENTS_BY_CLASSID_ENDPOINT, payload).then(response => {
+    ServiceEngine.post(GET_ALL_STUDENTS_ENDPOINT, payload).then(response => {
         //response.data
         dispatch(GetEnrollmentsToStore(response.data))
         callback(response.data, true);
@@ -82,6 +87,8 @@ export const GetAllEnrollments = (payload, callback) => (dispatch) => {
             //callback(error.response.data, false);
         })
 }
+
+
 
 export const UpdateEnrollmentById = (enrollmentPayload, callback) => (dispatch) => {
     ServiceEngine.put(UPDATE_ENROLLMENT_ENDPOINT, enrollmentPayload).then(response => {

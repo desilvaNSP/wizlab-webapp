@@ -8,7 +8,6 @@ const Courses = props => {
     const [showCourseCreationPopup, setShowCourseCreationPopup] = useState(false)
     const [selectedCourse, setSelectedCourse] = useState(null);
 
-    const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
 
     const triggerStartNewCourse = () => {
@@ -39,22 +38,6 @@ const Courses = props => {
                 </div>
             </div>
             <div className='widget-group'>
-                {/* <div className='widget-row'>
-                    <span className='global-filter'>
-                        Search:{' '}
-                        <input
-                            value={1 || ""}
-                            onChange={e => {
-                                //setValue(e.target.value);
-                                //onChange(e.target.value);
-                            }}
-                            placeholder={`${1} records...`}
-                            style={{
-                                border: '0',
-                            }}
-                        />
-                    </span>
-                </div> */}
                 <div className='widget-row'>
                     {common.Courses.map((course) =>
                         <div className="tile-widget" placeholder="Class Informations" onClick={() => { triggerUpdateCourse(course) }}>

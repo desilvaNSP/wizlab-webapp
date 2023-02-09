@@ -1,7 +1,14 @@
+import { toast } from 'react-toastify';
 import { createSlice, current } from '@reduxjs/toolkit'
-import { HTTP_STATUS_CODE_401_UNAUTHORIZED, HTTP_STATUS_CODE_403_FORBIDDEN, PAYMENT_SEARCH_ENDPOINT, PAYMENT_SUBMIT_ENDPOINT } from "../../../Configs/ApgConfigs";
 import { ServiceEngine } from "../../../Services/ServiceEngine";
-import CommonServicesSlice from '../Common/CommonServicesSlice';
+import { 
+    ERROR_MESSAGE_401_UNAUTHORIZED, 
+    ERROR_MESSAGE_403_FORBIDDEN, 
+    HTTP_STATUS_CODE_401_UNAUTHORIZED, 
+    HTTP_STATUS_CODE_403_FORBIDDEN, 
+    PAYMENT_SEARCH_ENDPOINT, 
+    PAYMENT_SUBMIT_ENDPOINT } from "../../../Configs/ApgConfigs";
+
 
 export const PaymentServicesSlice = createSlice({
     name: 'payment',
@@ -45,16 +52,16 @@ export const SearchPayments = (paymentSearchPayload, callback) => (dispatch) => 
         error => {
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
                     //error.response.data
                 }
             } else {
-                //toast.error("Check your internet connection or network connectivity issue between servers");
+                toast.error("Check your internet connection or network connectivity issue between servers");
             }
-            //callback(error.response.data, false);
+            callback(null, false);
         })
 }
 
@@ -67,14 +74,14 @@ export const PaymentSubmit = (paymentSubmitPayload, callback) => (dispatch) => {
         error => {
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else {
                     //error.response.data
                 }
             } else {
-                //toast.error("Check your internet connection or network connectivity issue between servers");
+                toast.error("Check your internet connection or network connectivity issue between servers");
             }
             callback(null, false);
         })

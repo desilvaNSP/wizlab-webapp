@@ -1,7 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { FETCH_TOKEN_ENDPOINT, HTTP_STATUS_CODE_401_UNAUTHORIZED, HTTP_STATUS_CODE_403_FORBIDDEN } from "../../../Configs/ApgConfigs";
+import { toast } from 'react-toastify';
 import { ServiceEngine } from "../../../Services/ServiceEngine";
-import CommonServicesSlice from '../Common/CommonServicesSlice';
+import { 
+    ERROR_MESSAGE_401_UNAUTHORIZED, 
+    ERROR_MESSAGE_403_FORBIDDEN, 
+    FETCH_TOKEN_ENDPOINT, 
+    HTTP_STATUS_CODE_401_UNAUTHORIZED, 
+    HTTP_STATUS_CODE_403_FORBIDDEN } from "../../../Configs/ApgConfigs";
 
 export const AuthenticateSlice = createSlice({
     name: 'auth',
@@ -46,16 +51,15 @@ export const FetchAuthenticationInfo = (username, password, callback) => (dispat
         error => {
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    //error.response.data
                 }
             } else {
-                //toast.error("Check your internet connection or network connectivity issue between servers");
+                toast.error("Check your internet connection or network connectivity issue between servers");
             }
-            //callback(error.response.data, false);
+            callback(null, false);
         })
 }
 

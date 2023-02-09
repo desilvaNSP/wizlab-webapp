@@ -1,11 +1,13 @@
 .detail-container label {
     font-weight: bold;
     display: inline-block;
+    margin-left: 15px;
 }
 
 .summary-container label {
     font-weight: bold;
     display: inline-block;
+    margin-left: 15px;
 }
 
 .detail-container span {

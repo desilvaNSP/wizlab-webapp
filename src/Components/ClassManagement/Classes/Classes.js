@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import { ClassesTable } from "./Table/ClassesTable";
 import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
 import { NewClass } from "./NewClass";
-import { useDispatch, useSelector } from "react-redux";
 import FilterDropdown from "../../Custom/FilterDropdown";
+import { useSelector } from "react-redux";
 
 const Classes = props => {
 
@@ -22,7 +22,6 @@ const Classes = props => {
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [selectedTeacher, setSelectedTeacher] = useState(null);
 
-    const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
 
     const triggerStartNewClass = () => {

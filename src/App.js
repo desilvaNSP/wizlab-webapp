@@ -5,9 +5,9 @@ import { SetAuthHeader } from "./Services/ServiceEngine";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Slider from "./Components/Slider/Slider";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import useCookies from "react-cookie/cjs/useCookies";
-import { FetchMetaData } from "./Redux/Features/Common/CommonServicesSlice";
+import { FetchMetaData, StartLoading, StopLoading } from "./Redux/Features/Common/CommonServicesSlice";
 
 const App = props => {
   const [sliderOpen, setSliderOpen] = useState(false);
@@ -16,16 +16,16 @@ const App = props => {
   const [instituteId, setInstituteId] = useCookies(['institute_id']);
 
   const dispatch = useDispatch();
-  const auth = useSelector((state) => state.auth);
-  const common = useSelector((state) => state.common);
 
   useEffect(() => {
+    dispatch(StartLoading("Loading Meta Data.."))
     dispatch(FetchMetaData(function (response, success) {
       if (success) {
 
       } else {
         //error handle
       }
+      dispatch(StopLoading())
     }));
   }, [token?.token])
 
@@ -35,8 +35,6 @@ const App = props => {
   };
 
   const isTokenExists = () => {
-    // Check token exists in cookie
-    // TODO: Check expiry date for validation.
     if (token?.token == "" || token?.token == undefined) {
       return false;
     } else {
@@ -46,8 +44,6 @@ const App = props => {
   };
 
   const handleLogout = () => {
-    // remove token
-    // TODO: Remove all cookies
     removeToken('token');
   }
 

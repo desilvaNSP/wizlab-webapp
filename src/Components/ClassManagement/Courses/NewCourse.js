@@ -2,14 +2,13 @@ import React, { useState, useRef, useEffect } from 'react'
 import { InfoConfirmModal } from '../../Custom/Modals';
 import { CustomTagInput } from '../../Custom/CustomTagInput';
 import { CustomInput } from '../../Custom/CustomInput';
-import { EditableInputTextCell } from '../../Custom/Editable';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { NewSubjects } from './NewSubjects';
 import { CreateCourse, StartLoading, StopLoading } from '../../../Redux/Features/Common/CommonServicesSlice';
 import { useDispatch } from 'react-redux';
 
 export const NewCourse = props => {
-    const { handleReload, handleClose, show, selectedCourse } = props
+    const { handleClose, show, selectedCourse } = props
 
     const showHideClassName = show
         ? "modal display-block"
@@ -19,7 +18,7 @@ export const NewCourse = props => {
 
     const [showInfoConfirmModal, setShowInfoConfirmModal] = useState(false);
     const [course, setCourse] = useState(selectedCourse);
-    const [levels, setLevels] = useState(selectedCourse?.levels == null ? [] : selectedCourse.levels );
+    const [levels, setLevels] = useState(selectedCourse?.levels == null ? [] : selectedCourse.levels);
     const [modalContents, setModalContents] = useState({
         "header": "",
         "content": ""

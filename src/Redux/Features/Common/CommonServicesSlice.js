@@ -1,6 +1,18 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { METADATA_ENDPOINT, CREATE_COURSE_ENDPOINT, HTTP_STATUS_CODE_401_UNAUTHORIZED, HTTP_STATUS_CODE_403_FORBIDDEN, CREATE_CLASS_ENDPOINT, CREATE_CLASSROOM_ENDPOINT, CREATE_SESSION_ENDPOINT, PAYMENT_SEARCH_ENDPOINT, PAYMENT_SUBMIT_ENDPOINT, GET_STUDENTS_BY_CLASSID_ENDPOINT, GET_SESSIONS_BY_CLASSID_ENDPOINT, UPDATE_CLASS_ENDPOINT } from "../../../Configs/ApgConfigs";
+import { toast } from 'react-toastify';
 import { ServiceEngine } from "../../../Services/ServiceEngine";
+import { 
+    METADATA_ENDPOINT, 
+    CREATE_COURSE_ENDPOINT, 
+    HTTP_STATUS_CODE_401_UNAUTHORIZED, 
+    HTTP_STATUS_CODE_403_FORBIDDEN, 
+    CREATE_CLASS_ENDPOINT, 
+    CREATE_CLASSROOM_ENDPOINT, 
+    CREATE_SESSION_ENDPOINT, 
+    GET_SESSIONS_BY_CLASSID_ENDPOINT, 
+    UPDATE_CLASS_ENDPOINT, 
+    ERROR_MESSAGE_401_UNAUTHORIZED, 
+    ERROR_MESSAGE_403_FORBIDDEN } from "../../../Configs/ApgConfigs";
 
 export const CommonServicesSlice = createSlice({
     name: 'common',
@@ -78,14 +90,14 @@ export const FetchMetaData = (callback) => (dispatch) => {
         error => {
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
                     //error.response.data
                 }
             } else {
-                //toast.error("Check your internet connection or network connectivity issue between servers");
+                toast.error("Check your internet connection or network connectivity issue between servers");
             }
             callback(null, false);
         })
@@ -101,16 +113,16 @@ export const CreateCourse = (coursePayload, callback) => (dispatch) => {
         error => {
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
                     //error.response.data
                 }
             } else {
-                //toast.error("Check your internet connection or network connectivity issue between servers");
+                toast.error("Check your internet connection or network connectivity issue between servers");
             }
-            //callback(error.response.data, false);
+            callback(null, false);
         })
 }
 
@@ -123,16 +135,16 @@ export const CreateClass = (classPayload, callback) => (dispatch) => {
         error => {
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
                     //error.response.data
                 }
             } else {
-                //toast.error("Check your internet connection or network connectivity issue between servers");
+                toast.error("Check your internet connection or network connectivity issue between servers");
             }
-            //callback(error.response.data, false);
+            callback(null, false);
         })
 }
 
@@ -145,16 +157,16 @@ export const UpdateClass = (classPayload, callback) => (dispatch) => {
         error => {
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
                     //error.response.data
                 }
             } else {
-                //toast.error("Check your internet connection or network connectivity issue between servers");
+                toast.error("Check your internet connection or network connectivity issue between servers");
             }
-            //callback(error.response.data, false);
+            callback(null, false);
         })
 }
 
@@ -169,16 +181,16 @@ export const CreateClassRoom = (classRoomPayload, callback) => (dispatch) => {
         error => {
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
                     //error.response.data
                 }
             } else {
-                //toast.error("Check your internet connection or network connectivity issue between servers");
+                toast.error("Check your internet connection or network connectivity issue between servers");
             }
-            //callback(error.response.data, false);
+            callback(null, false);
         })
 }
 
@@ -191,16 +203,16 @@ export const CreateSession = (sessionPayload, callback) => (dispatch) => {
         error => {
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
                     //error.response.data
                 }
             } else {
-                //toast.error("Check your internet connection or network connectivity issue between servers");
+                toast.error("Check your internet connection or network connectivity issue between servers");
             }
-            //callback(error.response.data, false);
+            callback(null, false);
         })
 }
 
@@ -211,14 +223,14 @@ export const GetSessionByClassId = (classId, callback) => (dispatch) => {
         error => {
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
                     //error.response.data
                 }
             } else {
-                //toast.error("Check your internet connection or network connectivity issue between servers");
+                toast.error("Check your internet connection or network connectivity issue between servers");
             }
             callback(null, false);
         })

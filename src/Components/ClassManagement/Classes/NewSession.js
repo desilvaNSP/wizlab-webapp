@@ -9,19 +9,10 @@ import { format } from 'date-fns'
 import { DateTimePicker } from '../../Custom/DateTimePicker';
 import FilterDropdown from '../../Custom/FilterDropdown';
 import { useDispatch, useSelector } from 'react-redux';
-import { CreateSession } from '../../../Redux/Features/Common/CommonServicesSlice';
+import { CreateSession, StartLoading, StopLoading } from '../../../Redux/Features/Common/CommonServicesSlice';
 
 export const NewSession = props => {
     const { handleReload, handleClose, show, selectedClass } = props
-
-    const showHideClassName = show
-        ? "modal display-block"
-        : "modal display-none";
-
-    //const auth = useSelector((state) => state.auth);
-    // calender popup default date and its state
-    var formatDateTimeString = "yyyy-MM-dd'T'HH:mm:ss";
-    var formatDateString = "yyyy-MM-dd";
 
     const [showInfoConfirmModal, setShowInfoConfirmModal] = useState(false);
     const [modalContents, setModalContents] = useState({
@@ -32,19 +23,20 @@ export const NewSession = props => {
     //var defaultTo = new Date(format(today, formatDateString) + "T" + "23:59:00")
     // var defaultFrom = new Date(format(today.setDate(today.getDate() - 7), formatDateString) + "T" + "00:00:00")
     var today = new Date();
-    const [fromDate, setFromDate] = useState(today);
-    const [toDate, setToDate] = useState(today);
 
-    const [startTime, setStartTime] = useState(null);
+    const [startTime, setStartTime] = useState(today);
     const [duration, setDuration] = useState(null);
     const [virtualLink, setVirtualLink] = useState(null);
     const [classRoom, setClassRoom] = useState(null);
 
-    const hiddenColumns = ["selection"];
-
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
 
+    const hiddenColumns = ["selection"];
+    const showHideClassName = show
+        ? "modal display-block"
+        : "modal display-none";
+        
     /**
      * Event for close confirm modal
      */
@@ -58,23 +50,6 @@ export const NewSession = props => {
     const continueConfirmModal = () => {
         setShowInfoConfirmModal(false)
     }
-
-    /**
- * Event handling for apply filters and retrive class data.
- */
-    const handleApplyOnClick = () => {
-        alert("load classes data")
-    };
-
-
-    /**
-     * 
-     * @param {Object} item selected item of the dropdown list
-     * @param {String} key used to selected desired dropdown component
-     */
-    const resetThenSet = (item, key) => {
-
-    };
 
     /**
      * Hook that alerts clicks outside of the passed ref
@@ -120,7 +95,6 @@ export const NewSession = props => {
         }
     }
 
-
     //Trigger create new class service
     const createNewSession = () => {
         var payload = {
@@ -130,12 +104,14 @@ export const NewSession = props => {
             "classRoomId": 1,
             "link": virtualLink
         }
+        dispatch(StartLoading("Creating New Session.."))
         dispatch(CreateSession(payload, function (response, success) {
             if (success) {
 
             } else {
                 //error handle
             }
+            dispatch(StopLoading());
         }));
     }
 
@@ -209,7 +185,7 @@ export const NewSession = props => {
                                     <div className='item-dropdown'>
                                         <DateTimePicker
                                             title={""}
-                                            initDateTime={toDate}
+                                            initDateTime={today}
                                             onDateTimeChange={(dateTime, selection) => onDateTimeChange(dateTime, selection)}
                                         />
                                     </div>

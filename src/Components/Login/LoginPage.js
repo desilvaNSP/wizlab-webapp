@@ -52,9 +52,9 @@ const LoginPage = (props) => {
       <main className="main-page login-page">
         <img className="back-image" src="assets/images/cover-photo.jpg"></img>
         <section className="login-section-wrapper">
-          <h1 className="login-section__title" style={{ color: "black" }}>
+          {/* <h1 className="login-section__title" style={{ color: "black" }}>
             Classroom Backoffice
-          </h1>
+          </h1> */}
           <div className="login-section__form">
             <div className="form-group">
               <div className="form-group-col">
