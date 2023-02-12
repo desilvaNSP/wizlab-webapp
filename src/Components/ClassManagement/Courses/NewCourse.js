@@ -14,15 +14,13 @@ export const NewCourse = props => {
         ? "modal display-block"
         : "modal display-none";
 
-    //const auth = useSelector((state) => state.auth);
-
-    const [showInfoConfirmModal, setShowInfoConfirmModal] = useState(false);
     const [course, setCourse] = useState(selectedCourse);
     const [levels, setLevels] = useState(selectedCourse?.levels == null ? [] : selectedCourse.levels);
     const [modalContents, setModalContents] = useState({
-        "header": "",
-        "content": ""
+        "header": "Delete Level",
+        "content": "Are you sure delete the level."
     });
+    const [showInfoConfirmModal, setShowInfoConfirmModal] = useState(false);
 
     // useDispatch() hook is equivalent of mapDispatchToProps.
     const dispatch = useDispatch();
@@ -72,6 +70,11 @@ export const NewCourse = props => {
 
     const levelFieldValidation = (value, callback) => {
         callback(true, "");
+    }
+
+    const levelTagDeletionValidation = (value, callback) => {
+        setShowInfoConfirmModal(true);
+        callback(false);
     }
 
     //Levels
@@ -129,9 +132,13 @@ export const NewCourse = props => {
             } else {
                 //error handle
             }
+            setShowInfoConfirmModal(false)
             dispatch(StopLoading())
         }));
-        closeConfirmModal();
+        setTimeout(function(){
+            setShowInfoConfirmModal(false)
+            dispatch(StopLoading())
+        },20000)
     }
 
     const updateExistingCourse = () => {
@@ -176,7 +183,7 @@ export const NewCourse = props => {
                                                 tags.push(element.desc);
                                             });
                                             return tags
-                                        }} disable={false} fieldValidation={levelFieldValidation} required={true} updateTags={(value) => {
+                                        }} disable={false} fieldValidation={levelFieldValidation} tagDeletionValidation={levelTagDeletionValidation} required={true} updateTags={(value) => {
                                             handleNewLevels(value);
                                         }}></CustomTagInput>
                                     </div>
@@ -216,7 +223,7 @@ export const NewCourse = props => {
                         <button className="btn btn--success" onClick={() => createNewCourse()}>
                             Create New Course
                         </button> :
-                        <button className="btn btn--success" onClick={updateExistingCourse}>
+                        <button className="btn btn--success" disabled={true} onClick={updateExistingCourse} placeholder="Sorry! restricted update course for now">
                             Update Course
                         </button>
                     }

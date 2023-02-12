@@ -11,6 +11,7 @@ const Courses = props => {
     const common = useSelector((state) => state.common);
 
     const triggerStartNewCourse = () => {
+        setSelectedCourse(null)
         setShowCourseCreationPopup(true)
     }
 

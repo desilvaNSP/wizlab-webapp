@@ -43,6 +43,7 @@ const Slider = props => {
             <ul className="aside-menu-content">
                 <MenuItem item={{ "path": "/", "name": "Dashboard" }} hideSlider={handleClose} />
                 <MenuItem item={{ "path": "/classes", "name": "Class Management" }} hideSlider={handleClose} />
+                <MenuItem item={{ "path":"/sessions", "name":"Session Management"}} hideSlider={handleClose} />
                 <MenuItem item={{ "path": "/instructors", "name": "Instructor Management" }} hideSlider={handleClose} />
                 <MenuItem item={{ "path": "/payments", "name": "Payment Management" }} hideSlider={handleClose} />
                 <MenuItem item={{ "path":"/students", "name":"Student Management"}} hideSlider={handleClose} />

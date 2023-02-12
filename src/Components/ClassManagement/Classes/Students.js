@@ -89,7 +89,7 @@ const Students = ({ selectedClass }) => {
                 "pageSize": 100,
                 "pageNumber": 1
             }
-            dispatch(StartLoading("Get Enrollments for Class '" + selectedClass.classIdentifier +"'"))
+            dispatch(StartLoading("Getting Enrollments"))
             dispatch(GetEnrollmentsById(payload, function (data, success) {
                 if (success) {
 
@@ -227,7 +227,7 @@ const Students = ({ selectedClass }) => {
                 </div>
             }
             <div className='page-header'>
-                Students
+              STUDENT ENROLLMENTS
             </div>
             <ReactTableFullWidthStyles>
                 <EnrollmentTable columns={columns} data={data} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} rowSelection={true} updateMyData={updateMyData} />

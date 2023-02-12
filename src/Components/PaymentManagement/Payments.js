@@ -107,6 +107,25 @@ const Payments = props => {
         setData(payment.FilteredPayments)
     }, [payment.FilteredPayments])
 
+    useEffect(() => {
+        var payload = {
+            "instituteId": instituteId?.institute_id,
+            "year": selectedYear,
+            "month": selectedMonth,
+            "pageSize": 10,
+            "pageNumber": 1
+        }
+        dispatch(ShowLoading("Loading Payment Records.."))
+        dispatch(SearchPayments(payload, function (response, success) {
+            if (success) {
+                //success handle
+            } else {
+                //error handle
+            }
+            dispatch(StopLoading())
+        }));
+    }, [])
+
     var formatDate = "yyyy-MM-dd HH:mm:ss";
 
     // When our cell renderer calls updateMyData, we'll use

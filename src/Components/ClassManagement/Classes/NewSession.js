@@ -10,9 +10,14 @@ import { DateTimePicker } from '../../Custom/DateTimePicker';
 import FilterDropdown from '../../Custom/FilterDropdown';
 import { useDispatch, useSelector } from 'react-redux';
 import { CreateSession, StartLoading, StopLoading } from '../../../Redux/Features/Common/CommonServicesSlice';
+import { ClassesTable } from './Table/ClassesTable';
 
-export const NewSession = props => {
-    const { handleReload, handleClose, show, selectedClass } = props
+export const NewSession = (props) => {
+    const { handleClose, show, classId, selectedSession } = props
+
+    //var defaultTo = new Date(format(today, formatDateString) + "T" + "23:59:00")
+    // var defaultFrom = new Date(format(today.setDate(today.getDate() - 7), formatDateString) + "T" + "00:00:00")
+    var today = new Date();
 
     const [showInfoConfirmModal, setShowInfoConfirmModal] = useState(false);
     const [modalContents, setModalContents] = useState({
@@ -20,23 +25,40 @@ export const NewSession = props => {
         "content": ""
     });
 
-    //var defaultTo = new Date(format(today, formatDateString) + "T" + "23:59:00")
-    // var defaultFrom = new Date(format(today.setDate(today.getDate() - 7), formatDateString) + "T" + "00:00:00")
-    var today = new Date();
-
+    const [selectedClass, setSelectedClass] = useState(null);
     const [startTime, setStartTime] = useState(today);
     const [duration, setDuration] = useState(null);
     const [virtualLink, setVirtualLink] = useState(null);
     const [classRoom, setClassRoom] = useState(null);
 
-    const dispatch = useDispatch();
-    const common = useSelector((state) => state.common);
-
     const hiddenColumns = ["selection"];
     const showHideClassName = show
         ? "modal display-block"
         : "modal display-none";
-        
+
+
+    const dispatch = useDispatch();
+    const common = useSelector((state) => state.common);
+
+    const SelectClassById = () => {
+        var selectedClass = null;
+        var filteredClass = common.Classes.filter(function (val) {
+            return val.id == classId;
+        });
+        if (filteredClass.length > 0) {
+            selectedClass = filteredClass[0]
+        }
+        return selectedClass;
+    }
+
+    useEffect(() => {
+        let filteredClass = SelectClassById();
+        if (filteredClass != null) {
+            setSelectedClass(filteredClass)
+        }
+    }, [common.Classes, classId])
+
+
     /**
      * Event for close confirm modal
      */
@@ -85,13 +107,21 @@ export const NewSession = props => {
         setStartTime(val)
     }
 
+    const selectClassProfile = (rows) => {
+        // if any transaction is not set, then set null to selectedTransaction state.
+        if (rows.length > 0) {
+            var selectedClass = rows[0].original;
+            console.log("selectedClass", selectedClass)
+            setSelectedClass(selectedClass)
+        }
+    }
 
     const selectClassRoom = (rows) => {
         // if any transaction is not set, then set null to selectedTransaction state.
         if (rows.length > 0) {
             var selectedClassRoom = rows[0].original;
             console.log("selectedClassRoom", selectedClassRoom)
-            //setSelectedClassRoom(selectedClassRoom)
+            setClassRoom(selectedClassRoom)
         }
     }
 
@@ -115,39 +145,95 @@ export const NewSession = props => {
         }));
     }
 
-    const columns = React.useMemo(
+    const classColumns = React.useMemo(
         () => [
-          {
-            Header: 'Auditorium No/Code',
-            accessor: 'desc',
-            disableFilters: true
-          },
-          {
-            Header: 'Capacity',
-            accessor: 'capacity',
-            disableFilters: true
-          },
-          {
-            Header: 'Physical/Virtual',
-            id: 'isVirtual',
-            disableFilters: true,
-            accessor: data => {
-              if (data.isVirtual) {
-                return (<span className="celltag--invalid">VIRTUAL</span>)
-              } else {
-                return (<span className="celltag--valid">PHYSICAL</span>)
-              }
+            {
+                Header: 'Class Name',
+                id: 'classIdentifier',
+                disableFilters: true,
+                accessor: data => {
+                    return data.classIdentifier
+                },
+            },
+            {
+                Header: 'Course/Program',
+                id: 'course',
+                disableFilters: true,
+                accessor: data => {
+                    return data.subject?.level?.course?.name
+                },
+            },
+            {
+                Header: 'Level/Grade',
+                id: 'level',
+                disableFilters: true,
+                accessor: data => {
+                    return data.subject?.level?.desc
+                },
+            },
+            {
+                Header: 'Subject',
+                id: 'subject',
+                accessor: data => {
+                    return data.subject?.title
+                },
+                disableFilters: true
+            },
+            {
+                Header: 'Teacher/Lecturer',
+                id: 'teacher',
+                accessor: data => {
+                    return data.teacher?.firstName + " " + data.teacher?.lastName
+                },
+                disableFilters: false
+            },
+            {
+                Header: 'Class Fee',
+                accessor: 'classFee',
+                disableFilters: true
+            },
+            {
+                Header: 'Payment Due Date',
+                accessor: 'paymentDueDate',
+                disableFilters: true
             }
-          },
-          {
-            Header: 'Address',
-            accessor: 'address',
-            disableFilters: true
-          }
         ],
         []
-      )
-    
+    )
+
+    const columns = React.useMemo(
+        () => [
+            {
+                Header: 'Auditorium No/Code',
+                accessor: 'desc',
+                disableFilters: true
+            },
+            {
+                Header: 'Capacity',
+                accessor: 'capacity',
+                disableFilters: true
+            },
+            {
+                Header: 'Physical/Virtual',
+                id: 'isVirtual',
+                disableFilters: true,
+                accessor: data => {
+                    if (data.isVirtual) {
+                        return (<span className="celltag--invalid">VIRTUAL</span>)
+                    } else {
+                        return (<span className="celltag--valid">PHYSICAL</span>)
+                    }
+                }
+            },
+            {
+                Header: 'Address',
+                accessor: 'address',
+                disableFilters: true
+            }
+        ],
+        []
+    )
+
     const noNeedFieldValidation = (value, callback) => {
         callback(true, "");
     }
@@ -166,9 +252,16 @@ export const NewSession = props => {
                 {showInfoConfirmModal && <InfoConfirmModal continueTo={continueConfirmModal} handleClose={closeConfirmModal} show={true} children={modalContents.content} heading={modalContents.header}></InfoConfirmModal>}
                 <span className="close-icon modal-detail__close" onClick={handleClose}></span>
                 <div className="modal-detail__header modal-detail__header" style={{ fontSize: "24px", fontWeight: 600 }}>
-                    {selectedClass == null ? <span>Create Session</span> : <span>Update Session</span>}
+                    {selectedSession == null ? <span>Create Session</span> : <span>Update Session</span>}
                 </div>
                 <div className="modal-detail__content">
+                    <div className='form-group'>
+                        <div className='form-group-col'>
+                            <ReactTableFullWidthStyles>
+                                <CommonTable columns={classColumns} data={common.Classes} onRowSelect={selectClassProfile} rowSelection={true} hiddenColumns={hiddenColumns} pagination={false} settings={false} globalsearch={false} downloadcsv={false} />
+                            </ReactTableFullWidthStyles>
+                        </div>
+                    </div>
                     <div className='form-group'>
                         <div className='form-group-col2'>
                             <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
@@ -222,9 +315,11 @@ export const NewSession = props => {
                     </div>
                 </div>
                 <div className="modal-detail__footer">
-                    <button className="btn btn--success" onClick={() => { createNewSession() }}>
+                    {selectedSession == null ? <button className="btn btn--success" onClick={() => { createNewSession() }}>
                         Create New Session
-                    </button>
+                    </button> : <button className="btn btn--success" onClick={() => { createNewSession() }}>
+                        Update Session
+                    </button>}
                 </div>
             </section>
         </div>

@@ -5,6 +5,7 @@ import CustomDropdown from '../../Custom/CustomDropdown';
 import { CustomInput } from '../../Custom/CustomInput';
 import { useDispatch, useSelector } from 'react-redux';
 import { CreateClass, ShowLoading, StopLoading, UpdateClass } from '../../../Redux/Features/Common/CommonServicesSlice';
+import { DateSelectionPicker } from '../../Custom/DateSelectionPicker';
 
 export const NewClass = props => {
     const { handleClose, show, selectedClass } = props
@@ -31,6 +32,7 @@ export const NewClass = props => {
     const [selectedSubject, setSelectedSubject] = useState(selectedClass?.subject);
     const [selectedTeacher, setSelectedTeacher] = useState(selectedClass?.teacher);
     const [selectedClassFee, setSelectedClassFee] = useState(selectedClass?.classFee);
+    const [selectedDueDate, setSelectedDueDate] = useState(selectedClass?.paymentDueDate);
     const [selectedClassIdentifier, setSelectedClassIdentifier] = useState(selectedClass?.classIdentifier);
     const [indentifiers, setIdentifiers] = useState([]);
 
@@ -111,6 +113,10 @@ export const NewClass = props => {
         setSelectedClassIdentifier(value)
     }
 
+    const updatePaymentDueDate = (value) => {
+        setSelectedDueDate(value)
+    }
+
     const getCoursesList = () => {
         let coursesList = [];
         common.Courses?.forEach((course, index) => {
@@ -182,7 +188,8 @@ export const NewClass = props => {
             "identifier": selectedClassIdentifier,
             "subjectId": selectedSubject.id,
             "classfee": selectedClassFee,
-            "teacherId": selectedTeacher.id
+            "teacherId": selectedTeacher.id,
+            "paymentDueDate": selectedDueDate
         }
         dispatch(ShowLoading("Creating New Class.."))
         dispatch(CreateClass(payload, function (response, success) {
@@ -326,6 +333,19 @@ export const NewClass = props => {
                                             }} fieldValidation={courseFeeFieldValidation} required={true} placeHolder="Please enter course fee in ruppees"
                                         />
                                     </div>
+                                </div>
+                            </div>
+                            <div className='form-row'>
+                                <div className='form-column'>
+                                    <div className='item-name'>Payment Due Date</div>
+                                    <div className='item-dropdown'>
+                                        <DateSelectionPicker
+                                            title={""}
+                                            onDateSelect={(dateTime, selection) => updatePaymentDueDate(dateTime, selection)}
+                                        />
+                                    </div>
+                                </div>
+                                <div className='form-column'>
                                 </div>
                             </div>
                             <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>

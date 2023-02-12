@@ -7,6 +7,7 @@ import { EnrollmentTable } from "../ClassManagement/Classes/Table/EnrollmentTabl
 import { GetAllEnrollments, GetEnrollmentsById, UpdateEnrollmentById } from "../../Redux/Features/Enrollments/EnrollmentServicesSlice";
 import { StartLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
 import { useCookies } from "react-cookie";
+import { GroupEnrollmentTable } from "./Table/GroupEnrollmentTable";
 
 const EnrollmentUpdateComponent = ({ rowRecord }) => {
 
@@ -72,7 +73,7 @@ const AllStudents = ({ }) => {
     const [data, setData] = useState([])
     const [instituteId, setInstituteId] = useCookies(['institute_id']);
 
-    const hiddenColumns = ["id", "parentName"];
+    const hiddenColumns = ["id", "selection", "parentName"];
 
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
@@ -88,10 +89,10 @@ const AllStudents = ({ }) => {
         var payload = {
             "instituteId": instituteId?.institute_id,
             "keyWord": "",
-            "pageSize": 10,
+            "pageSize": 50,
             "pageNumber": 1
         }
-        dispatch(StartLoading("Get All Students"))
+        dispatch(StartLoading("Getting enrollments"))
         dispatch(GetAllEnrollments(payload, function (data, success) {
             if (success) {
 
@@ -133,6 +134,14 @@ const AllStudents = ({ }) => {
     const columns = React.useMemo(
         () => [
             {
+                Header: 'Phone Number',
+                id: 'phoneNumber',
+                disableFilters: false,
+                accessor: data => {
+                    return data.student?.parent?.phoneNumber;
+                }
+            },
+            {
                 Header: 'First Name',
                 id: 'firstName',
                 disableFilters: false,
@@ -165,19 +174,27 @@ const AllStudents = ({ }) => {
                 }
             },
             {
-                Header: 'Phone Number',
-                id: 'phoneNumber',
-                disableFilters: false,
-                accessor: data => {
-                    return data.student?.parent?.phoneNumber;
-                }
-            },
-            {
-                Header: 'Patent Name',
+                Header: 'Parent Name',
                 id: 'parentName',
                 disableFilters: false,
                 accessor: data => {
                     return data.student?.parent?.name;
+                }
+            },
+            {
+                Header: 'Class',
+                id: 'class',
+                disableFilters: false,
+                accessor: data => {
+                    return data.class?.classIdentifier;
+                }
+            },
+            {
+                Header: 'Subject',
+                id: 'subject',
+                disableFilters: false,
+                accessor: data => {
+                    return data.class?.subject?.title;
                 }
             },
             {
@@ -217,8 +234,6 @@ const AllStudents = ({ }) => {
         []
     )
 
-    console.log("data", data)
-
     return (
         <div className="classes-container">
             {common.IsLoading &&
@@ -228,7 +243,7 @@ const AllStudents = ({ }) => {
                 </div>
             }
             <div className='page-header'>
-                Students
+                Student Enrollments
             </div>
             {/* <div className='classes-filter-box'>
                 <div className='filter-box-row'>
@@ -288,7 +303,7 @@ const AllStudents = ({ }) => {
                 </div>
             </div> */}
             <ReactTableFullWidthStyles>
-                <EnrollmentTable columns={columns} data={data} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} rowSelection={true} updateMyData={updateMyData} />
+                <GroupEnrollmentTable columns={columns} data={data} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} rowSelection={true} updateMyData={updateMyData} />
             </ReactTableFullWidthStyles>
         </div>
     );

@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
-import { NewSession } from "./NewSession";
-import EventLayout from "./EventLayout";
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { useDispatch, useSelector } from "react-redux";
-import { GetSessionByClassId, StartLoading, StopLoading } from "../../../Redux/Features/Common/CommonServicesSlice";
-import { ClassesTable } from "./Table/ClassesTable";
-import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
+import { GetSessionByClassId, StartLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
+import { ReactTableFullWidthStyles } from '../Custom/StyleComponents'
 import * as dateFns from "date-fns";
+import { NewSession } from "../ClassManagement/Classes/NewSession";
+import { ClassesTable } from "../ClassManagement/Classes/Table/ClassesTable";
+import EventLayout from "../ClassManagement/Classes/EventLayout";
 
-const Sessions = ({ classId }) => {
+const AllSessions = ({ }) => {
 
     const [data, setData] = useState([])
     const [showSessionCreationPopup, setShowSessionCreationPopup] = useState(false)
@@ -21,16 +21,14 @@ const Sessions = ({ classId }) => {
     const common = useSelector((state) => state.common);
 
     useEffect(() => {
-        if (classId != null) {
-            dispatch(StartLoading("Get Sessions for Class"))
-            dispatch(GetSessionByClassId(classId, function (data, success) {
-                if (success) {
-                    setData(data)
-                }
-                dispatch(StopLoading())
-            }));
-        }
-    }, [classId]);
+        dispatch(StartLoading("Get All Sessions"))
+        dispatch(GetSessionByClassId(1, function (data, success) {
+            if (success) {
+                setData(data)
+            }
+            dispatch(StopLoading())
+        }));
+    }, []);
 
     const triggerStartSession = () => {
         setSelectedSession(null)
@@ -59,10 +57,11 @@ const Sessions = ({ classId }) => {
 
     var formatDate = "yyyy-MM-dd HH:mm:ss";
 
+
     const columns = React.useMemo(
         () => [
             {
-                Header: 'Class',
+                Header: 'Class Room',
                 id: 'classIdentifier',
                 accessor: data => {
                     return data.classRoom?.desc
@@ -89,7 +88,7 @@ const Sessions = ({ classId }) => {
                 Header: 'Start Time',
                 id: 'startTime',
                 accessor: data => {
-                    return dateFns.format(new Date(data.time), formatDate) //  // need to update this as startTime
+                    return dateFns.format(new Date(data.time), formatDate)
                 },
                 disableFilters: true
             },
@@ -145,10 +144,10 @@ const Sessions = ({ classId }) => {
                 </TabPanel>
             </Tabs>
             {showSessionCreationPopup &&
-                <NewSession show={showSessionCreationPopup} handleReload={() => { }} handleClose={closeSessionCreationPopup} classId={classId} selectedSession={selectedSession}></NewSession>
+                <NewSession show={showSessionCreationPopup} handleReload={() => { }} handleClose={closeSessionCreationPopup} selectedSession={selectedSession}></NewSession>
             }
         </div>
     );
 };
 
-export default Sessions;
+export default AllSessions;

@@ -8,7 +8,7 @@
 /*newly added*/
 .login-page .back-image {
   background-image: url("/public/assets/images/cover-photo.jpg");
-  opacity: 0.3;
+  opacity: 0.4;
   width: 100%;
   position: absolute;
   top: 0px;
@@ -21,16 +21,6 @@
   margin-top: 0;
   margin-bottom: 40px;
 }
-
-/*newly added*/
-/* .login-section-wrapper {
-  position: absolute;
-  padding: 30px;
-  text-transform: uppercase;
-  background: #f6ebe8;
-  border-radius: 20px;
-  border: solid #cfd2d6 1px;
-} */
 
 .login-section-wrapper {
     border: 1px solid #b3b4b5;

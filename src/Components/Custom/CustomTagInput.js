@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import closeIcon from '../Custom/icons/close-icon.svg'
 
-export const CustomTagInput = ({ initialValue = "", initialTags = [], updateTags, type, disable = false, fieldValidation, required = false }) => {
+export const CustomTagInput = ({ 
+    initialValue = "", 
+    initialTags = [], 
+    updateTags, type, 
+    disable = false, 
+    fieldValidation, 
+    required = false,
+    tagDeletionValidation }) => {
     // We need to keep and update the state of the cell normally
     const [input, setInput] = useState(initialValue);
     const [tags, setTags] = useState(initialTags);
@@ -84,9 +91,13 @@ export const CustomTagInput = ({ initialValue = "", initialTags = [], updateTags
     }
 
     const deleteTag = (index) => {
-        delete invalidMessageKeyValue[tags[index]];
-        delete tagsWithValidy[tags[index]];
-        setTags(prevState => prevState.filter((tag, i) => i !== index))
+        tagDeletionValidation(tags[index], (deleteFlag) => {
+            if (deleteFlag) {
+                delete invalidMessageKeyValue[tags[index]];
+                delete tagsWithValidy[tags[index]];
+                setTags(prevState => prevState.filter((tag, i) => i !== index))
+            }
+        });
     }
 
     const validationErrorMessage = () => {

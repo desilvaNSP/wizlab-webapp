@@ -36,11 +36,7 @@ export const EditableInputTextCell = ({
         setValue(initialValue)
     }, [initialValue])
 
-    return ((original.new && original.new == true) || dbUpdate) && dbAdd ?
-        <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type={type} min="1" max="20" placeholder={placeholderText} />
-        : isLink ?
-            <a className="datatable--link" onClick={() => linkClickEvent(original, index)}>{value}</a>
-            : <span>{value}</span>
+    return <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type={type} min="1" max="20" placeholder={placeholderText} />
 }
 
 // Create an editable cell renderer
@@ -71,9 +67,9 @@ export const EditableInputCurrencyCell = ({
         e.target.value = value;
         setValue(value)
         if (val.length > 0) {
-          e.target.value = Number(value).toFixed(2);
-          e.target.setSelectionRange(start, start);
-          setValue(Number(value).toFixed(2))
+            e.target.value = Number(value).toFixed(2);
+            e.target.setSelectionRange(start, start);
+            setValue(Number(value).toFixed(2))
         }
     }
 
@@ -90,11 +86,7 @@ export const EditableInputCurrencyCell = ({
         setValue(initialValue)
     }, [initialValue])
 
-    return ((original.new && original.new == true) || dbUpdate) && dbAdd ?
-        <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type={type} min="1" max="20" placeholder={placeholderText} />
-        : isLink ?
-            <a className="datatable--link" onClick={() => linkClickEvent(original, index)}>{value}</a>
-            : <span>{value}</span>
+    return <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type={type} min="1" max="20" placeholder={placeholderText} />
 }
 
 // Create an editable cell renderer
@@ -163,11 +155,7 @@ export const EditableInputNumberCell = ({
         setValue(initialValue)
     }, [initialValue])
 
-    return ((original.new && original.new == true) || dbUpdate) && dbAdd ?
-        <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type="number" min={min} max={max} />
-        : isLink ?
-            <a className="datatable--link" onClick={() => linkClickEvent(original, index)}>{value}</a>
-            : <span>{value}</span>
+    return <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type="number" min={min} max={max} />
 }
 
 // Create an editable cell renderer

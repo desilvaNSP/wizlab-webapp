@@ -16,6 +16,7 @@ import ClassesIndex from "./Components/ClassManagement/Index";
 import Institutes from "./Components/InstituteManagement/Institutes";
 import Dashboard from "./Components/Dashboard/Dashboard";
 import AllStudents from "./Components/StudentManagment/AllStudents";
+import AllSessions from "./Components/SessionManagement/AllSessions";
 
 const router = createBrowserRouter([
   {
@@ -33,6 +34,10 @@ const router = createBrowserRouter([
       {
         path: "classes/:classId",
         element: <ClassDetails />,
+      },
+      {
+        path: "sessions",
+        element: <AllSessions/>,
       },
       {
         path: "instructors",
