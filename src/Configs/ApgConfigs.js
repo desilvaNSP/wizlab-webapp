@@ -66,5 +66,5 @@ export const GET_ENROLLMENTS_BY_CLASSID_ENDPOINT = '/api/v1/admin/class/enrollme
 export const UPDATE_ENROLLMENT_ENDPOINT = '/api/v1/admin/enrollment'
 export const GET_ALL_STUDENTS_ENDPOINT = '/api/v1/admin/enrollments/search'
 //payments
-export const PAYMENT_SUBMIT_ENDPOINT = '/api/v1/payment/submit'
+export const PAYMENT_UPDATE_ENDPOINT = '/api/v1/payment/update'
 export const PAYMENT_SEARCH_ENDPOINT = '/api/v1/payment/search'

@@ -20,7 +20,18 @@ const IndeterminateCheckbox = React.forwardRef(
     }
 )
 
-export const RowDetailTable = ({ columns, data, onRowSelect, hiddenColumns, updateMyData, renderRowSubComponent, rowSelection = false }) => {
+export const RowDetailTable = ({
+    columns,
+    data,
+    onRowSelect,
+    hiddenColumns,
+    updateMyData,
+    renderRowSubComponent,
+    rowSelection = false,
+    fetchData,
+    loading,
+    pageCount: controlledPageCount,
+}) => {
 
     const [showContextMenu, setShowContextMenu] = useState(false);
 
@@ -67,8 +78,6 @@ export const RowDetailTable = ({ columns, data, onRowSelect, hiddenColumns, upda
         setShowContextMenu(!showContextMenu);
     }
 
-    const initialState = { hiddenColumns: hiddenColumns };
-
     const {
         getTableProps,
         getTableBodyProps,
@@ -89,7 +98,6 @@ export const RowDetailTable = ({ columns, data, onRowSelect, hiddenColumns, upda
         setPageSize,
         selectedFlatRows,
         allColumns,
-        state,
         getToggleHideAllColumnsProps,
         toggleAllRowsSelected,
         visibleColumns,
@@ -99,7 +107,12 @@ export const RowDetailTable = ({ columns, data, onRowSelect, hiddenColumns, upda
             columns,
             data,
             defaultColumn, // Be sure to pass the defaultColumn option
-            initialState,
+            initialState: { pageIndex: 0 }, // Pass our hoisted table state
+            manualPagination: true, // Tell the usePagination
+            // hook that we'll handle our own data fetching
+            // This means we'll also have to provide our own
+            // pageCount.
+            pageCount: controlledPageCount,
             filterTypes,
             updateMyData
         },
@@ -108,6 +121,11 @@ export const RowDetailTable = ({ columns, data, onRowSelect, hiddenColumns, upda
         usePagination,
         useRowSelect
     )
+
+    // Listen for changes in pagination and use the state to fetch our new data
+    React.useEffect(() => {
+        fetchData({ pageIndex, pageSize })
+    }, [fetchData, pageIndex, pageSize])
 
     React.useEffect(() => {
         if (rowSelection) {
@@ -230,10 +248,23 @@ export const RowDetailTable = ({ columns, data, onRowSelect, hiddenColumns, upda
                                 ) : null}
                             </React.Fragment>
                         )
-                    }) :
+                    })
+                        :
                         <tr>
                             <td className='table-no-results' colSpan="15">No result found</td>
-                        </tr>}
+                        </tr>
+                    }
+                    <tr>
+                        {loading ? (
+                            // Use our custom loading state to show a loading indicator
+                            <td colSpan="10000">Loading...</td>
+                        ) : (
+                            <td colSpan="10000">
+                                Showing {page.length} of ~{controlledPageCount * pageSize}{' '}
+                                results
+                            </td>
+                        )}
+                    </tr>
                 </tbody>
             </table>
 
@@ -242,16 +273,16 @@ export const RowDetailTable = ({ columns, data, onRowSelect, hiddenColumns, upda
           This is just a very basic UI implementation:
         */}
             <div className="pagination">
-                <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+                <button className='btn--pagination' onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
                     {'<<'}
                 </button>{' '}
-                <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+                <button className='btn--pagination' onClick={() => previousPage()} disabled={!canPreviousPage}>
                     {'<'}
                 </button>{' '}
-                <button onClick={() => nextPage()} disabled={!canNextPage}>
+                <button className='btn--pagination' onClick={() => nextPage()} disabled={!canNextPage}>
                     {'>'}
                 </button>{' '}
-                <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+                <button className='btn--pagination' onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
                     {'>>'}
                 </button>{' '}
                 <span>
@@ -264,15 +295,18 @@ export const RowDetailTable = ({ columns, data, onRowSelect, hiddenColumns, upda
                     | Go to page:{' '}
                     <input
                         type="number"
-                        defaultValue={pageIndex + 1}
+                        value={pageIndex + 1}
                         onChange={e => {
                             const page = e.target.value ? Number(e.target.value) - 1 : 0
                             gotoPage(page)
                         }}
                         style={{ width: '100px' }}
+                        className='editable-input--cell'
                     />
                 </span>{' '}
                 <select
+                    className='editable-input--cell'
+                    style={{ width: '100px' }}
                     value={pageSize}
                     onChange={e => {
                         setPageSize(Number(e.target.value))

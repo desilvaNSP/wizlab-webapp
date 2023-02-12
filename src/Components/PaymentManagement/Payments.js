@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import { ReactEditableTableFullWidthStyles } from "../Custom/StyleComponents";
-import { EditableCheckBoxCell, EditableInputCurrencyCell, EditableInputTextCell } from "../Custom/Editable";
-import { RowDetailTable } from "./Table/RowDetailTable";
+import { EditableCheckBoxCell, EditableInputCurrencyCell, EditableInputNumberCell, EditableInputTextCell } from "../Custom/Editable";
 import upIcon from '../Custom/icons/up.svg'
 import downIcon from '../Custom/icons/down.svg'
 import './Payments.css'
 import FilterDropdown from "../Custom/FilterDropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { MonthPicker } from "../Custom/MonthPicker";
-import { PaymentSubmit, SearchPayments } from "../../Redux/Features/Payment/PaymentServicesSlice";
+import { PaymentUpdate, SearchPayments } from "../../Redux/Features/Payment/PaymentServicesSlice";
 import { ShowLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
 import { useCookies } from "react-cookie";
 import { format } from "date-fns";
+import { PaymentTable } from "./Table/PaymentTable";
 
 const PaymentSubmitComponent = ({ rowRecord }) => {
 
@@ -28,9 +28,11 @@ const PaymentSubmitComponent = ({ rowRecord }) => {
             "year": row.original?.year,
             "month": row.original?.month,
             "paidAmount": row.original?.payingAmount,
+            "dueAmount": row.original?.dueAmount,
+            "paymentDueDate": row.original?.paymentDueDate,
             "isFullyPaid": row.original?.isFullyPaid
         }
-        dispatch(PaymentSubmit(payload, function (response, success) {
+        dispatch(PaymentUpdate(payload, function (response, success) {
             setIsLoading(false)
             if (success) {
                 setCallback(1)
@@ -58,9 +60,10 @@ const PaymentSubmitComponent = ({ rowRecord }) => {
             <button
                 onClick={() => payPayment(rowRecord)}
                 className="btn btn--primary"
+                disabled={rowRecord.original?.isFullyPaid}
                 type="submit"
             >
-                Pay
+                Update
             </button>
             <div class={loaderClassName}></div>
             <div class={messageClassName}></div>
@@ -97,31 +100,39 @@ const Payments = props => {
     const [instituteId, setInstituteId] = useCookies(['institute_id']);
 
     const [data, setData] = useState([]);
+    const [loading, setLoading] = React.useState(false)
+    const [tablePageIndex, setTablePageIndex] = React.useState(0)
+    const [tablePageSize, setTablePageSize] = React.useState(10)
+    const [pageCount, setPageCount] = React.useState(0)
+    const fetchIdRef = React.useRef(0)
 
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
-    const auth = useSelector((state) => state.auth);
     const payment = useSelector((state) => state.payment);
 
     useEffect(() => {
         setData(payment.FilteredPayments)
     }, [payment.FilteredPayments])
 
-    useEffect(() => {
+    const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
+        const fetchId = ++fetchIdRef.current
         var payload = {
             "instituteId": instituteId?.institute_id,
             "year": selectedYear,
             "month": selectedMonth,
-            "pageSize": 10,
-            "pageNumber": 1
+            "pageSize": pageSize,
+            "pageNumber": pageIndex + 1
         }
+
+        setLoading(true)
         dispatch(ShowLoading("Loading Payment Records.."))
         dispatch(SearchPayments(payload, function (response, success) {
             if (success) {
-                //success handle
-            } else {
-                //error handle
+                if (fetchId === fetchIdRef.current) {
+                    setPageCount(Math.ceil(1000 / pageSize))
+                }
             }
+            setLoading(false)
             dispatch(StopLoading())
         }));
     }, [])
@@ -199,14 +210,21 @@ const Payments = props => {
                 Header: 'Due Date',
                 accessor: 'paymentDueDate',
                 width: "5%",
-                disableFilters: true
+                disableFilters: true,
+                Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
+                    return (
+                        <EditableInputNumberCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData}></EditableInputNumberCell>
+                    )
+                }
             },
             {
                 Header: 'Due Amount',
-                id: 'dueAmount',
+                accessor: 'dueAmount',
                 width: "10%",
-                accessor: data => {
-                    return data.dueAmount.toFixed(2);
+                Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
+                    return (
+                        <EditableInputCurrencyCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData}></EditableInputCurrencyCell>
+                    )
                 },
                 disableFilters: true
             },
@@ -253,8 +271,8 @@ const Payments = props => {
                 }
             },
             {
-                Header: 'Pay',
-                accessor: 'pay',
+                Header: 'Action',
+                accessor: 'Update',
                 disableFilters: true,
                 width: "5%",
                 Cell: ({ value: initialValue, row: row, column: { id } }) => {
@@ -286,7 +304,6 @@ const Payments = props => {
                 break;
             case LEVEL_SELECTION:
                 var levelObj = null
-                console.log("selectedCourse MM", selectedCourse)
                 selectedCourse?.levels.forEach((level, index) => {
                     if (level.id == item.id) {
                         levelObj = level;
@@ -325,15 +342,15 @@ const Payments = props => {
     const handleApplyOnClick = () => {
         var payload = {
             "instituteId": instituteId?.institute_id,
-            //"courseId": selectedCourse?.id,
-            //"subjectId": selectedSubject?.id,
-            //"teacherId": selectedTeacher?.id,
+            "courseId": selectedCourse?.id,
+            "subjectId": selectedSubject?.id,
+            "teacherId": selectedTeacher?.id,
             "year": selectedYear,
             "month": selectedMonth,
             "paymentStatus": selectedPaymentStatus?.key,
             "keyWord": selectedKeyValue,
-            "pageSize": 10,
-            "pageNumber": 1
+            "pageSize": tablePageSize,
+            "pageNumber": tablePageIndex
         }
 
         dispatch(ShowLoading("Loading Payment Records.."))
@@ -550,12 +567,24 @@ const Payments = props => {
                 </div>
             </div>
             <ReactEditableTableFullWidthStyles>
-                <RowDetailTable
+                {/* <RowDetailTable
                     columns={columns}
                     data={data}
+                    fetchData={fetchData}
+                    loading={loading}
+                    pageCount={pageCount}
                     hiddenColumns={hiddenColumns}
                     updateMyData={updateMyData}
-                    renderRowSubComponent={renderRowSubComponent} />
+                    renderRowSubComponent={renderRowSubComponent} /> */}
+                <PaymentTable
+                    columns={columns}
+                    data={data}
+                    fetchData={fetchData}
+                    loading={loading}
+                    pageCount={pageCount}
+                    updateMyData={updateMyData}
+                    renderRowSubComponent={renderRowSubComponent}
+                />
             </ReactEditableTableFullWidthStyles>
         </div>
     );

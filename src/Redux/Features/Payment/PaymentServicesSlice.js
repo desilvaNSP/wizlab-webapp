@@ -7,7 +7,7 @@ import {
     HTTP_STATUS_CODE_401_UNAUTHORIZED, 
     HTTP_STATUS_CODE_403_FORBIDDEN, 
     PAYMENT_SEARCH_ENDPOINT, 
-    PAYMENT_SUBMIT_ENDPOINT } from "../../../Configs/ApgConfigs";
+    PAYMENT_UPDATE_ENDPOINT} from "../../../Configs/ApgConfigs";
 
 
 export const PaymentServicesSlice = createSlice({
@@ -65,8 +65,8 @@ export const SearchPayments = (paymentSearchPayload, callback) => (dispatch) => 
         })
 }
 
-export const PaymentSubmit = (paymentSubmitPayload, callback) => (dispatch) => {
-    ServiceEngine.post(PAYMENT_SUBMIT_ENDPOINT, paymentSubmitPayload).then(response => {
+export const PaymentUpdate = (paymentSubmitPayload, callback) => (dispatch) => {
+    ServiceEngine.put(PAYMENT_UPDATE_ENDPOINT, paymentSubmitPayload).then(response => {
         var response = response.data.paymentHistoryEntry;
         dispatch(UpdatePaymentStatus(response))
         callback(response.data, true);
