@@ -3,7 +3,7 @@ import 'react-tabs/style/react-tabs.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { useDispatch, useSelector } from "react-redux";
-import { GetSessionByClassId, StartLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
+import { GetSessionByClassId, GetSessions, StartLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
 import { ReactTableFullWidthStyles } from '../Custom/StyleComponents'
 import * as dateFns from "date-fns";
 import { NewSession } from "../ClassManagement/Classes/NewSession";
@@ -32,8 +32,14 @@ const AllSessions = ({ }) => {
     const common = useSelector((state) => state.common);
 
     useEffect(() => {
-        dispatch(StartLoading("Get All Sessions"))
-        dispatch(GetSessionByClassId(1, function (data, success) {
+        var payload = {
+            "courseId": selectedCourse?.id,
+            "levelId": selectedLevel?.id,
+            "subjectId": selectedSubject?.id,
+            "teacherId": selectedTeacher?.id
+        }
+        dispatch(StartLoading("Retrieving all sessions"))
+        dispatch(GetSessions(payload, function (data, success) {
             if (success) {
                 setData(data)
             }
@@ -162,7 +168,19 @@ const AllSessions = ({ }) => {
      * Event handling for apply filters and retrive class data.
      */
     const handleApplyOnClick = () => {
-        alert("load classes data")
+        var payload = {
+            "courseId": selectedCourse?.id,
+            "levelId": selectedLevel?.id,
+            "subjectId": selectedSubject?.id,
+            "teacherId": selectedTeacher?.id
+        }
+        dispatch(StartLoading("Retrieving all sessions"))
+        dispatch(GetSessions(payload, function (data, success) {
+            if (success) {
+                setData(data)
+            }
+            dispatch(StopLoading())
+        }));
     };
 
 

@@ -31,12 +31,12 @@ export default function EventLayout({ data = [] }) {
     var eventsArray = [];
     if (data != null) {
       data.forEach(element => {
-        var startTime = new Date(element.startTime); // need to update this as startTime
+        var startTime = new Date(element?.startTime); // need to update this as startTime
         var item = {
-          id: element.id,
-          title: element.classRoom.desc,
+          id: element?.id,
+          title: element?.classRoom?.desc,
           start: startTime,
-          end: dateFns.addMinutes(startTime, element.duration)
+          end: dateFns.addMinutes(startTime, element?.duration)
         }
         eventsArray.push(item);
       });

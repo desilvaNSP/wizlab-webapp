@@ -12,7 +12,8 @@ import {
     GET_SESSIONS_BY_CLASSID_ENDPOINT, 
     UPDATE_CLASS_ENDPOINT, 
     ERROR_MESSAGE_401_UNAUTHORIZED, 
-    ERROR_MESSAGE_403_FORBIDDEN } from "../../../Configs/ApgConfigs";
+    ERROR_MESSAGE_403_FORBIDDEN, 
+    GET_ALL_SESSIONS_ENDPOINT} from "../../../Configs/ApgConfigs";
 
 export const CommonServicesSlice = createSlice({
     name: 'common',
@@ -242,5 +243,26 @@ export const GetSessionByClassId = (classId, callback) => (dispatch) => {
             callback(null, false);
         })
 }
+
+export const GetSessions = (payload, callback) => (dispatch) => {
+    ServiceEngine.post(GET_ALL_SESSIONS_ENDPOINT, payload).then(response => {
+        callback(response.data, true);
+    }).catch(
+        error => {
+            if (error.response !== undefined) {
+                if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                } else {
+                    //error.response.data
+                }
+            } else {
+                toast.error("Check your internet connection or network connectivity issue between servers");
+            }
+            callback(null, false);
+        })
+}
+
 
 export default CommonServicesSlice.reducer

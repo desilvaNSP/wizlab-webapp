@@ -61,6 +61,8 @@ export const DELETE_CLASSROOM_ENDPOINT = '/api/v1/admin/classroom'
 //sessions
 export const CREATE_SESSION_ENDPOINT = '/api/v1/admin/session'
 export const GET_SESSIONS_BY_CLASSID_ENDPOINT = '/api/v1/admin/sessionByClassId'
+export const GET_ALL_SESSIONS_ENDPOINT = '/api/v1/admin/sessions/search'
+
 //student's enrollments
 export const GET_ENROLLMENTS_BY_CLASSID_ENDPOINT = '/api/v1/admin/class/enrollments'
 export const UPDATE_ENROLLMENT_ENDPOINT = '/api/v1/admin/enrollment'
