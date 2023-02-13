@@ -40,7 +40,7 @@ export const NewSubjects = props => {
         })
         setData(dataUpdated)
         updateLevel({
-            "description": selectedLevel.description,
+            "desc": selectedLevel.desc,
             "subjects": dataUpdated
         }, levelInex)
     }

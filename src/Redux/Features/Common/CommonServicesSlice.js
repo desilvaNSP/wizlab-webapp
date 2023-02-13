@@ -61,17 +61,24 @@ export const CommonServicesSlice = createSlice({
                 UserRoles: obj.userRoles
             };
         },
-        AddNewClass: (state, action) => {
+        AddNewCourse: (state, action) => {
             let obj = action.payload;
             return {
                 ...state,
                 Courses: [...state.Courses, obj]
             };
+        },
+        AddNewClass: (state, action) => {
+            let obj = action.payload;
+            return {
+                ...state,
+                Classes: [...state.Classes, obj.classobj]
+            };
         }
     },
 })
 
-export const { ShowLoading, HideLoading, UpdateMetaData, AddNewClass } = CommonServicesSlice.actions
+export const { ShowLoading, HideLoading, UpdateMetaData, AddNewCourse, AddNewClass } = CommonServicesSlice.actions
 
 
 export const StartLoading = (message) => (dispatch) => {
@@ -107,7 +114,7 @@ export const FetchMetaData = (callback) => (dispatch) => {
 export const CreateCourse = (coursePayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_COURSE_ENDPOINT, coursePayload).then(response => {
         //response.data
-        dispatch(AddNewClass(response.data))
+        dispatch(AddNewCourse(response.data))
         callback(response.data, true);
     }).catch(
         error => {
@@ -151,7 +158,7 @@ export const CreateClass = (classPayload, callback) => (dispatch) => {
 export const UpdateClass = (classPayload, callback) => (dispatch) => {
     ServiceEngine.put(UPDATE_CLASS_ENDPOINT, classPayload).then(response => {
         //response.data
-        //dispatch(AddNewClass(response.data))
+        dispatch(AddNewClass(response.data))
         callback(response.data, true);
     }).catch(
         error => {
