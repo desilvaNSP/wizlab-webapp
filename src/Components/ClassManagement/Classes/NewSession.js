@@ -255,13 +255,15 @@ export const NewSession = (props) => {
                     {selectedSession == null ? <span>Create Session</span> : <span>Update Session</span>}
                 </div>
                 <div className="modal-detail__content">
-                    <div className='form-group'>
-                        <div className='form-group-col'>
-                            <ReactTableFullWidthStyles>
-                                <CommonTable columns={classColumns} data={common.Classes} onRowSelect={selectClassProfile} rowSelection={true} hiddenColumns={hiddenColumns} pagination={false} settings={false} globalsearch={false} downloadcsv={false} />
-                            </ReactTableFullWidthStyles>
+                    {selectedSession == null ?
+                        <div className='form-group'>
+                            <div className='form-group-col'>
+                                <ReactTableFullWidthStyles>
+                                    <CommonTable columns={classColumns} data={common.Classes} onRowSelect={selectClassProfile} rowSelection={true} hiddenColumns={hiddenColumns} pagination={false} settings={false} globalsearch={false} downloadcsv={false} />
+                                </ReactTableFullWidthStyles>
+                            </div>
                         </div>
-                    </div>
+                        : <></>}
                     <div className='form-group'>
                         <div className='form-group-col2'>
                             <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>

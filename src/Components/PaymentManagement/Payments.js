@@ -492,7 +492,7 @@ const Payments = props => {
                                 }}
                                 placeholder={`Search by Phone number or Name`}
                                 style={{
-                                    border: '0', width: "100%"
+                                    border: '0', width: "100%", float:"left"
                                 }}
                             />
                         </span>
@@ -567,15 +567,6 @@ const Payments = props => {
                 </div>
             </div>
             <ReactEditableTableFullWidthStyles>
-                {/* <RowDetailTable
-                    columns={columns}
-                    data={data}
-                    fetchData={fetchData}
-                    loading={loading}
-                    pageCount={pageCount}
-                    hiddenColumns={hiddenColumns}
-                    updateMyData={updateMyData}
-                    renderRowSubComponent={renderRowSubComponent} /> */}
                 <PaymentTable
                     columns={columns}
                     data={data}

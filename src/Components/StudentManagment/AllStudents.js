@@ -70,8 +70,12 @@ const EnrollmentUpdateComponent = ({ rowRecord }) => {
 
 const AllStudents = ({ }) => {
 
-    const [data, setData] = useState([])
     const [instituteId, setInstituteId] = useCookies(['institute_id']);
+    const [selectedKeyValue, setSelectedKeyValue] = useState(null);
+    const [data, setData] = useState([])
+    const [loading, setLoading] = React.useState(false)
+    const [pageCount, setPageCount] = React.useState(0)
+    const fetchIdRef = React.useRef(0)
 
     const hiddenColumns = ["id", "selection", "parentName"];
 
@@ -85,23 +89,33 @@ const AllStudents = ({ }) => {
         }
     }, [enrollments.Enrollments])
 
-    useEffect(() => {
+    const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
+        const fetchId = ++fetchIdRef.current
         var payload = {
             "instituteId": instituteId?.institute_id,
             "keyWord": "",
-            "pageSize": 50,
-            "pageNumber": 1
+            "pageSize": pageSize,
+            "pageNumber": pageIndex
         }
+        setLoading(true)
         dispatch(StartLoading("Getting enrollments"))
-        dispatch(GetAllEnrollments(payload, function (data, success) {
+        dispatch(GetAllEnrollments(payload, function (response, success) {
             if (success) {
-
-            } else {
-                //error handle
+                if (fetchId === fetchIdRef.current) {
+                    setPageCount(Math.ceil(1000 / pageSize))
+                }
             }
-            dispatch(StopLoading());
+            setLoading(false)
+            dispatch(StopLoading())
         }));
-    }, []);
+    }, [])
+
+    /**
+     * Event handling for apply filters and retrive class data.
+     */
+    const handleApplyOnClick = () => {
+
+    };
 
     // When our cell renderer calls updateMyData, we'll use
     // the rowIndex(ex: 9), columnId(ex: merchantName) and new value to update the
@@ -245,51 +259,22 @@ const AllStudents = ({ }) => {
             <div className='page-header'>
                 Student Enrollments
             </div>
-            {/* <div className='classes-filter-box'>
+            <div className='classes-filter-box'>
                 <div className='filter-box-row'>
-                    <div className='filter-box-column'>
-                        <FilterDropdown
-                            defaultList={[]}
-                            onItemChange={(item) => {
-                                console.log(item)
-                            }}
-                            initValue={"Teacher"}
-                            required={true}
-                            editable={true}
-                            warningMessage={"Updating course is not allowed"} />
-                    </div>
-                    <div className='filter-box-column'>
-                        <FilterDropdown
-                            defaultList={[]}
-                            onItemChange={(item) => {
-                                console.log(item)
-                            }}
-                            initValue={"Teacher"}
-                            required={true}
-                            editable={true}
-                            warningMessage={"Updating course is not allowed"} />
-                    </div>
-                    <div className='filter-box-column'>
-                        <FilterDropdown
-                            defaultList={[]}
-                            onItemChange={(item) => {
-                                console.log(item)
-                            }}
-                            initValue={"Teacher"}
-                            required={true}
-                            editable={true}
-                            warningMessage={"Updating course is not allowed"} />
-                    </div>
-                    <div className='filter-box-column'>
-                        <FilterDropdown
-                            defaultList={[]}
-                            onItemChange={(item) => {
-                                console.log(item)
-                            }}
-                            initValue={"Teacher"}
-                            required={true}
-                            editable={true}
-                            warningMessage={"Updating course is not allowed"} />
+                    <div className='filter-box-column' >
+                        <span className='global-filter'>
+                            <input
+                                value={selectedKeyValue}
+                                onChange={e => {
+                                    setSelectedKeyValue(e.target.value);
+                                    //onChange(e.target.value);
+                                }}
+                                placeholder={`Search by Phone number or Name`}
+                                style={{
+                                    border: '0', width: "100%"
+                                }}
+                            />
+                        </span>
                     </div>
                     <div className='filter-box-column apply-filter'>
                         <button
@@ -301,9 +286,18 @@ const AllStudents = ({ }) => {
                         </button>
                     </div>
                 </div>
-            </div> */}
+            </div>
             <ReactTableFullWidthStyles>
-                <GroupEnrollmentTable columns={columns} data={data} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} rowSelection={true} updateMyData={updateMyData} />
+                <GroupEnrollmentTable
+                    columns={columns}
+                    data={data}
+                    onRowSelect={(rows) => { }}
+                    hiddenColumns={hiddenColumns}
+                    rowSelection={true}
+                    fetchData={fetchData}
+                    loading={loading}
+                    pageCount={pageCount}
+                    updateMyData={updateMyData} />
             </ReactTableFullWidthStyles>
         </div>
     );
