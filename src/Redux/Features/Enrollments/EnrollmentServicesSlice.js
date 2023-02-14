@@ -12,7 +12,7 @@ import {
 export const EnrollmentServicesSlice = createSlice({
     name: 'enrollments',
     initialState: {
-        Enrollments: []
+        Enrollments: {}
     },
     reducers: {
         GetEnrollmentsToStore(state, action) {
@@ -23,7 +23,8 @@ export const EnrollmentServicesSlice = createSlice({
             };
         },
         UpdateEnrollment(state, action) {
-            var existingEndrollments = current(state).Enrollments
+            var enrollments = current(state).Enrollments
+            var existingEndrollments = enrollments.enrollments;
             var updatedEnrollment = action.payload;
             const updatedEnrollments = existingEndrollments.map(enrollment => {
                 if (updatedEnrollment.id == enrollment.id) {
@@ -35,7 +36,10 @@ export const EnrollmentServicesSlice = createSlice({
             });
             return {
                 ...state,
-                Enrollments: updatedEnrollments
+                Enrollments: {
+                    enrollments: updatedEnrollments,
+                    totalNumberOfEntries: enrollments.totalNumberOfEntries
+                }
             };
         }
     },

@@ -28,6 +28,7 @@ export const GroupEnrollmentTable = ({
   fetchData,
   loading,
   pageCount: controlledPageCount,
+  numberOfRecords,
   renderRowSubComponent
 }) => {
 
@@ -198,7 +199,7 @@ export const GroupEnrollmentTable = ({
               <td colSpan="10000">Loading...</td>
             ) : (
               <td colSpan="10000">
-                Showing {page.length} of ~{controlledPageCount * pageSize}{' '}
+                Showing {page.length} of ~{numberOfRecords}{' '}
                 results
               </td>
             )}

@@ -1402,7 +1402,7 @@ header .user-welcome-message {
 }
 
 .aside-menu-header__time {
-  text-align: right;
+  text-align: left;
   font-size: 34px;
   margin-bottom: 30px;
 }
@@ -1422,7 +1422,7 @@ header .user-welcome-message {
 .aside-menu-content {
   list-style-type: none;
   margin: 0;
-  padding: 0 15px;
+  /* padding: 0 15px; */
   font-size: 16px;
 }
 
@@ -1447,7 +1447,8 @@ header .user-welcome-message {
 
 .aside-menu-content__item:hover {
   cursor: pointer;
-  background-color: #FAFAFA;
+  background-color: #dfdfdf;
+  font-weight: bold;
 }
 
 .aside-menu-content__item-icon {
@@ -1744,6 +1745,13 @@ a.datatable--link:hover {
   border-radius: 5px;
   width: 100%;
 }
+
+.editable-input--cell:disabled {
+  background: #d0d0d0;
+  border-color: #d0d0d0 !important;
+  font-weight: 700;
+}
+
 
 .table-row--delete {
   width: 30px;

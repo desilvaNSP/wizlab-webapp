@@ -74,8 +74,8 @@ const AllStudents = ({ }) => {
     const [selectedKeyValue, setSelectedKeyValue] = useState(null);
     const [data, setData] = useState([])
     const [loading, setLoading] = React.useState(false)
+    const [tablePageSize, setTablePageSize] = React.useState(10)
     const [pageCount, setPageCount] = React.useState(0)
-    const fetchIdRef = React.useRef(0)
 
     const hiddenColumns = ["id", "selection", "parentName"];
 
@@ -84,27 +84,23 @@ const AllStudents = ({ }) => {
     const enrollments = useSelector((state) => state.enrollments);
 
     useEffect(() => {
-        if (enrollments.Enrollments != null) {
-            setData(enrollments.Enrollments)
+        if (enrollments.Enrollments.enrollments != null) {
+            setData(enrollments.Enrollments?.enrollments)
+            setPageCount(Math.ceil(enrollments.Enrollments?.totalNumberOfEntries / tablePageSize))
         }
     }, [enrollments.Enrollments])
 
     const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
-        const fetchId = ++fetchIdRef.current
         var payload = {
             "instituteId": instituteId?.institute_id,
             "keyWord": "",
             "pageSize": pageSize,
-            "pageNumber": pageIndex
+            "pageNumber": pageIndex + 1
         }
         setLoading(true)
+        setTablePageSize(pageSize)
         dispatch(StartLoading("Getting enrollments"))
         dispatch(GetAllEnrollments(payload, function (response, success) {
-            if (success) {
-                if (fetchId === fetchIdRef.current) {
-                    setPageCount(Math.ceil(1000 / pageSize))
-                }
-            }
             setLoading(false)
             dispatch(StopLoading())
         }));
@@ -277,7 +273,9 @@ const AllStudents = ({ }) => {
                         </span>
                     </div>
                     <div className='filter-box-column apply-filter'>
-                        <button
+                        <button style={{
+                            float:'left'
+                            }}
                             onClick={() => handleApplyOnClick()}
                             className="btn btn--primary"
                             type="submit"
@@ -297,7 +295,8 @@ const AllStudents = ({ }) => {
                     fetchData={fetchData}
                     loading={loading}
                     pageCount={pageCount}
-                    updateMyData={updateMyData} />
+                    updateMyData={updateMyData} 
+                    numberOfRecords={enrollments.Enrollments?.totalNumberOfEntries}/>
             </ReactTableFullWidthStyles>
         </div>
     );

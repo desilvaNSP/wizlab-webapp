@@ -33,12 +33,12 @@ const Slider = props => {
         <aside className="aside-menu" ref={wrapperRef}>
             <div className="aside-menu-header">
                 <div class="aside-menu-header__time">
-                    <Clock format={'h:mm A'} ticking={true} timezone={'Europe/Stockholm'} />
+                    <Clock format={'hh:mm:ss A'} ticking={true} timezone={'Asia/Colombo'} />
                 </div>
                 <div class="aside-menu-header__date">
-                    <Clock date={new Date()} format={'MMMM D, YYYY'} timezone={'Europe/Stockholm'} />
+                    <Clock date={new Date()} format={'MMMM D, YYYY'} timezone={'Asia/Colombo'} />
                 </div>
-                <div className="aside-menu-header__country">Europe/Stockholm</div>
+                <div className="aside-menu-header__country">Asia/Colombo</div>
             </div>
             <ul className="aside-menu-content">
                 <MenuItem item={{ "path": "/", "name": "Dashboard" }} hideSlider={handleClose} />

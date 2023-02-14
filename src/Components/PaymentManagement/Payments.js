@@ -104,34 +104,36 @@ const Payments = props => {
     const [tablePageIndex, setTablePageIndex] = React.useState(0)
     const [tablePageSize, setTablePageSize] = React.useState(10)
     const [pageCount, setPageCount] = React.useState(0)
-    const fetchIdRef = React.useRef(0)
 
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
     const payment = useSelector((state) => state.payment);
 
     useEffect(() => {
-        setData(payment.FilteredPayments)
+        if(payment.FilteredPayments?.studentPaymentHistoryResults != null){
+            setData(payment.FilteredPayments?.studentPaymentHistoryResults)
+            setPageCount(Math.ceil(payment.FilteredPayments?.totalNumberOfEntries / tablePageSize))
+        }
     }, [payment.FilteredPayments])
 
     const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
-        const fetchId = ++fetchIdRef.current
         var payload = {
             "instituteId": instituteId?.institute_id,
+            "courseId": selectedCourse?.id,
+            "subjectId": selectedSubject?.id,
+            "teacherId": selectedTeacher?.id,
             "year": selectedYear,
             "month": selectedMonth,
+            "paymentStatus": selectedPaymentStatus?.key,
+            "keyWord": selectedKeyValue,
             "pageSize": pageSize,
             "pageNumber": pageIndex + 1
         }
 
         setLoading(true)
+        setTablePageSize(pageSize);
         dispatch(ShowLoading("Loading Payment Records.."))
         dispatch(SearchPayments(payload, function (response, success) {
-            if (success) {
-                if (fetchId === fetchIdRef.current) {
-                    setPageCount(Math.ceil(1000 / pageSize))
-                }
-            }
             setLoading(false)
             dispatch(StopLoading())
         }));
@@ -213,7 +215,7 @@ const Payments = props => {
                 disableFilters: true,
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
-                        <EditableInputNumberCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData}></EditableInputNumberCell>
+                        <EditableInputNumberCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData} disabled={row.original?.isFullyPaid}></EditableInputNumberCell>
                     )
                 }
             },
@@ -223,7 +225,7 @@ const Payments = props => {
                 width: "10%",
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
-                        <EditableInputCurrencyCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData}></EditableInputCurrencyCell>
+                        <EditableInputCurrencyCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData} disabled={row.original?.isFullyPaid}></EditableInputCurrencyCell>
                     )
                 },
                 disableFilters: true
@@ -253,7 +255,7 @@ const Payments = props => {
                 width: "10%",
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
-                        <EditableInputCurrencyCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData}></EditableInputCurrencyCell>
+                        <EditableInputCurrencyCell initialValue={""}  placeholderText={row.original?.isFullyPaid ? "Already fully paid." : "Enter amount"} row={row} columnId={id} updateMyData={updateMyData} disabled={row.original?.isFullyPaid} ></EditableInputCurrencyCell>
                     )
                 }
             },
@@ -265,7 +267,7 @@ const Payments = props => {
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
                         <div className="payment--save">
-                            <EditableCheckBoxCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData}></EditableCheckBoxCell>
+                            <EditableCheckBoxCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData} disabled={row.original?.isFullyPaid}></EditableCheckBoxCell>
                         </div>
                     )
                 }
@@ -318,7 +320,7 @@ const Payments = props => {
                 setSelectedTeacher(item !== null ? item : null)
                 break;
             case PAYMENT_STATUS_SELECTION:
-                selectedPaymentStatus(item !== null ? item : null)
+                setSelectedPaymentStatus(item !== null ? item : null)
                 break;
             default:
                 break;
@@ -347,7 +349,7 @@ const Payments = props => {
             "teacherId": selectedTeacher?.id,
             "year": selectedYear,
             "month": selectedMonth,
-            "paymentStatus": selectedPaymentStatus?.key,
+            "paymentStatus": selectedPaymentStatus?.id,
             "keyWord": selectedKeyValue,
             "pageSize": tablePageSize,
             "pageNumber": tablePageIndex
@@ -509,7 +511,7 @@ const Payments = props => {
                     <div className='filter-box-column'>
                         <FilterDropdown
                             title="Payment Status"
-                            selection={SUBJECT_SELECTION}
+                            selection={PAYMENT_STATUS_SELECTION}
                             defaultList={getPaymentStatuesList()}
                             onItemChange={handleItemChange}
                             initValue={""}
@@ -575,6 +577,7 @@ const Payments = props => {
                     pageCount={pageCount}
                     updateMyData={updateMyData}
                     renderRowSubComponent={renderRowSubComponent}
+                    numberOfRecords={payment.FilteredPayments?.totalNumberOfEntries}
                 />
             </ReactEditableTableFullWidthStyles>
         </div>

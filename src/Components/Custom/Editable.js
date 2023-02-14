@@ -7,10 +7,7 @@ export const EditableInputTextCell = ({
     row: { index, original, id },
     columnId,
     updateMyData,
-    isLink = false,
-    linkClickEvent,
-    dbUpdate = true,
-    dbAdd = true,
+    disabled=false,
     type = "text",
     placeholderText = ""
 }) => {
@@ -36,7 +33,7 @@ export const EditableInputTextCell = ({
         setValue(initialValue)
     }, [initialValue])
 
-    return <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type={type} min="1" max="20" placeholder={placeholderText} />
+    return <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type={type} min="1" max="20" placeholder={placeholderText} disabled={disabled}/>
 }
 
 // Create an editable cell renderer
@@ -45,10 +42,7 @@ export const EditableInputCurrencyCell = ({
     row: { index, original, id },
     columnId,
     updateMyData,
-    isLink = false,
-    linkClickEvent,
-    dbUpdate = true,
-    dbAdd = true,
+    disabled=false,
     type = "text",
     placeholderText = ""
 }) => {
@@ -86,7 +80,7 @@ export const EditableInputCurrencyCell = ({
         setValue(initialValue)
     }, [initialValue])
 
-    return <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type={type} min="1" max="20" placeholder={placeholderText} />
+    return <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type={type} min="1" max="20" placeholder={placeholderText} disabled={disabled}/>
 }
 
 // Create an editable cell renderer
@@ -94,7 +88,8 @@ export const EditableCheckBoxCell = ({
     initialValue,
     row: { index, original, id },
     columnId,
-    updateMyData
+    updateMyData,
+    disabled=false
 }) => {
     // We need to keep and update the state of the cell normally
     const [value, setValue] = useState(initialValue)
@@ -119,7 +114,7 @@ export const EditableCheckBoxCell = ({
         setValue(initialValue)
     }, [initialValue])
 
-    return <input className='custom-input custom-checkbox' checked={value} onChange={onChange} onBlur={onBlur} type="checkbox" />
+    return <input className='editable-input--cell custom-checkbox' checked={value} onChange={onChange} onBlur={onBlur} type="checkbox" disabled={disabled}/>
 }
 
 export const EditableInputNumberCell = ({
@@ -127,10 +122,7 @@ export const EditableInputNumberCell = ({
     row: { index, original, id },
     columnId,
     updateMyData,
-    isLink = false,
-    linkClickEvent,
-    dbUpdate = true,
-    dbAdd = true,
+    disabled=false,
     max,
     min = 0
 }) => {
@@ -155,7 +147,7 @@ export const EditableInputNumberCell = ({
         setValue(initialValue)
     }, [initialValue])
 
-    return <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type="number" min={min} max={max} />
+    return <input className='editable-input--cell' value={value} onChange={onChange} onBlur={onBlur} type="number" min={min} max={max} disabled={disabled}/>
 }
 
 // Create an editable cell renderer

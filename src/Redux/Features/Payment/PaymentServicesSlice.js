@@ -13,18 +13,19 @@ import {
 export const PaymentServicesSlice = createSlice({
     name: 'payment',
     initialState: {
-        FilteredPayments: []
+        FilteredPayments: {}
     },
     reducers: {
         UpdateFilteredPayments(state, action) {
             let obj = action.payload;
             return {
                 ...state,
-                FilteredPayments: obj.studentPaymentHistoryResults
+                FilteredPayments: obj
             };
         },
         UpdatePaymentStatus(state, action) {
-            var existingPayments = current(state).FilteredPayments
+            var filterPayments = current(state).FilteredPayments;
+            var existingPayments = filterPayments?.studentPaymentHistoryResults
             var obj = action.payload;
             const updatedFilteredPayments = existingPayments.map(x => {
                 if (obj.enrollmentId == x.enrollmentId) {
@@ -35,7 +36,11 @@ export const PaymentServicesSlice = createSlice({
             });
             return {
                 ...state,
-                FilteredPayments: updatedFilteredPayments
+                FilteredPayments: {
+                    totalNumberOfEntries: existingPayments.totalNumberOfEntries,
+                    studentPaymentHistoryResults:updatedFilteredPayments
+                }
+                
             };
         }
     },
@@ -46,6 +51,7 @@ export const { UpdateFilteredPayments, UpdatePaymentStatus } = PaymentServicesSl
 export const SearchPayments = (paymentSearchPayload, callback) => (dispatch) => {
     ServiceEngine.post(PAYMENT_SEARCH_ENDPOINT, paymentSearchPayload).then(response => {
         //response.data
+        console.log(response.data)
         dispatch(UpdateFilteredPayments(response.data))
         callback(response.data, true);
     }).catch(
