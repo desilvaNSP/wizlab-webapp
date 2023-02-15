@@ -75,11 +75,18 @@ export const CommonServicesSlice = createSlice({
                 ...state,
                 Classes: [...state.Classes, obj.classobj]
             };
-        }
+        },
+        AddClassRoom:(state, action) => {
+            let obj = action.payload;
+            return {
+                ...state,
+                ClassRooms: [...state.ClassRooms, obj]
+            };
+        },
     },
 })
 
-export const { ShowLoading, HideLoading, UpdateMetaData, AddNewCourse, AddNewClass } = CommonServicesSlice.actions
+export const { ShowLoading, HideLoading, UpdateMetaData, AddNewCourse, AddNewClass, AddClassRoom } = CommonServicesSlice.actions
 
 
 export const StartLoading = (message) => (dispatch) => {
@@ -125,7 +132,8 @@ export const CreateCourse = (coursePayload, callback) => (dispatch) => {
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    //error.response.data
+                    console.log(error.response.data)
+                    toast.error("Creating course failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");
@@ -141,13 +149,14 @@ export const CreateClass = (classPayload, callback) => (dispatch) => {
         callback(response.data, true);
     }).catch(
         error => {
+            console.log(error.response)
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
                     toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    //error.response.data
+                    toast.error("Creating class failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");
@@ -169,7 +178,7 @@ export const UpdateClass = (classPayload, callback) => (dispatch) => {
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    //error.response.data
+                    toast.error("Updating class failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");
@@ -183,7 +192,7 @@ export const UpdateClass = (classPayload, callback) => (dispatch) => {
 export const CreateClassRoom = (classRoomPayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_CLASSROOM_ENDPOINT, classRoomPayload).then(response => {
         //response.data
-        //dispatch(AddNewClass(response.data))
+        dispatch(AddClassRoom(response.data))
         callback(response.data, true);
     }).catch(
         error => {
@@ -193,7 +202,7 @@ export const CreateClassRoom = (classRoomPayload, callback) => (dispatch) => {
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    //error.response.data
+                    toast.error("Creating class room failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");
@@ -215,7 +224,7 @@ export const CreateSession = (sessionPayload, callback) => (dispatch) => {
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    //error.response.data
+                    toast.error("Creating session failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");
@@ -235,7 +244,7 @@ export const GetSessionByClassId = (classId, callback) => (dispatch) => {
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    //error.response.data
+                    toast.error("Get sessions by class failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");
@@ -255,7 +264,7 @@ export const GetSessions = (payload, callback) => (dispatch) => {
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    //error.response.data
+                    toast.error("Get sessions failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");

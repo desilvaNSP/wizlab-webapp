@@ -8,6 +8,8 @@ import Slider from "./Components/Slider/Slider";
 import { useDispatch } from "react-redux";
 import useCookies from "react-cookie/cjs/useCookies";
 import { FetchMetaData, StartLoading, StopLoading } from "./Redux/Features/Common/CommonServicesSlice";
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = props => {
   const [sliderOpen, setSliderOpen] = useState(false);
@@ -87,6 +89,7 @@ const App = props => {
       </div>
       */}
     {isTokenExists() ? renderContent() : redirectToLoginPage()}
+    <ToastContainer autoClose={4000} />
   </div>
 };
 
