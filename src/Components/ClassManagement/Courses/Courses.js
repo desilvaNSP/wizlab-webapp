@@ -8,10 +8,10 @@ const Courses = props => {
     const [showCourseCreationPopup, setShowCourseCreationPopup] = useState(false)
     const [selectedCourse, setSelectedCourse] = useState(null);
 
-    const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
 
     const triggerStartNewCourse = () => {
+        setSelectedCourse(null)
         setShowCourseCreationPopup(true)
     }
 
@@ -26,6 +26,12 @@ const Courses = props => {
 
     return (
         <div className="classes-container">
+            {common.IsLoading &&
+                <div className="main-loader"  >
+                    <img src="/assets/images/loading.svg" alt="loader" />
+                    <div className="main-loader__txt">{common.LoadingMessage}</div>
+                </div>
+            }
             <div className='page-header'>
                 <div className="add-record" onClick={() => triggerStartNewCourse()}>
                     <img src="/assets/icons/icon-add.svg" alt="Start New Course" />
@@ -33,22 +39,6 @@ const Courses = props => {
                 </div>
             </div>
             <div className='widget-group'>
-                {/* <div className='widget-row'>
-                    <span className='global-filter'>
-                        Search:{' '}
-                        <input
-                            value={1 || ""}
-                            onChange={e => {
-                                //setValue(e.target.value);
-                                //onChange(e.target.value);
-                            }}
-                            placeholder={`${1} records...`}
-                            style={{
-                                border: '0',
-                            }}
-                        />
-                    </span>
-                </div> */}
                 <div className='widget-row'>
                     {common.Courses.map((course) =>
                         <div className="tile-widget" placeholder="Class Informations" onClick={() => { triggerUpdateCourse(course) }}>

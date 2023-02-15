@@ -8,7 +8,7 @@ import nextIcon from '../Custom/icons/next-icon.svg'
 import '../Custom/custom.css'
 
 
-export const DateTimePicker = ({ title, initDateTime, selection, onDateTimeChange, valid = false}) => {
+export const DateTimePicker = ({ title, initDateTime, selection, onDateTimeChange, valid = true}) => {
     const [listOpen, setListOpen] = useState(false);
     const [dateTime, setDateTime] = useState(initDateTime);
     const [time, setTime] = useState(dateFns.format(initDateTime, "HH:mm"));

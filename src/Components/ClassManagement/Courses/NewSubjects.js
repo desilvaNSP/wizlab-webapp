@@ -1,5 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react'
-import update from 'react-addons-update';
+import React, { useState } from 'react'
 import { EditableInputTextCell } from '../../Custom/Editable';
 import { ReactEditableTableFullWidthStyles } from '../../Custom/StyleComponents';
 import { SubjectsTable } from './Table/SubjectsTable';
@@ -7,14 +6,6 @@ import { SubjectsTable } from './Table/SubjectsTable';
 export const NewSubjects = props => {
     const { selectedLevel, levelInex, updateLevel } = props
     const [data, setData] = useState(selectedLevel.subjects)
-   
-    //const auth = useSelector((state) => state.auth);
-    // useDispatch() hook is equivalent of mapDispatchToProps.
-    //const dispatch = useDispatch();
-
-    // useEffect(() => {
-
-    // }, [])
 
     // listener for the add new row on the table.
     // added new row at the top of the table.
@@ -49,11 +40,10 @@ export const NewSubjects = props => {
         })
         setData(dataUpdated)
         updateLevel({
-            "description": selectedLevel.description,
+            "desc": selectedLevel.desc,
             "subjects": dataUpdated
         }, levelInex)
     }
-
 
     const hiddenColumns = ["id"];
 

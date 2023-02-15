@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { useTable, usePagination, useRowSelect, useFilters, useExpanded } from 'react-table'
-import { DefaultColumnFilter } from '../../Custom/Filters'
+import { useTable, usePagination, useGlobalFilter, useRowSelect, useFilters } from 'react-table'
+import { DefaultColumnFilter, GlobalFilter } from '../../../Custom/Filters'
 import { matchSorter } from 'match-sorter'
 
 const IndeterminateCheckbox = React.forwardRef(
@@ -20,7 +20,8 @@ const IndeterminateCheckbox = React.forwardRef(
     }
 )
 
-export const RowDetailTable = ({ columns, data, onRowSelect, hiddenColumns, updateMyData, renderRowSubComponent, rowSelection = false }) => {
+
+export const EnrollmentTable = ({ columns, data, onRowSelect, hiddenColumns, updateMyData, rowSelection = false }) => {
 
     const [showContextMenu, setShowContextMenu] = useState(false);
 
@@ -55,8 +56,8 @@ export const RowDetailTable = ({ columns, data, onRowSelect, hiddenColumns, upda
     const defaultColumn = React.useMemo(
         () => ({
             // Let's set up our default Filter UI
-            minWidth: 20,
-            width: 100,
+            minWidth: 30,
+            width: 150,
             maxWidth: 400,
             Filter: DefaultColumnFilter,
         }),
@@ -92,8 +93,9 @@ export const RowDetailTable = ({ columns, data, onRowSelect, hiddenColumns, upda
         state,
         getToggleHideAllColumnsProps,
         toggleAllRowsSelected,
-        visibleColumns,
-        state: { pageIndex, pageSize, expanded, selectedRowIds },
+        setGlobalFilter,
+        preGlobalFilteredRows,
+        state: { pageIndex, pageSize, selectedRowIds },
     } = useTable(
         {
             columns,
@@ -104,9 +106,31 @@ export const RowDetailTable = ({ columns, data, onRowSelect, hiddenColumns, upda
             updateMyData
         },
         useFilters, // useFilters!
-        useExpanded,
+        useGlobalFilter, // useGlobalFilter!
         usePagination,
-        useRowSelect
+        useRowSelect,
+        hooks => {
+            hooks.visibleColumns.push(columns => [
+                // Let's make a column for selection
+                {
+                    id: 'selection',
+                    // The header can use the table's getToggleAllRowsSelectedProps method
+                    // to render a checkbox
+                    Header: ({ getToggleAllPageRowsSelectedProps }) => (
+                        <div>
+                        </div>
+                    ),
+                    // The cell can use the individual row's getToggleRowSelectedProps method
+                    // to the render a checkbox
+                    Cell: ({ row }) => (
+                        <div>
+                            <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+                        </div>
+                    ),
+                },
+                ...columns,
+            ])
+        }
     )
 
     React.useEffect(() => {
@@ -164,30 +188,33 @@ export const RowDetailTable = ({ columns, data, onRowSelect, hiddenColumns, upda
     // Render the UI for your table
     return (
         <>
-            <div className='' style={{ height: "25px", marginBottom: "10px" }}>
-                <div className="table-setting-icon" onClick={() => showContextMenuEvent()}>
-                    <img src='/assets/images/settings-icon.png' />
-                </div>
-                <div className="table-setting-icon" onClick={(e) => exportToCsv(e)}>
-                    <img src='/assets/images/download-icon.png' alt='Export' />
-                </div>
-                {showContextMenu && <div className='column-hiding-contextmenu'>
-                    <div>
-                        <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} /> Toggle
-                        All
-                    </div>
-                    {allColumns.map(column => (
-                        <div key={column.id}>
-                            <label>
-                                <input type="checkbox" {...column.getToggleHiddenProps()} />{' '}
-                                {column.id}
-                            </label>
-                        </div>
-                    ))}
-                    <br />
-                </div>
-                }
+            <div className="table-setting-icon" onClick={() => showContextMenuEvent()}>
+                <img src='/assets/images/settings-icon.png' />
             </div>
+            <div className="table-setting-icon" onClick={(e) => exportToCsv(e)}>
+                <img src='/assets/images/download-icon.png' alt='Export' />
+            </div>
+            {showContextMenu && <div className='column-hiding-contextmenu'>
+                <div>
+                    <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} /> Toggle
+                    All
+                </div>
+                {allColumns.map(column => (
+                    <div key={column.id}>
+                        <label>
+                            <input type="checkbox" {...column.getToggleHiddenProps()} />{' '}
+                            {column.id}
+                        </label>
+                    </div>
+                ))}
+                <br />
+            </div>
+            }
+            <GlobalFilter
+                preGlobalFilteredRows={preGlobalFilteredRows}
+                globalFilter={state.globalFilter}
+                setGlobalFilter={setGlobalFilter}
+            />
             <table className='transaction-table' {...getTableProps()}>
                 <thead>
                     {headerGroups.map(headerGroup => (
@@ -207,36 +234,26 @@ export const RowDetailTable = ({ columns, data, onRowSelect, hiddenColumns, upda
                         prepareRow(row)
                         var className = row.isSelected ? 'row row--highlighted' : 'row';
                         return (
-                            <React.Fragment >
-                                <tr {...row.getRowProps()} className={className} onClick={() => {
-                                    // This below two line change for enable one row selection for the entire table
-                                    toggleAllRowsSelected(false)
-                                    if (row.isSelected) {
-                                        row.toggleRowSelected(false)
-                                    } else {
-                                        row.toggleRowSelected(true)
-                                    }
-                                }}>
-                                    {row.cells.map(cell => {
-                                        return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                                    })}
-                                </tr>
-                                {row.isExpanded ? (
-                                    <tr>
-                                        <td colSpan={visibleColumns.length}>
-                                            {renderRowSubComponent({ row })}
-                                        </td>
-                                    </tr>
-                                ) : null}
-                            </React.Fragment>
+                            <tr {...row.getRowProps()} className={className} onClick={() => {
+                                // This below two line change for enable one row selection for the entire table
+                                toggleAllRowsSelected(false)
+                                if (row.isSelected) {
+                                    row.toggleRowSelected(false)
+                                } else {
+                                    row.toggleRowSelected(true)
+                                }
+                            }}>
+                                {row.cells.map(cell => {
+                                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                                })}
+                            </tr>
                         )
                     }) :
                         <tr>
-                            <td className='table-no-results' colSpan="15">No result found</td>
+                            <td className='table-no-results' colSpan="15">No results found</td>
                         </tr>}
                 </tbody>
             </table>
-
             {/* 
           Pagination can be built however you'd like. 
           This is just a very basic UI implementation:

@@ -1,16 +1,16 @@
 let CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net"
 
 switch (process.env.REACT_APP_SERVER_TYPE) {
-  case "dev":
+  case "Development":
     CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net";
     break;
-  case "qa":
+  case "UAT":
+    CLASSROOM_ADMIN_LISTENER = "https://classroom-be-uat.azurewebsites.net";
+    break;
+  case "Production":
     CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net";
     break;
-  case "prod":
-    CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net";
-    break;
-  case "local":
+  case "Local":
     CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net";
     break;
   default:
@@ -42,11 +42,32 @@ export const ERROR_MESSAGE_403_FORBIDDEN = 'You are not authorized to perform th
 //Admin Services
 export const FETCH_TOKEN_ENDPOINT = '/api/v1/admin/user/login';
 export const METADATA_ENDPOINT = '/api/v1/admin/metadata'
+//institute
+export const CREATE_INSTITUTE_ENDPOINT = '/api/v1/admin/institute'
+export const GET_INSTITUTE_ENDPOINT = '/api/v1/admin/institute'
+//portal users
+export const CREATE_USER_ENDPOINT = '/api/v1/admin/user'
+//courses
 export const CREATE_COURSE_ENDPOINT = '/api/v1/admin/course'
-export const CREATE_TEACHER_ENDPOINT = '/api/v1/admin/teacher'
+export const GET_COURSE_BYID_ENDPOINT = '/api/v1/admin/courseinfo'
+//classes
 export const CREATE_CLASS_ENDPOINT = '/api/v1/admin/class'
+export const UPDATE_CLASS_ENDPOINT = '/api/v1/admin/class'
+export const DELETE_CLASS_ENDPOINT = '/api/v1/admin/class'
+//classrooms
 export const CREATE_CLASSROOM_ENDPOINT = '/api/v1/admin/classroom'
+export const UPDATE_CLASSROOM_ENDPOINT = '/api/v1/admin/classroom'
+export const DELETE_CLASSROOM_ENDPOINT = '/api/v1/admin/classroom'
+//sessions
 export const CREATE_SESSION_ENDPOINT = '/api/v1/admin/session'
-
-export const PAYMENT_SUBMIT_ENDPOINT = '/api/v1/payment/submit'
+export const GET_SESSIONS_BY_CLASSID_ENDPOINT = '/api/v1/admin/sessionByClassId'
+export const GET_ALL_SESSIONS_ENDPOINT = '/api/v1/admin/sessions/search'
+//student's enrollments
+export const GET_ENROLLMENTS_BY_CLASSID_ENDPOINT = '/api/v1/admin/class/enrollments'
+export const UPDATE_ENROLLMENT_ENDPOINT = '/api/v1/admin/enrollment'
+export const GET_ALL_STUDENTS_ENDPOINT = '/api/v1/admin/enrollments/search'
+//payments
+export const PAYMENT_UPDATE_ENDPOINT = '/api/v1/payment/update'
 export const PAYMENT_SEARCH_ENDPOINT = '/api/v1/payment/search'
+//teachers
+export const CREATE_TEACHER_ENDPOINT = '/api/v1/admin/teacher'

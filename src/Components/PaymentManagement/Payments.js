@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import { ReactEditableTableFullWidthStyles } from "../Custom/StyleComponents";
-import { EditableCheckBoxCell, EditableInputCurrencyCell, EditableInputTextCell } from "../Custom/Editable";
-import { RowDetailTable } from "./Table/RowDetailTable";
+import { EditableCheckBoxCell, EditableInputCurrencyCell, EditableInputNumberCell, EditableInputTextCell } from "../Custom/Editable";
 import upIcon from '../Custom/icons/up.svg'
 import downIcon from '../Custom/icons/down.svg'
 import './Payments.css'
 import FilterDropdown from "../Custom/FilterDropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { MonthPicker } from "../Custom/MonthPicker";
-import { PaymentSubmit, SearchPayments } from "../../Redux/Features/Payment/PaymentServicesSlice";
+import { PaymentUpdate, SearchPayments } from "../../Redux/Features/Payment/PaymentServicesSlice";
+import { ShowLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
+import { useCookies } from "react-cookie";
+import { format } from "date-fns";
+import { PaymentTable } from "./Table/PaymentTable";
 
 const PaymentSubmitComponent = ({ rowRecord }) => {
 
@@ -25,9 +28,11 @@ const PaymentSubmitComponent = ({ rowRecord }) => {
             "year": row.original?.year,
             "month": row.original?.month,
             "paidAmount": row.original?.payingAmount,
+            "dueAmount": row.original?.dueAmount,
+            "paymentDueDate": row.original?.paymentDueDate,
             "isFullyPaid": row.original?.isFullyPaid
         }
-        dispatch(PaymentSubmit(payload, function (response, success) {
+        dispatch(PaymentUpdate(payload, function (response, success) {
             setIsLoading(false)
             if (success) {
                 setCallback(1)
@@ -55,9 +60,10 @@ const PaymentSubmitComponent = ({ rowRecord }) => {
             <button
                 onClick={() => payPayment(rowRecord)}
                 className="btn btn--primary"
+                disabled={rowRecord.original?.isFullyPaid}
                 type="submit"
             >
-                Pay
+                Update
             </button>
             <div class={loaderClassName}></div>
             <div class={messageClassName}></div>
@@ -78,7 +84,6 @@ const Payments = props => {
         "July", "August", "September", "October", "November", "December"
     ];
 
-
     const hiddenColumns = ["id"];
 
     var today = new Date()
@@ -92,16 +97,49 @@ const Payments = props => {
     const [selectedMonth, setSelectedMonth] = useState(today.getMonth());
     const [selectedYear, setSelectedYear] = useState(today.getFullYear());
 
+    const [instituteId, setInstituteId] = useCookies(['institute_id']);
+
     const [data, setData] = useState([]);
+    const [loading, setLoading] = React.useState(false)
+    const [tablePageIndex, setTablePageIndex] = React.useState(0)
+    const [tablePageSize, setTablePageSize] = React.useState(10)
+    const [pageCount, setPageCount] = React.useState(0)
 
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
-    const auth = useSelector((state) => state.auth);
     const payment = useSelector((state) => state.payment);
 
     useEffect(() => {
-        setData(payment.FilteredPayments)
+        if(payment.FilteredPayments?.studentPaymentHistoryResults != null){
+            setData(payment.FilteredPayments?.studentPaymentHistoryResults)
+            setPageCount(Math.ceil(payment.FilteredPayments?.totalNumberOfEntries / tablePageSize))
+        }
     }, [payment.FilteredPayments])
+
+    const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
+        var payload = {
+            "instituteId": instituteId?.institute_id,
+            "courseId": selectedCourse?.id,
+            "subjectId": selectedSubject?.id,
+            "teacherId": selectedTeacher?.id,
+            "year": selectedYear,
+            "month": selectedMonth,
+            "paymentStatus": selectedPaymentStatus?.key,
+            "keyWord": selectedKeyValue,
+            "pageSize": pageSize,
+            "pageNumber": pageIndex + 1
+        }
+
+        setLoading(true)
+        setTablePageSize(pageSize);
+        dispatch(ShowLoading("Loading Payment Records.."))
+        dispatch(SearchPayments(payload, function (response, success) {
+            setLoading(false)
+            dispatch(StopLoading())
+        }));
+    }, [])
+
+    var formatDate = "yyyy-MM-dd HH:mm:ss";
 
     // When our cell renderer calls updateMyData, we'll use
     // the rowIndex(ex: 9), columnId(ex: merchantName) and new value to update the
@@ -174,14 +212,21 @@ const Payments = props => {
                 Header: 'Due Date',
                 accessor: 'paymentDueDate',
                 width: "5%",
-                disableFilters: true
+                disableFilters: true,
+                Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
+                    return (
+                        <EditableInputNumberCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData} disabled={row.original?.isFullyPaid}></EditableInputNumberCell>
+                    )
+                }
             },
             {
                 Header: 'Due Amount',
-                id: 'dueAmount',
+                accessor: 'dueAmount',
                 width: "10%",
-                accessor: data => {
-                    return data.dueAmount.toFixed(2);
+                Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
+                    return (
+                        <EditableInputCurrencyCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData} disabled={row.original?.isFullyPaid}></EditableInputCurrencyCell>
+                    )
                 },
                 disableFilters: true
             },
@@ -210,7 +255,7 @@ const Payments = props => {
                 width: "10%",
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
-                        <EditableInputCurrencyCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData}></EditableInputCurrencyCell>
+                        <EditableInputCurrencyCell initialValue={""}  placeholderText={row.original?.isFullyPaid ? "Already fully paid." : "Enter amount"} row={row} columnId={id} updateMyData={updateMyData} disabled={row.original?.isFullyPaid} ></EditableInputCurrencyCell>
                     )
                 }
             },
@@ -222,15 +267,14 @@ const Payments = props => {
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
                         <div className="payment--save">
-                            <EditableCheckBoxCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData}></EditableCheckBoxCell>
+                            <EditableCheckBoxCell initialValue={initialValue} row={row} columnId={id} updateMyData={updateMyData} disabled={row.original?.isFullyPaid}></EditableCheckBoxCell>
                         </div>
                     )
                 }
             },
-
             {
-                Header: '',
-                accessor: 'pay',
+                Header: 'Action',
+                accessor: 'Update',
                 disableFilters: true,
                 width: "5%",
                 Cell: ({ value: initialValue, row: row, column: { id } }) => {
@@ -262,7 +306,6 @@ const Payments = props => {
                 break;
             case LEVEL_SELECTION:
                 var levelObj = null
-                console.log("selectedCourse MM", selectedCourse)
                 selectedCourse?.levels.forEach((level, index) => {
                     if (level.id == item.id) {
                         levelObj = level;
@@ -277,7 +320,7 @@ const Payments = props => {
                 setSelectedTeacher(item !== null ? item : null)
                 break;
             case PAYMENT_STATUS_SELECTION:
-                selectedPaymentStatus(item !== null ? item : null)
+                setSelectedPaymentStatus(item !== null ? item : null)
                 break;
             default:
                 break;
@@ -295,62 +338,62 @@ const Payments = props => {
         setSelectedYear(val.getFullYear())
     }
 
-
-    /**
-     * 
-     * @param {Object} item selected item of the dropdown list
-     * @param {String} key used to selected desired dropdown component
-     */
-    const resetThenSet = (item, key) => {
-
-    };
-
     /**
      * Event handling for apply filters and retrive class data.
      */
     const handleApplyOnClick = () => {
-        console.log(auth)
         var payload = {
-            "instituteId": auth.InstituteId,
-            //"courseId": selectedCourse?.id,
-            //"subjectId": selectedSubject?.id,
-            //"teacherId": selectedTeacher?.id,
+            "instituteId": instituteId?.institute_id,
+            "courseId": selectedCourse?.id,
+            "subjectId": selectedSubject?.id,
+            "teacherId": selectedTeacher?.id,
             "year": selectedYear,
             "month": selectedMonth,
-            "paymentStatus": selectedPaymentStatus?.key,
+            "paymentStatus": selectedPaymentStatus?.id,
             "keyWord": selectedKeyValue,
-            "pageSize": 10,
-            "pageNumber": 1
+            "pageSize": tablePageSize,
+            "pageNumber": tablePageIndex
         }
 
+        dispatch(ShowLoading("Loading Payment Records.."))
         dispatch(SearchPayments(payload, function (response, success) {
             if (success) {
-
+                //success handle
             } else {
                 //error handle
             }
+            dispatch(StopLoading())
         }));
     };
 
     // Create a function that will render our row sub components
     const renderRowSubComponent = React.useCallback(
         ({ row }) => (
-            <DetailComponent></DetailComponent>
+            <DetailComponent row={row}></DetailComponent>
         ),
         []
     )
 
-    const DetailComponent = (props) => {
+    const DetailComponent = ({ row }) => {
+        console.log(row.original)
+        var details = row.original;
         return (
             <div className='detail-container container'>
                 <div className='cont-row'>
                     <div className='cont-3-column col-1'>
+                        {details?.payments.length > 0 ? details?.payments.map((logHistory, index) =>
+                            <div>
+                                <label>Payment Date : </label>
+                                <span>{format(new Date(logHistory.paymentDate), formatDate)}</span>
+                                <label>Amount: </label>
+                                <span>{logHistory.amount}</span>
+                            </div>
+
+                        ) : <div>
+                            <label>No payment history records.</label>
+                        </div>}
                     </div>
                     <div className='cont-3-column col-2'>
-                        <div>
-                            <label>Status : </label>
-                            <span>Woooooow</span>
-                        </div>
                     </div>
                     <div className='cont-3-column col-3'>
                     </div>
@@ -430,10 +473,14 @@ const Payments = props => {
         return statusList;
     }
 
-
-
     return (
         <div className="classes-container">
+            {common.IsLoading &&
+                <div className="main-loader"  >
+                    <img src="assets/images/loading.svg" alt="loader" />
+                    <div className="main-loader__txt">{common.LoadingMessage}</div>
+                </div>
+            }
             <div className='page-header'>Monthly Settlement</div>
             <div className='classes-filter-box'>
                 <div className='filter-box-row'>
@@ -447,7 +494,7 @@ const Payments = props => {
                                 }}
                                 placeholder={`Search by Phone number or Name`}
                                 style={{
-                                    border: '0', width: "100%"
+                                    border: '0', width: "100%", float:"left"
                                 }}
                             />
                         </span>
@@ -464,7 +511,7 @@ const Payments = props => {
                     <div className='filter-box-column'>
                         <FilterDropdown
                             title="Payment Status"
-                            selection={SUBJECT_SELECTION}
+                            selection={PAYMENT_STATUS_SELECTION}
                             defaultList={getPaymentStatuesList()}
                             onItemChange={handleItemChange}
                             initValue={""}
@@ -522,12 +569,16 @@ const Payments = props => {
                 </div>
             </div>
             <ReactEditableTableFullWidthStyles>
-                <RowDetailTable
+                <PaymentTable
                     columns={columns}
                     data={data}
-                    hiddenColumns={hiddenColumns}
+                    fetchData={fetchData}
+                    loading={loading}
+                    pageCount={pageCount}
                     updateMyData={updateMyData}
-                    renderRowSubComponent={renderRowSubComponent} />
+                    renderRowSubComponent={renderRowSubComponent}
+                    numberOfRecords={payment.FilteredPayments?.totalNumberOfEntries}
+                />
             </ReactEditableTableFullWidthStyles>
         </div>
     );

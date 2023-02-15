@@ -14,7 +14,6 @@
     "crypto": "npm:crypto-browserify",
     "date-fns": "^2.29.3",
     "match-sorter": "^6.3.1",
-    "moment": "^2.24.0",
     "namor": "^2.0.4",
     "prop-types": "^15.7.2",
     "react": "^18.0.0",
@@ -32,6 +31,7 @@
     "react-table": "^7.8.0",
     "react-tabs": "^6.0.0",
     "react-time-picker": "^5.2.0",
+    "react-toastify": "^9.1.1",
     "stream": "npm:stream-browserify",
     "styled-components": "^5.3.6"
   },

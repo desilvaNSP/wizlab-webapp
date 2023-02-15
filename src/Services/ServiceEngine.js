@@ -10,7 +10,6 @@ export const ServiceEngine = axios.create({
 });
 
 export const SetAuthHeader = (token, instituteId) => {
-    console.log("instituteId", instituteId)
     ServiceEngine.defaults.headers.common.Authorization =  `Bearer ${token}`;
     ServiceEngine.defaults.headers.common.InstituteId =  instituteId;
 };

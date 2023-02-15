@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import { ClassesTable } from "./Table/ClassesTable";
 import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
 import { NewClass } from "./NewClass";
-import { useDispatch, useSelector } from "react-redux";
 import FilterDropdown from "../../Custom/FilterDropdown";
+import { useSelector } from "react-redux";
 
 const Classes = props => {
 
@@ -22,7 +22,6 @@ const Classes = props => {
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [selectedTeacher, setSelectedTeacher] = useState(null);
 
-    const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
 
     const triggerStartNewClass = () => {
@@ -221,13 +220,19 @@ const Classes = props => {
 
     return (
         <div className="classes-container">
+            {common.IsLoading &&
+                <div className="main-loader"  >
+                    <img src="/assets/images/loading.svg" alt="loader" />
+                    <div className="main-loader__txt">{common.LoadingMessage}</div>
+                </div>
+            }
             <div className='page-header'>
                 <div className="add-record" onClick={() => triggerStartNewClass()}>
                     <img src="/assets/icons/icon-add.svg" alt="Start New Class" />
                     <span>Create new Class</span>
                 </div>
                 <div className={selectedRowOnTable != null ? "add-record" : "add-record--disabled"} onClick={() => triggerUpdateClass()} >
-                    <img src="/assets/icons/update.png" alt="Update Class" style={{ width: "20px", height: "20px", marginRight:"8px"}} />
+                    <img src="/assets/icons/update.png" alt="Update Class" style={{ width: "20px", height: "20px", marginRight: "8px" }} />
                     <span>Update Class</span>
                 </div>
             </div>

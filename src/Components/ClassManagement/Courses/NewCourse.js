@@ -2,30 +2,27 @@ import React, { useState, useRef, useEffect } from 'react'
 import { InfoConfirmModal } from '../../Custom/Modals';
 import { CustomTagInput } from '../../Custom/CustomTagInput';
 import { CustomInput } from '../../Custom/CustomInput';
-import { EditableInputTextCell } from '../../Custom/Editable';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { NewSubjects } from './NewSubjects';
-import { CreateCourse } from '../../../Redux/Features/Common/CommonServicesSlice';
+import { CreateCourse, StartLoading, StopLoading } from '../../../Redux/Features/Common/CommonServicesSlice';
 import { useDispatch } from 'react-redux';
 
 export const NewCourse = props => {
-    const { handleReload, handleClose, show, selectedCourse } = props
-
-    console.log("selectedCourse", selectedCourse)
+    const { handleClose, show, selectedCourse } = props
 
     const showHideClassName = show
         ? "modal display-block"
         : "modal display-none";
 
-    //const auth = useSelector((state) => state.auth);
-
-    const [showInfoConfirmModal, setShowInfoConfirmModal] = useState(false);
     const [course, setCourse] = useState(selectedCourse);
-    const [levels, setLevels] = useState(selectedCourse?.levels == null ? [] : selectedCourse.levels );
+    const [levels, setLevels] = useState(selectedCourse?.levels == null ? [] : selectedCourse.levels);
+    const [tags, setTags] = useState([])
     const [modalContents, setModalContents] = useState({
-        "header": "",
-        "content": ""
+        "header": "Delete Level",
+        "content": "Are you sure delete the level. when you delete level automatically associated subjects will be lost."
     });
+    const [showInfoConfirmModal, setShowInfoConfirmModal] = useState(false);
+    const [currentTagValue, setCurrentTagValue] = useState(null);
 
     // useDispatch() hook is equivalent of mapDispatchToProps.
     const dispatch = useDispatch();
@@ -37,11 +34,21 @@ export const NewCourse = props => {
         setShowInfoConfirmModal(false)
     }
 
+    const generateTagsByLevels = (levelsArray) => {
+        var tags = []
+        levelsArray.forEach((element) => {
+            tags.push(element.desc);
+        });
+        return tags
+    }
     /**
        * Event for continue confirm modal
        */
     const continueConfirmModal = () => {
         setShowInfoConfirmModal(false)
+        var newLevels = levels.filter((v) => { return v.desc != currentTagValue });
+        setLevels(newLevels)
+        setTags(generateTagsByLevels(newLevels))
     }
 
     /**
@@ -77,11 +84,16 @@ export const NewCourse = props => {
         callback(true, "");
     }
 
+    const levelTagDeletionValidation = (value) => {
+        setCurrentTagValue(value);
+        setShowInfoConfirmModal(true);
+    }
+
     //Levels
     const checkLevelAlreadyExistsOnState = (key) => {
         let isOk = false;
         levels.forEach(function (item) {
-            if (item.description == key) {
+            if (item.desc == key) {
                 isOk = true;
             }
         });
@@ -89,22 +101,17 @@ export const NewCourse = props => {
     }
 
     const handleNewLevels = (allLevels) => {
-        for (const key in allLevels) {
+        allLevels.forEach(element => {
             // if key already exists no need create one.
-            if (!checkLevelAlreadyExistsOnState(key)) {
-                if (Object.hasOwnProperty.call(allLevels, key)) {
-                    const element = allLevels[key];
-                    if (element) {
-                        var levelObj = {
-                            description: key,
-                            subjects: [
-                            ]
-                        }
-                        levels.push(levelObj)
-                    }
+            if (!checkLevelAlreadyExistsOnState(element)) {
+                var levelObj = {
+                    desc: element,
+                    subjects: [
+                    ]
                 }
+                levels.push(levelObj)
             }
-        }
+        });
         setLevels(levels.slice());
     }
 
@@ -125,13 +132,20 @@ export const NewCourse = props => {
             "course": course,
             "levels": levels
         }
+        dispatch(StartLoading("Creating New Course.."))
         dispatch(CreateCourse(payload, function (response, success) {
             if (success) {
 
             } else {
                 //error handle
             }
+            handleClose()
+            dispatch(StopLoading())
         }));
+        setTimeout(function () {
+            setShowInfoConfirmModal(false)
+            dispatch(StopLoading())
+        }, 20000)
     }
 
     const updateExistingCourse = () => {
@@ -170,13 +184,7 @@ export const NewCourse = props => {
                                 <div className='form-column'>
                                     <div className='item-name'>Levels/Grades</div>
                                     <div className='item-dropdown'>
-                                        <CustomTagInput initialTags={() => {
-                                            var tags = []
-                                            levels.forEach((element) => {
-                                                tags.push(element.desc);
-                                            });
-                                            return tags
-                                        }} disable={false} fieldValidation={levelFieldValidation} required={true} updateTags={(value) => {
+                                        <CustomTagInput initialTags={tags} disable={false} fieldValidation={levelFieldValidation} tagDeletionValidation={levelTagDeletionValidation} required={true} updateTags={(value) => {
                                             handleNewLevels(value);
                                         }}></CustomTagInput>
                                     </div>
@@ -199,7 +207,7 @@ export const NewCourse = props => {
                             <Tabs>
                                 <TabList>
                                     {levels.map((level) =>
-                                        <Tab>{level.description}</Tab>
+                                        <Tab>{level.desc}</Tab>
                                     )}
                                 </TabList>
                                 {levels.map((level, index) =>
@@ -216,7 +224,7 @@ export const NewCourse = props => {
                         <button className="btn btn--success" onClick={() => createNewCourse()}>
                             Create New Course
                         </button> :
-                        <button className="btn btn--success" onClick={updateExistingCourse}>
+                        <button className="btn btn--success" disabled={true} onClick={updateExistingCourse} placeholder="Sorry! restricted update course for now">
                             Update Course
                         </button>
                     }

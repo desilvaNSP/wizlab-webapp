@@ -188,10 +188,10 @@ export const ClassesTable = ({ columns, data, onRowSelect, hiddenColumns, rowSel
     return (
         <>
             <div className="table-setting-icon" onClick={() => showContextMenuEvent()}>
-                <img src='assets/images/settings-icon.png' />
+                <img src='/assets/images/settings-icon.png' />
             </div>
             <div className="table-setting-icon" onClick={(e) => exportToCsv(e)}>
-                <img src='assets/images/download-icon.png'  alt='Export'/>
+                <img src='/assets/images/download-icon.png'  alt='Export'/>
             </div>
             {showContextMenu && <div className='column-hiding-contextmenu'>
                 <div>
