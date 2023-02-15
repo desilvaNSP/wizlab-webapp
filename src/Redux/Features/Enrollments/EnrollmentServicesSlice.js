@@ -64,7 +64,7 @@ export const GetEnrollmentsById = (payload, callback) => (dispatch) => {
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else if (HTTP_STATUS_CODE_404_NOT_FOUND === error.response.status) {
-                    toast.warning("Enrollment records for class are not found for selected criteria")
+                    toast.warning("Enrollment records for classs are not found for selected criteria")
                 }else {
                     toast.error("Get enrollments by Id failed with " + error.response.data.message + " - " + error.response.status);
                 }
