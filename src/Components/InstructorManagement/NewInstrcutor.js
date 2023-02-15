@@ -3,14 +3,12 @@ import React, { useState, useRef, useEffect } from 'react'
 import { InfoConfirmModal } from '../Custom/Modals';
 import { CustomTagInput } from '../Custom/CustomTagInput';
 import { CustomInput } from '../Custom/CustomInput';
-import { CreateTeacher } from '../../Redux/Features/Common/CommonServicesSlice';
+import { CreateTeacher, ShowLoading, StopLoading, UpdateTeacher } from '../../Redux/Features/Common/CommonServicesSlice';
 import { useDispatch } from 'react-redux';
 
 export const NewInstrcutor = props => {
 
-    debugger;
-
-    const { handleReload, handleClose, show, selectedTeacher } = props
+    const { handleClose, show, selectedTeacher } = props
 
     const showHideClassName = show
         ? "modal display-block"
@@ -19,7 +17,6 @@ export const NewInstrcutor = props => {
     //const auth = useSelector((state) => state.auth);
 
     const [showInfoConfirmModal, setShowInfoConfirmModal] = useState(false);
-    //const [teacher, setTeacher] = useState(selectedTeacher);
     const [modalContents, setModalContents] = useState({
         "header": "",
         "content": ""
@@ -30,7 +27,7 @@ export const NewInstrcutor = props => {
     const [selectedLastName, setSelectedLastName] = useState(selectedTeacher?.lastName);
     const [selectedPhoneNumber, setSelectedPhoneNumber] = useState(selectedTeacher?.phoneNumber);
     const [selectedEducationQualification, setSelectedEducationQualification] = useState(selectedTeacher?.education);
-    const [selectedSubjects, setSelectedSubjects] = useState(selectedTeacher?.subjects == null ? [] : selectedTeacher.subjects );
+    const [selectedSubjects, setSelectedSubjects] = useState(selectedTeacher?.subjects);
 
     // useDispatch() hook is equivalent of mapDispatchToProps.
     const dispatch = useDispatch();
