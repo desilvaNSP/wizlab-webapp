@@ -2,11 +2,14 @@ import { createSlice, current } from '@reduxjs/toolkit'
 import update from 'react-addons-update';
 import { ServiceEngine } from "../../../Services/ServiceEngine";
 import { 
+    ERROR_MESSAGE_401_UNAUTHORIZED,
+    ERROR_MESSAGE_403_FORBIDDEN,
     GET_ALL_STUDENTS_ENDPOINT,
     GET_ENROLLMENTS_BY_CLASSID_ENDPOINT, 
     HTTP_STATUS_CODE_401_UNAUTHORIZED, 
     HTTP_STATUS_CODE_403_FORBIDDEN,
     UPDATE_ENROLLMENT_ENDPOINT } from "../../../Configs/ApgConfigs";
+import { toast } from 'react-toastify';
 
 
 export const EnrollmentServicesSlice = createSlice({
@@ -56,14 +59,14 @@ export const GetEnrollmentsById = (payload, callback) => (dispatch) => {
         error => {
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    //error.response.data
+                    toast.error("Get enrollments by Id failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
-                //toast.error("Check your internet connection or network connectivity issue between servers");
+                toast.error("Check your internet connection or network connectivity issue between servers");
             }
             callback(null, false);
         })
@@ -79,16 +82,16 @@ export const GetAllEnrollments = (payload, callback) => (dispatch) => {
         error => {
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    //error.response.data
+                    toast.error("Get all enrollments failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
-                //toast.error("Check your internet connection or network connectivity issue between servers");
+                toast.error("Check your internet connection or network connectivity issue between servers");
             }
-            //callback(error.response.data, false);
+            callback(null, false);
         })
 }
 
@@ -102,14 +105,14 @@ export const UpdateEnrollmentById = (enrollmentPayload, callback) => (dispatch) 
         error => {
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    //toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    //error.response.data
+                    toast.error("Updating enrollment failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
-                //toast.error("Check your internet connection or network connectivity issue between servers");
+                toast.error("Check your internet connection or network connectivity issue between servers");
             }
             callback(null, false);
         })

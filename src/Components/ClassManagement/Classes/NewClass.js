@@ -198,8 +198,10 @@ export const NewClass = props => {
             } else {
                 //error handle
             }
+            handleClose()
             dispatch(StopLoading())
         }));
+
     }
 
     const updateExistingClass = () => {
@@ -217,6 +219,7 @@ export const NewClass = props => {
             } else {
                 //error handle
             }
+            handleClose()
             dispatch(StopLoading())
         }));
     }

@@ -3,7 +3,7 @@ import 'react-tabs/style/react-tabs.css';
 import { CustomInput } from "../Custom/CustomInput";
 import { ReactTableFullWidthStyles } from "../Custom/StyleComponents";
 import { CommonTable } from "../CommonTable/CommonTable";
-import { CreateClassRoom } from "../../Redux/Features/Common/CommonServicesSlice";
+import { CreateClassRoom, StartLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { CustomCheckBox } from "../Custom/CustomCheckBox ";
 
@@ -26,12 +26,14 @@ const ClassRooms = props => {
       "auditoriumNo": audNo,
       "address": address
     }
+    dispatch(StartLoading("Creating new Classroom"));
     dispatch(CreateClassRoom(payload, function (response, success) {
       if (success) {
 
       } else {
         //error handle
       }
+      dispatch(StopLoading());
     }));
   }
 
