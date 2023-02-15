@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from 'react'
-
 import { InfoConfirmModal } from '../Custom/Modals';
 import { CustomTagInput } from '../Custom/CustomTagInput';
 import { CustomInput } from '../Custom/CustomInput';
@@ -155,18 +154,38 @@ export const NewInstrcutor = props => {
             "education": selectedEducationQualification,
             "subjects": selectedSubjects
         }
-        debugger;
+        dispatch(ShowLoading("Creating New Teacher.."))
         dispatch(CreateTeacher(payload, function (response, success) {
             if (success) {
 
             } else {
                 //error handle
             }
+            handleClose()
+            dispatch(StopLoading())
         }));
     }
 
     const updateExistingTeacher = () => {
-        console.log(selectedTeacher)
+        var payload = {
+            "id":selectedTeacher.id,
+            "firstName": selectedFirstName,
+            "middleName": selectedMiddleName,
+            "lastName": selectedLastName,
+            "phoneNumber": selectedPhoneNumber,
+            "education": selectedEducationQualification,
+            "subjects": selectedSubjects
+        }
+        dispatch(ShowLoading("Updating Teacher.."))
+        dispatch(UpdateTeacher(payload, function (response, success) {
+            if (success) {
+
+            } else {
+                //error handle
+            }
+            handleClose()
+            dispatch(StopLoading())
+        }));
     }
 
     return (
