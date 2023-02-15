@@ -13,7 +13,9 @@ import {
     UPDATE_CLASS_ENDPOINT, 
     ERROR_MESSAGE_401_UNAUTHORIZED, 
     ERROR_MESSAGE_403_FORBIDDEN, 
-    GET_ALL_SESSIONS_ENDPOINT} from "../../../Configs/ApgConfigs";
+    GET_ALL_SESSIONS_ENDPOINT,
+    CREATE_TEACHER_ENDPOINT, 
+    UPDATE_TEACHER_ENDPOINT} from "../../../Configs/ApgConfigs";
 
 export const CommonServicesSlice = createSlice({
     name: 'common',
@@ -83,10 +85,17 @@ export const CommonServicesSlice = createSlice({
                 ClassRooms: [...state.ClassRooms, obj]
             };
         },
+        AddNewTeacher:(state, action) => {
+            let obj = action.payload;
+            return {
+                ...state,
+                Teachers: [...state.Teachers, obj]
+            };
+        }
     },
 })
 
-export const { ShowLoading, HideLoading, UpdateMetaData, AddNewCourse, AddNewClass, AddClassRoom } = CommonServicesSlice.actions
+export const { ShowLoading, HideLoading, UpdateMetaData, AddNewCourse, AddNewClass, AddClassRoom, AddNewTeacher } = CommonServicesSlice.actions
 
 
 export const StartLoading = (message) => (dispatch) => {
@@ -265,6 +274,50 @@ export const GetSessions = (payload, callback) => (dispatch) => {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
                     toast.error("Get sessions failed with " + error.response.data.message + " - " + error.response.status);
+                }
+            } else {
+                toast.error("Check your internet connection or network connectivity issue between servers");
+            }
+            callback(null, false);
+        })
+}
+
+export const CreateTeacher = (teacherPayload, callback) => (dispatch) => {
+    ServiceEngine.post(CREATE_TEACHER_ENDPOINT, teacherPayload).then(response => {
+        //response.data
+        dispatch(AddNewTeacher(response.data))
+        callback(response.data, true);
+    }).catch(
+        error => {
+            if (error.response !== undefined) {
+                if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                } else {
+                    //error.response.data
+                }
+            } else {
+                toast.error("Check your internet connection or network connectivity issue between servers");
+            }
+            callback(null, false);
+        })
+}
+
+export const UpdateTeacher = (teacherPayload, callback) => (dispatch) => {
+    ServiceEngine.put(UPDATE_TEACHER_ENDPOINT, teacherPayload).then(response => {
+        //response.data
+        dispatch(AddNewTeacher(response.data))
+        callback(response.data, true);
+    }).catch(
+        error => {
+            if (error.response !== undefined) {
+                if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                } else {
+                    //error.response.data
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");
