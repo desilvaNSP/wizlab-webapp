@@ -13,7 +13,9 @@ import {
     UPDATE_CLASS_ENDPOINT, 
     ERROR_MESSAGE_401_UNAUTHORIZED, 
     ERROR_MESSAGE_403_FORBIDDEN, 
-    GET_ALL_SESSIONS_ENDPOINT} from "../../../Configs/ApgConfigs";
+    GET_ALL_SESSIONS_ENDPOINT,
+    GET_CLASSES_ENDPOINT,
+    HTTP_STATUS_CODE_404_NOT_FOUND} from "../../../Configs/ApgConfigs";
 
 export const CommonServicesSlice = createSlice({
     name: 'common',
@@ -51,7 +53,10 @@ export const CommonServicesSlice = createSlice({
             return {
                 ...state,
                 ClassRooms: obj.institute?.classRooms,
-                Classes: obj.institute?.classes,
+                Classes:{
+                    classes: obj.institute?.classes,
+                    totalNumberOfEntries: obj.institute?.classes.length
+                }, 
                 Courses: obj.institute?.courses,
                 InstituteId: obj.institute?.id,
                 Location: obj.institute?.location,
@@ -76,6 +81,16 @@ export const CommonServicesSlice = createSlice({
                 Classes: [...state.Classes, obj.classobj]
             };
         },
+        UpdateExistingClass: (state, action) => {
+            let obj = action.payload;
+            return {
+                ...state,
+                Classes: [
+                    ...state.Classes.filter(classObj => classObj.id != obj.id), 
+                    ...state.Classes.filter(classObj => classObj.id == obj.id) //update this with obj.classObj after backend issue fixed.
+                ]
+            };
+        },
         AddClassRoom:(state, action) => {
             let obj = action.payload;
             return {
@@ -86,7 +101,7 @@ export const CommonServicesSlice = createSlice({
     },
 })
 
-export const { ShowLoading, HideLoading, UpdateMetaData, AddNewCourse, AddNewClass, AddClassRoom } = CommonServicesSlice.actions
+export const { ShowLoading, HideLoading, UpdateMetaData, AddNewCourse, AddNewClass, UpdateExistingClass, AddClassRoom } = CommonServicesSlice.actions
 
 
 export const StartLoading = (message) => (dispatch) => {
@@ -118,10 +133,8 @@ export const FetchMetaData = (callback) => (dispatch) => {
         })
 }
 
-
 export const CreateCourse = (coursePayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_COURSE_ENDPOINT, coursePayload).then(response => {
-        //response.data
         dispatch(AddNewCourse(response.data))
         callback(response.data, true);
     }).catch(
@@ -144,7 +157,6 @@ export const CreateCourse = (coursePayload, callback) => (dispatch) => {
 
 export const CreateClass = (classPayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_CLASS_ENDPOINT, classPayload).then(response => {
-        //response.data
         dispatch(AddNewClass(response.data))
         callback(response.data, true);
     }).catch(
@@ -167,8 +179,7 @@ export const CreateClass = (classPayload, callback) => (dispatch) => {
 
 export const UpdateClass = (classPayload, callback) => (dispatch) => {
     ServiceEngine.put(UPDATE_CLASS_ENDPOINT, classPayload).then(response => {
-        //response.data
-        dispatch(AddNewClass(response.data))
+        dispatch(UpdateExistingClass(response.data))
         callback(response.data, true);
     }).catch(
         error => {
@@ -187,11 +198,30 @@ export const UpdateClass = (classPayload, callback) => (dispatch) => {
         })
 }
 
-
+export const GetClasses = (payload, callback) => (dispatch) => {
+    ServiceEngine.post(GET_CLASSES_ENDPOINT, payload).then(response => {
+        callback(response.data, true);
+    }).catch(
+        error => {
+            if (error.response !== undefined) {
+                if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                } else if (HTTP_STATUS_CODE_404_NOT_FOUND === error.response.status) {
+                    toast.warning("Classes are not found for selected criteria")
+                } else {
+                    toast.error("Get classes failed with " + error.response.data.message + " - " + error.response.status);
+                }
+            } else {
+                toast.error("Check your internet connection or network connectivity issue between servers");
+            }
+            callback(null, false);
+        })
+}
 
 export const CreateClassRoom = (classRoomPayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_CLASSROOM_ENDPOINT, classRoomPayload).then(response => {
-        //response.data
         dispatch(AddClassRoom(response.data))
         callback(response.data, true);
     }).catch(
@@ -263,7 +293,9 @@ export const GetSessions = (payload, callback) => (dispatch) => {
                     toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
-                } else {
+                } else if (HTTP_STATUS_CODE_404_NOT_FOUND === error.response.status) {
+                    toast.warning("Sessions are not found for selected criteria")
+                }else {
                     toast.error("Get sessions failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {

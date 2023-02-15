@@ -54,6 +54,7 @@ export const GET_COURSE_BYID_ENDPOINT = '/api/v1/admin/courseinfo'
 export const CREATE_CLASS_ENDPOINT = '/api/v1/admin/class'
 export const UPDATE_CLASS_ENDPOINT = '/api/v1/admin/class'
 export const DELETE_CLASS_ENDPOINT = '/api/v1/admin/class'
+export const GET_CLASSES_ENDPOINT  = '/api/v1/admin/classes/search'
 //classrooms
 export const CREATE_CLASSROOM_ENDPOINT = '/api/v1/admin/classroom'
 export const UPDATE_CLASSROOM_ENDPOINT = '/api/v1/admin/classroom'

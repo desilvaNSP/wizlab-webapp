@@ -8,9 +8,6 @@ const CustomDropdown = ({ defaultList, initValue, selection, onItemChange, isNul
   // array of drop down list
   const [dropList, setDropList] = useState(defaultList);
 
-  console.log("initValue", initValue);
-  console.log("defaultList", defaultList)
-
   //item{id, value, code, selected}
   const [item, setItem] = useState(null)
   const [listOpen, setListOpen] = useState(false);
@@ -98,7 +95,7 @@ const CustomDropdown = ({ defaultList, initValue, selection, onItemChange, isNul
           }
         }}>
           {
-            <div className="dd-header-title">{item && item.value}</div>
+            <div className="dd-header-title" style={{fontWeight: !editable && 'bold'}}>{editable ? item && item.value : initValue}</div>
           }
           {editable && <div className="dd-header-actions">
             {

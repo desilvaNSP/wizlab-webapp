@@ -40,8 +40,10 @@ export const NewClass = props => {
     const common = useSelector((state) => state.common);
     
     useEffect(() => {
-        var string = indentifiers.join('-');
-        setSelectedClassIdentifier(string)
+        if(indentifiers.length > 0){
+            var string = indentifiers.join('-');
+            setSelectedClassIdentifier(string)
+        }
     }, [indentifiers])
 
     /**
@@ -186,9 +188,9 @@ export const NewClass = props => {
     const createNewClass = () => {
         var payload = {
             "identifier": selectedClassIdentifier,
-            "subjectId": selectedSubject.id,
+            "subjectId": selectedSubject?.id,
             "classfee": selectedClassFee,
-            "teacherId": selectedTeacher.id,
+            "teacherId": selectedTeacher?.id,
             "paymentDueDate": selectedDueDate
         }
         dispatch(ShowLoading("Creating New Class.."))
@@ -208,10 +210,12 @@ export const NewClass = props => {
         var payload = {
             "id":selectedClass.id,
             "identifier": selectedClassIdentifier,
-            "subjectId": selectedSubject.id,
+            "subjectId": selectedSubject?.id,
             "classfee": selectedClassFee,
-            "teacherId": selectedTeacher.id
+            "teacherId": selectedTeacher?.id,
+            "paymentDueDate": selectedDueDate
         }
+
         dispatch(ShowLoading("Updating Class.."))
         dispatch(UpdateClass(payload, function (response, success) {
             if (success) {
@@ -267,6 +271,9 @@ export const NewClass = props => {
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef, props);
 
+    console.log("selectedClassIdentifier", selectedClassIdentifier)
+    console.log("selectedClassFee", selectedClassFee)
+
     return (
         <div className={showHideClassName}>
             <section className="modal-detail" ref={wrapperRef} onClick={e => e.stopPropagation()}>
@@ -295,8 +302,8 @@ export const NewClass = props => {
                                             defaultList={getCoursesList()}
                                             selection={COURSE_SELECTION}
                                             onItemChange={handleItemChange}
-                                            initValue={selectedCourse?.id}
-                                            editable={true}
+                                            initValue={selectedClass == null ? selectedCourse?.id : selectedCourse?.name}
+                                            editable={selectedClass == null ? true : false }
                                         />
                                     </div>
                                 </div>
@@ -307,8 +314,8 @@ export const NewClass = props => {
                                             defaultList={getLevelsByCourse()}
                                             selection={LEVEL_SELECTION}
                                             onItemChange={handleItemChange}
-                                            initValue={selectedLevel?.id}
-                                            editable={true}
+                                            initValue={selectedClass == null ? selectedLevel?.id : selectedLevel?.desc}
+                                            editable={selectedClass == null ? true : false }
                                         />
                                     </div>
                                 </div>
@@ -321,8 +328,8 @@ export const NewClass = props => {
                                             defaultList={getSubjectByCourseAndLevels()}
                                             selection={SUBJECT_SELECTION}
                                             onItemChange={handleItemChange}
-                                            initValue={selectedSubject?.id}
-                                            editable={true}
+                                            initValue={selectedClass == null ? selectedSubject?.id : selectedSubject?.title }
+                                            editable={selectedClass == null ? true : false }
                                         />
                                     </div>
                                 </div>
@@ -331,7 +338,6 @@ export const NewClass = props => {
                                     <div className='item-dropdown'>
                                         <CustomInput
                                             initialValue={selectedClassFee} type="number" updateInput={(value) => {
-                                                console.log("updateClassFee", value)
                                                 updateClassFee(value);
                                             }} fieldValidation={courseFeeFieldValidation} required={true} placeHolder="Please enter course fee in ruppees"
                                         />
@@ -367,7 +373,7 @@ export const NewClass = props => {
                                             defaultList={getTeachersList()}
                                             selection={TEACHER_SELECTION}
                                             onItemChange={handleItemChange}
-                                            initValue={""}
+                                            initValue={selectedTeacher?.id}
                                             editable={true}
                                         />
                                     </div>
