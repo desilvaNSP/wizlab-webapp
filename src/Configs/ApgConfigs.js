@@ -50,6 +50,10 @@ export const CREATE_USER_ENDPOINT = '/api/v1/admin/user'
 //courses
 export const CREATE_COURSE_ENDPOINT = '/api/v1/admin/course'
 export const GET_COURSE_BYID_ENDPOINT = '/api/v1/admin/courseinfo'
+export const ADD_NEWLEVELS_AND_SUBJECTS_ENDPOINT = '/api/v1/admin/cource/addlevel' //POST
+export const UPDATE_SUBJECTS_BY_ID_ENDPOINT = '/api/v1/admin/subject' //PUT
+export const DELETE_SUBJECT_ENDPOINT = '/api/v1/admin/subject' //DELETE
+export const DELETE_LEVEL_ENDPOINT = '/api/v1/admin/level' // DELETE
 //classes
 export const CREATE_CLASS_ENDPOINT = '/api/v1/admin/class'
 export const UPDATE_CLASS_ENDPOINT = '/api/v1/admin/class'
@@ -61,6 +65,8 @@ export const UPDATE_CLASSROOM_ENDPOINT = '/api/v1/admin/classroom'
 export const DELETE_CLASSROOM_ENDPOINT = '/api/v1/admin/classroom'
 //sessions
 export const CREATE_SESSION_ENDPOINT = '/api/v1/admin/session'
+export const UPDATE_SESSION_ENDPOINT = '/api/v1/admin/session'
+export const DELETE_SESSION_ENDPOINT = '/api/v1/admin/session'
 export const GET_SESSIONS_BY_CLASSID_ENDPOINT = '/api/v1/admin/sessionByClassId'
 export const GET_ALL_SESSIONS_ENDPOINT = '/api/v1/admin/sessions/search'
 //student's enrollments

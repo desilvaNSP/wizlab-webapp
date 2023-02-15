@@ -27,6 +27,12 @@ export const NewCourse = props => {
     // useDispatch() hook is equivalent of mapDispatchToProps.
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        if(selectedCourse?.levels != null){
+            setTags(generateTagsByLevels(selectedCourse?.levels))
+        }
+    }, [selectedCourse?.levels])
+
     /**
      * Event for close confirm modal
      */
