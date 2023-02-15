@@ -1,16 +1,16 @@
 let CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net"
 
 switch (process.env.REACT_APP_SERVER_TYPE) {
-  case "dev":
+  case "Development":
     CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net";
     break;
-  case "qa":
+  case "UAT":
+    CLASSROOM_ADMIN_LISTENER = "https://classroom-be-uat.azurewebsites.net";
+    break;
+  case "Production":
     CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net";
     break;
-  case "prod":
-    CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net";
-    break;
-  case "local":
+  case "Local":
     CLASSROOM_ADMIN_LISTENER = "https://classroom-be-dev-as.azurewebsites.net";
     break;
   default:

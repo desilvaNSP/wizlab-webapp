@@ -10,6 +10,9 @@ import { NewSession } from "../ClassManagement/Classes/NewSession";
 import { ClassesTable } from "../ClassManagement/Classes/Table/ClassesTable";
 import EventLayout from "../ClassManagement/Classes/EventLayout";
 import FilterDropdown from "../Custom/FilterDropdown";
+import { DateTimePicker } from "../Custom/DateTimePicker";
+import { SessionsTable } from "./Table/SessionsTable";
+import { format } from "date-fns/esm";
 
 const AllSessions = ({ }) => {
 
@@ -17,35 +20,56 @@ const AllSessions = ({ }) => {
     const LEVEL_SELECTION = "LEVEL_SELECTION";
     const SUBJECT_SELECTION = "SUBJECT_SELECTION";
     const TEACHER_SELECTION = "TEACHER_SELECTION";
+    const STARTDATE_SELECTION = "STARTDATE_SELECTION";
+    const ENDDATE_SELECTION = "ENDDATE_SELECTION";
+
+    var formatDateString = "yyyy-MM-dd";
 
     const [data, setData] = useState([])
     const [showSessionCreationPopup, setShowSessionCreationPopup] = useState(false)
     const [selectedSession, setSelectedSession] = useState([])
     const [selectedRowOnTable, setSelectedRowOnTable] = useState(null)
 
+    var today = new Date();
+    var defaultStartDate = new Date(format(today, formatDateString) + "T" + "00:00:00")
+    var defaultEndDate = new Date(format(today.setDate(today.getDate() + 7), formatDateString) + "T" + "23:59:00")
+
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedLevel, setSelectedLevel] = useState(null);
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [selectedTeacher, setSelectedTeacher] = useState(null);
+    const [startDate, setStartDate] = useState(defaultStartDate)
+    const [endDate, setEndDate] = useState(defaultEndDate)
+
+    const [loading, setLoading] = React.useState(false)
+    const [tablePageSize, setTablePageSize] = React.useState(10)
+    const [pageCount, setPageCount] = React.useState(0)
 
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
 
-    useEffect(() => {
+    const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
         var payload = {
             "courseId": selectedCourse?.id,
             "levelId": selectedLevel?.id,
             "subjectId": selectedSubject?.id,
-            "teacherId": selectedTeacher?.id
+            "teacherId": selectedTeacher?.id,
+            "startDate": startDate,
+            "endDate": endDate,
+            "pageSize": pageSize,
+            "pageNumber": pageIndex + 1
         }
+        setTablePageSize(pageSize)
         dispatch(StartLoading("Retrieving all sessions"))
         dispatch(GetSessions(payload, function (data, success) {
             if (success) {
-                setData(data)
+                console.log(data.sessions)
+                setData(data.sessions)
+                setPageCount(Math.ceil(data.totalNumberOfEntries / tablePageSize))
             }
             dispatch(StopLoading())
         }));
-    }, []);
+    }, [])
 
     const triggerStartSession = () => {
         setSelectedSession(null)
@@ -68,6 +92,24 @@ const AllSessions = ({ }) => {
         } else {
             setSelectedRowOnTable(null)
         }
+    }
+
+    // When our cell renderer calls updateMyData, we'll use
+    // the rowIndex(ex: 9), columnId(ex: merchantName) and new value to update the
+    // original data
+    const updateMyData = (rowIndex, columnId, value, validity) => {
+        var dataUpdated = data.map((row, index) => {
+            if (index === rowIndex) {
+                var updatedRow = {
+                    ...data[rowIndex],
+                    [columnId]: value,
+                    ["updated"]: true
+                }
+                return updatedRow
+            }
+            return row
+        })
+        setData(dataUpdated)
     }
 
 
@@ -165,6 +207,24 @@ const AllSessions = ({ }) => {
     };
 
     /**
+    * Props event handler which is used in calender component
+    * @param {Date} val selected date information
+    * @param {String} selection used to selected desired calender component
+    */
+    const onDateTimeChange = (val, selection) => {
+        switch (selection) {
+            case STARTDATE_SELECTION:
+                setStartDate(val)
+                break;
+            case ENDDATE_SELECTION:
+                setEndDate(val)
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
      * Event handling for apply filters and retrive class data.
      */
     const handleApplyOnClick = () => {
@@ -172,12 +232,17 @@ const AllSessions = ({ }) => {
             "courseId": selectedCourse?.id,
             "levelId": selectedLevel?.id,
             "subjectId": selectedSubject?.id,
-            "teacherId": selectedTeacher?.id
+            "teacherId": selectedTeacher?.id,
+            "startDate": startDate,
+            "endDate": endDate,
+            "pageSize": tablePageSize,
+            "pageNumber": 1
         }
         dispatch(StartLoading("Retrieving all sessions"))
         dispatch(GetSessions(payload, function (data, success) {
             if (success) {
-                setData(data)
+                setData(data.sessions)
+                setPageCount(Math.ceil(data.totalNumberOfEntries / tablePageSize))
             }
             dispatch(StopLoading())
         }));
@@ -293,6 +358,26 @@ const AllSessions = ({ }) => {
                             initValue={""}
                             editable={true} />
                     </div>
+                </div>
+                <div className='filter-box-row'>
+                    <div className='filter-box-column'>
+                        <DateTimePicker
+                            title={"Start Date"}
+                            initDateTime={startDate}
+                            selection={STARTDATE_SELECTION}
+                            onDateTimeChange={(dateTime, selection) => onDateTimeChange(dateTime, selection)}
+                        />
+                    </div>
+                    <div className='filter-box-column'>
+                        <DateTimePicker
+                            title={"End Date"}
+                            initDateTime={endDate}
+                            selection={ENDDATE_SELECTION}
+                            onDateTimeChange={(dateTime, selection) => onDateTimeChange(dateTime, selection)}
+                        />
+                    </div>
+                    <div className='filter-box-column'>
+                    </div>
                     <div className='filter-box-column apply-filter'>
                         <button
                             onClick={() => handleApplyOnClick()}
@@ -315,7 +400,17 @@ const AllSessions = ({ }) => {
                             Sessions
                         </div>
                         <ReactTableFullWidthStyles>
-                            <ClassesTable columns={columns} data={data} onRowSelect={selectSession} hiddenColumns={hiddenColumns} rowSelection={true} />
+                            <SessionsTable
+                                columns={columns}
+                                data={data}
+                                onRowSelect={selectSession}
+                                hiddenColumns={hiddenColumns}
+                                rowSelection={true}
+                                fetchData={fetchData}
+                                loading={loading}
+                                pageCount={pageCount}
+                                updateMyData={updateMyData}
+                                numberOfRecords={pageCount} />
                         </ReactTableFullWidthStyles>
                     </div>
                 </TabPanel>
