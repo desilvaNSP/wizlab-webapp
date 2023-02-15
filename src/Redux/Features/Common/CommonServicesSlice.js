@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit'
-import { METADATA_ENDPOINT, CREATE_COURSE_ENDPOINT, HTTP_STATUS_CODE_401_UNAUTHORIZED, HTTP_STATUS_CODE_403_FORBIDDEN, CREATE_CLASS_ENDPOINT, CREATE_CLASSROOM_ENDPOINT, CREATE_SESSION_ENDPOINT, PAYMENT_SEARCH_ENDPOINT, PAYMENT_SUBMIT_ENDPOINT } from "../../../Configs/ApgConfigs";
+import { METADATA_ENDPOINT, CREATE_COURSE_ENDPOINT, CREATE_TEACHER_ENDPOINT, HTTP_STATUS_CODE_401_UNAUTHORIZED, HTTP_STATUS_CODE_403_FORBIDDEN, CREATE_CLASS_ENDPOINT, CREATE_CLASSROOM_ENDPOINT, CREATE_SESSION_ENDPOINT, PAYMENT_SEARCH_ENDPOINT, PAYMENT_SUBMIT_ENDPOINT } from "../../../Configs/ApgConfigs";
 import { ServiceEngine } from "../../../Services/ServiceEngine";
 
 export const CommonServicesSlice = createSlice({
@@ -138,6 +138,28 @@ export const CreateSession = (sessionPayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_SESSION_ENDPOINT, sessionPayload).then(response => {
         //response.data
         //dispatch(AddNewClass(response.data))
+        callback(response.data, true);
+    }).catch(
+        error => {
+            if (error.response !== undefined) {
+                if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
+                    //toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
+                    //toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                } else {
+                    //error.response.data
+                }
+            } else {
+                //toast.error("Check your internet connection or network connectivity issue between servers");
+            }
+            //callback(error.response.data, false);
+        })
+}
+
+export const CreateTeacher = (teacherPayload, callback) => (dispatch) => {
+    ServiceEngine.post(CREATE_TEACHER_ENDPOINT, teacherPayload).then(response => {
+        //response.data
+        dispatch(AddNewClass(response.data))
         callback(response.data, true);
     }).catch(
         error => {

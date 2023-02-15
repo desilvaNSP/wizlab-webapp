@@ -4,37 +4,78 @@ import { CommonTable } from "../CommonTable/CommonTable";
 import FilterDropdown from "../Custom/FilterDropdown";
 import { ReactTableFullWidthStyles } from '../Custom/StyleComponents'
 import { NewInstrcutor } from "./NewInstrcutor";
+import { useSelector } from "react-redux";
 
 const Instructors = props => {
 
-    const [selectedClass, setSelectedClass] = useState(null)
-    const [showClassCreationPopup, setShowClassCreationPopup] = useState(false)
+    const COURSE_SELECTION = "COURSE_SELECTION";
+    const LEVEL_SELECTION = "LEVEL_SELECTION";
+    const SUBJECT_SELECTION = "SUBJECT_SELECTION";
+
+    const [selectedCourse, setSelectedCourse] = useState(null);
+    const [selectedLevel, setSelectedLevel] = useState(null);
+    const [selectedSubject, setSelectedSubject] = useState(null);
+    const [selectedTeacher, setSelectedTeacher] = useState(null)
+    const [selectedRowOnTable, setSelectedRowOnTable] = useState(null)
+    const [showTeacherCreationPopup, setShowTeacherCreationPopup] = useState(false)
+
+    const common = useSelector((state) => state.common);
 
     const hiddenColumns = ["id"];
 
-    /**
-     * 
-     * @param {Object} item selected item of the dropdown list
-     * @param {String} key used to selected desired dropdown component
-     */
-    const resetThenSet = (item, key) => {
-
-    };
-
-    const triggerStartNewClass = () => {
-        console.log('test');
-        setShowClassCreationPopup(true)
+    const triggerStartNewTeacher = () => {
+        setSelectedTeacher(null)
+        setShowTeacherCreationPopup(true)
     }
 
-    const closeClassCreationPopup = () => {
-        setShowClassCreationPopup(false)
+    const triggerUpdateTeacher = () => {
+        setSelectedTeacher(selectedRowOnTable)
+        setShowTeacherCreationPopup(true)
+    }
+
+    const closeTeacherCreationPopup = () => {
+        setShowTeacherCreationPopup(false)
     }
 
     /**
      * Event handling for apply filters and retrive class data.
      */
     const handleApplyOnClick = () => {
-        alert("load classes data")
+        alert("load teacher data")
+    };
+
+     /**
+     * 
+     * @param {Object} item selected item of the dropdown list
+     * @param {String} key used to selected desired dropdown component
+     */
+      const handleItemChange = (item, selection) => {
+        switch (selection) {
+            case COURSE_SELECTION:
+                var courseObj = null
+                common.Courses?.forEach((course, index) => {
+                    if (course.id == item.id) {
+                        courseObj = course;
+                    }
+                });
+                setSelectedCourse(courseObj !== null ? courseObj : null);
+                break;
+            case LEVEL_SELECTION:
+                var levelObj = null
+                console.log("selectedCourse MM", selectedCourse)
+                selectedCourse?.levels.forEach((level, index) => {
+                    if (level.id == item.id) {
+                        levelObj = level;
+                    }
+                });
+                setSelectedLevel(levelObj !== null ? levelObj : null)
+                break;
+            case SUBJECT_SELECTION:
+                setSelectedSubject(item !== null ? item : null)
+                break;
+            default:
+                break;
+        }
     };
 
     const columns = React.useMemo(
@@ -93,6 +134,50 @@ const Instructors = props => {
         []
     )
 
+    const getCoursesList = () => {
+        let coursesList = [];
+        common.Courses?.forEach((course, index) => {
+            let obj = {
+                id: course.id,
+                value: course.name,
+                code: course.id,
+                selected: false
+            };
+            coursesList.push(obj);
+        });
+        return coursesList;
+    }
+
+    const getLevelsByCourse = () => {
+        let levelList = [];
+        selectedCourse?.levels.forEach((level, index) => {
+            let obj = {
+                id: level.id,
+                value: level.desc,
+                code: level.id,
+                selected: false
+            };
+            levelList.push(obj);
+        });
+        return levelList;
+    }
+
+    const getSubjectByCourseAndLevels = () => {
+        let subjectList = [];
+        selectedLevel?.subjects.forEach((subject, index) => {
+            let obj = {
+                id: subject.id,
+                value: subject.title,
+                code: subject.id,
+                selected: false
+            };
+            subjectList.push(obj);
+        });
+        return subjectList;
+    }
+
+
+
     const data = [
         {
             "course": "Year 05 Schoolarship Program",
@@ -139,14 +224,24 @@ const Instructors = props => {
     ]
 
 
+    const teacherSelectionOnTable = (rows) => {
+        if (rows.length > 0) {
+            console.log(rows[0].original)
+            setSelectedRowOnTable(rows[0].original)
+        } else {
+            setSelectedRowOnTable(null)
+        }
+    }
+
+
     return (
         <div className="classes-container">
             <div className='page-header'>
-                <div className="add-record" onClick={() => triggerStartNewClass()}>
+                <div className="add-record" onClick={() => triggerStartNewTeacher()}>
                     <img src="/assets/icons/icon-add.svg" alt="Start New Class" />
                     <span>Create Teacher</span>
                 </div>
-                <div className="add-record" onClick={() => triggerStartNewClass()} >
+                <div className={selectedRowOnTable != null ? "add-record" : "add-record--disabled"} onClick={() => triggerUpdateTeacher()} >
                     <img src="/assets/icons/update.png" alt="Update Class" style={{ width: "20px", height: "20px" }} />
                     <span>Update Teacher</span>
                 </div>
@@ -154,40 +249,31 @@ const Instructors = props => {
             <div className='classes-filter-box'>
                 <div className='filter-box-row'>
                     <div className='filter-box-column'>
-                        {/* course */}
-                        <FilterDropdown
-                            defaultList={[]}
-                            onItemChange={(item) => {
-                                console.log(item)
-                            }}
-                            initValue={"Teacher"}
-                            required={true}
-                            editable={true}
-                            warningMessage={"Updating course is not allowed"} />
+                    <FilterDropdown
+                            title="Course"
+                            selection={COURSE_SELECTION}
+                            defaultList={getCoursesList()}
+                            onItemChange={handleItemChange}
+                            initValue={""}
+                            editable={true} />
                     </div>
                     <div className='filter-box-column'>
-                        {/** level */}
-                        <FilterDropdown
-                            defaultList={[]}
-                            onItemChange={(item) => {
-                                console.log(item)
-                            }}
-                            initValue={"Teacher"}
-                            required={true}
-                            editable={true}
-                            warningMessage={"Updating course is not allowed"} />
+                    <FilterDropdown
+                            title="Level"
+                            selection={LEVEL_SELECTION}
+                            defaultList={getLevelsByCourse()}
+                            onItemChange={handleItemChange}
+                            initValue={""}
+                            editable={true} />
                     </div>
                     <div className='filter-box-column'>
-                        {/** subject */}
-                        <FilterDropdown
-                            defaultList={[]}
-                            onItemChange={(item) => {
-                                console.log(item)
-                            }}
-                            initValue={"Teacher"}
-                            required={true}
-                            editable={true}
-                            warningMessage={"Updating course is not allowed"} />
+                    <FilterDropdown
+                            title="Subject"
+                            selection={SUBJECT_SELECTION}
+                            defaultList={getSubjectByCourseAndLevels()}
+                            onItemChange={handleItemChange}
+                            initValue={""}
+                            editable={true} />
                     </div>
                     <div className='filter-box-column apply-filter'>
                         <button
@@ -201,10 +287,10 @@ const Instructors = props => {
                 </div>
             </div>
             <ReactTableFullWidthStyles>
-                <CommonTable columns={columns} data={data} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} rowSelection={true} />
+                <CommonTable columns={columns} data={common.Teachers} onRowSelect={(rows) => { teacherSelectionOnTable(rows)}} hiddenColumns={hiddenColumns} rowSelection={true} />
             </ReactTableFullWidthStyles>
-            {showClassCreationPopup &&
-                <NewInstrcutor show={showClassCreationPopup} handleReload={() => { }} handleClose={closeClassCreationPopup} selectedClass={selectedClass}></NewInstrcutor>
+            {showTeacherCreationPopup &&
+                <NewInstrcutor show={showTeacherCreationPopup} handleReload={() => { }} handleClose={closeTeacherCreationPopup} selectedTeacher={selectedTeacher}></NewInstrcutor>
             }
         </div>
     );
