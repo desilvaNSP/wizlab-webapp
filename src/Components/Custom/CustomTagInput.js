@@ -14,8 +14,8 @@ export const CustomTagInput = ({
     const [tags, setTags] = useState(initialTags);
     const [isKeyReleased, setIsKeyReleased] = useState(false);
 
+    console.log("tags", tags)
     useEffect(() => {
-        console.log("create tags", tags)
         updateTags(tags)
     }, [tags])
 

@@ -6,6 +6,7 @@ import {
     ERROR_MESSAGE_403_FORBIDDEN, 
     HTTP_STATUS_CODE_401_UNAUTHORIZED, 
     HTTP_STATUS_CODE_403_FORBIDDEN, 
+    HTTP_STATUS_CODE_404_NOT_FOUND, 
     PAYMENT_SEARCH_ENDPOINT, 
     PAYMENT_UPDATE_ENDPOINT} from "../../../Configs/ApgConfigs";
 
@@ -61,8 +62,10 @@ export const SearchPayments = (paymentSearchPayload, callback) => (dispatch) => 
                     toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
-                } else {
-                    //error.response.data
+                } else if (HTTP_STATUS_CODE_404_NOT_FOUND === error.response.status) {
+                    toast.warning("Payment records are not found for selected criteria")
+                }else {
+                    toast.error("Get payments failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");
@@ -84,7 +87,7 @@ export const PaymentUpdate = (paymentSubmitPayload, callback) => (dispatch) => {
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else {
-                    //error.response.data
+                    toast.error("Payment update failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");

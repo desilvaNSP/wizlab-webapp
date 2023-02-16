@@ -42,7 +42,7 @@ export const NewSession = (props) => {
 
     const SelectClassById = () => {
         var selectedClass = null;
-        var filteredClass = common.Classes.filter(function (val) {
+        var filteredClass = common.Classes?.classes.filter(function (val) {
             return val.id == classId;
         });
         if (filteredClass.length > 0) {
@@ -56,7 +56,7 @@ export const NewSession = (props) => {
         if (filteredClass != null) {
             setSelectedClass(filteredClass)
         }
-    }, [common.Classes, classId])
+    }, [common.Classes?.classes, classId])
 
 
     /**
@@ -259,7 +259,7 @@ export const NewSession = (props) => {
                         <div className='form-group'>
                             <div className='form-group-col'>
                                 <ReactTableFullWidthStyles>
-                                    <CommonTable columns={classColumns} data={common.Classes} onRowSelect={selectClassProfile} rowSelection={true} hiddenColumns={hiddenColumns} pagination={false} settings={false} globalsearch={false} downloadcsv={false} />
+                                    <CommonTable columns={classColumns} data={common.Classes?.classes} onRowSelect={selectClassProfile} rowSelection={true} hiddenColumns={hiddenColumns} pagination={false} settings={false} globalsearch={false} downloadcsv={false} />
                                 </ReactTableFullWidthStyles>
                             </div>
                         </div>

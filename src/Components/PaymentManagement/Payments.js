@@ -352,7 +352,7 @@ const Payments = props => {
             "paymentStatus": selectedPaymentStatus?.id,
             "keyWord": selectedKeyValue,
             "pageSize": tablePageSize,
-            "pageNumber": tablePageIndex
+            "pageNumber": tablePageIndex + 1
         }
 
         dispatch(ShowLoading("Loading Payment Records.."))

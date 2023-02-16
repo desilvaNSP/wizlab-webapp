@@ -1,10 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import { ClassesTable } from "./Table/ClassesTable";
 import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
 import { NewClass } from "./NewClass";
 import FilterDropdown from "../../Custom/FilterDropdown";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { GetClasses, ShowLoading, StopLoading } from "../../../Redux/Features/Common/CommonServicesSlice";
 
 const Classes = props => {
 
@@ -22,7 +23,40 @@ const Classes = props => {
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [selectedTeacher, setSelectedTeacher] = useState(null);
 
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = React.useState(false)
+    const [tablePageIndex, setTablePageIndex] = React.useState(0)
+    const [tablePageSize, setTablePageSize] = React.useState(10)
+    const [pageCount, setPageCount] = React.useState(0)
+
+    const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
+
+    useEffect(() => {
+        if(common.Classes != null){
+            setData(common.Classes?.classes)
+            setPageCount(Math.ceil(common.Classes?.totalNumberOfEntries / tablePageSize))
+        }
+    }, [common.Classes])
+
+    const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
+        var payload = {
+            "courseId": selectedCourse?.id,
+            "levelId": selectedLevel?.id,
+            "subjectId": selectedSubject?.id,
+            "teacherId": selectedTeacher?.id,
+            "pageSize": pageSize,
+            "pageNumber":  pageIndex + 1
+          }
+
+        setLoading(true)
+        setTablePageSize(pageSize);
+        //dispatch(ShowLoading("Loading Classes.."))
+        dispatch(GetClasses(payload, function (response, success) {
+            setLoading(false)
+            //dispatch(StopLoading())
+        }));
+    }, [])
 
     const triggerStartNewClass = () => {
         setSelectedClass(null)
@@ -42,7 +76,23 @@ const Classes = props => {
      * Event handling for apply filters and retrive class data.
      */
     const handleApplyOnClick = () => {
-        alert("load classes data")
+        var payload = {
+            "courseId": selectedCourse?.id,
+            "levelId": selectedLevel?.id,
+            "subjectId": selectedSubject?.id,
+            "teacherId": selectedTeacher?.id,
+            "pageSize": tablePageSize,
+            "pageNumber":  tablePageIndex + 1
+        }
+        dispatch(ShowLoading("Loading Classes.."))
+        dispatch(GetClasses(payload, function (response, success) {
+            if (success) {
+                //success handle
+            } else {
+                //error handle
+            }
+            dispatch(StopLoading())
+        }));
     };
 
     /**
@@ -63,7 +113,6 @@ const Classes = props => {
                 break;
             case LEVEL_SELECTION:
                 var levelObj = null
-                console.log("selectedCourse MM", selectedCourse)
                 selectedCourse?.levels.forEach((level, index) => {
                     if (level.id == item.id) {
                         levelObj = level;
@@ -286,7 +335,17 @@ const Classes = props => {
                 </div>
             </div>
             <ReactTableFullWidthStyles>
-                <ClassesTable columns={columns} data={common.Classes} onRowSelect={(rows) => { classSelectionOnTable(rows) }} hiddenColumns={hiddenColumns} rowSelection={true} />
+                <ClassesTable
+                    columns={columns}
+                    data={data}
+                    fetchData={fetchData}
+                    loading={loading}
+                    pageCount={pageCount}
+                    onRowSelect={(rows) => { classSelectionOnTable(rows) }}
+                    hiddenColumns={hiddenColumns}
+                    rowSelection={true}
+                    numberOfRecords={common.Classes?.totalNumberOfEntries}
+                />
             </ReactTableFullWidthStyles>
             {showClassCreationPopup &&
                 <NewClass show={showClassCreationPopup} handleReload={() => { }} handleClose={closeClassCreationPopup} selectedClass={selectedClass}></NewClass>

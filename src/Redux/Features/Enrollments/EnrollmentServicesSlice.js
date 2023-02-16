@@ -8,6 +8,7 @@ import {
     GET_ENROLLMENTS_BY_CLASSID_ENDPOINT, 
     HTTP_STATUS_CODE_401_UNAUTHORIZED, 
     HTTP_STATUS_CODE_403_FORBIDDEN,
+    HTTP_STATUS_CODE_404_NOT_FOUND,
     UPDATE_ENROLLMENT_ENDPOINT } from "../../../Configs/ApgConfigs";
 import { toast } from 'react-toastify';
 
@@ -62,7 +63,9 @@ export const GetEnrollmentsById = (payload, callback) => (dispatch) => {
                     toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
-                } else {
+                } else if (HTTP_STATUS_CODE_404_NOT_FOUND === error.response.status) {
+                    toast.warning("Enrollment records for classs are not found for selected criteria")
+                }else {
                     toast.error("Get enrollments by Id failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
@@ -85,6 +88,8 @@ export const GetAllEnrollments = (payload, callback) => (dispatch) => {
                     toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                }else if (HTTP_STATUS_CODE_404_NOT_FOUND === error.response.status) {
+                    toast.warning("Enrollment records are not found for selected criteria")
                 } else {
                     toast.error("Get all enrollments failed with " + error.response.data.message + " - " + error.response.status);
                 }

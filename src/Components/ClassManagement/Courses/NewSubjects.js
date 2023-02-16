@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { EditableInputTextCell } from '../../Custom/Editable';
 import { ReactEditableTableFullWidthStyles } from '../../Custom/StyleComponents';
 import { SubjectsTable } from './Table/SubjectsTable';
+import closeIcon from '../../Custom/icons/close-icon.svg'
 
 export const NewSubjects = props => {
     const { selectedLevel, levelInex, updateLevel } = props
@@ -22,6 +23,11 @@ export const NewSubjects = props => {
         var newDataSet = [...newData, ...data]
         setData(newDataSet);
     }
+
+    const deleteRecord = (row) => {
+        console.log(row)
+    }
+
 
     // When our cell renderer calls updateMyData, we'll use
     // the rowIndex(ex: 9), columnId(ex: merchantName) and new value to update the
@@ -89,6 +95,18 @@ export const NewSubjects = props => {
                     )
                 }
             },
+            {
+                Header: '',
+                id: 'deleteOption',
+                disableFilters: true,
+                Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
+                    return (
+                        <div className="table-row--delete" onClick={() => { deleteRecord(row) }}>
+                            <img src={closeIcon}/>
+                        </div>
+                    )
+                }
+            }
         ],
         []
     )

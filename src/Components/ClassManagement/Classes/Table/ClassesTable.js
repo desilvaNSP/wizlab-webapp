@@ -21,7 +21,18 @@ const IndeterminateCheckbox = React.forwardRef(
 )
 
 
-export const ClassesTable = ({ columns, data, onRowSelect, hiddenColumns, rowSelection=false }) => {
+export const ClassesTable = ({
+    columns,
+    data,
+    updateMyData,
+    fetchData,
+    loading,
+    pageCount: controlledPageCount,
+    onRowSelect,
+    hiddenColumns,
+    rowSelection = false,
+    numberOfRecords
+}) => {
 
     const [showContextMenu, setShowContextMenu] = useState(false);
 
@@ -101,8 +112,14 @@ export const ClassesTable = ({ columns, data, onRowSelect, hiddenColumns, rowSel
             columns,
             data,
             defaultColumn, // Be sure to pass the defaultColumn option
-            initialState,
+            initialState: { pageIndex: 0 }, // Pass our hoisted table state
+            manualPagination: true, // Tell the usePagination
+            // hook that we'll handle our own data fetching
+            // This means we'll also have to provide our own
+            // pageCount.
             filterTypes,
+            pageCount: controlledPageCount,
+            updateMyData
         },
         useFilters, // useFilters!
         useGlobalFilter, // useGlobalFilter!
@@ -132,12 +149,17 @@ export const ClassesTable = ({ columns, data, onRowSelect, hiddenColumns, rowSel
         }
     )
 
+    // Listen for changes in pagination and use the state to fetch our new data
     React.useEffect(() => {
-        if(rowSelection){
+        fetchData({ pageIndex, pageSize })
+    }, [fetchData, pageIndex, pageSize])
+
+    React.useEffect(() => {
+        if (rowSelection) {
             onRowSelect(selectedFlatRows);
         }
     }, [selectedFlatRows]);
-    
+
     const downloadFile = ({ data, fileName, fileType }) => {
         const blob = new Blob([data], { type: fileType })
 
@@ -157,7 +179,7 @@ export const ClassesTable = ({ columns, data, onRowSelect, hiddenColumns, rowSel
         e.preventDefault()
 
         // Headers for each column
-        let arrayOfheaders= allColumns.map((value) => {
+        let arrayOfheaders = allColumns.map((value) => {
             if (value.isVisible && value.id != 'selection') {
                 return value.id
             }
@@ -191,7 +213,7 @@ export const ClassesTable = ({ columns, data, onRowSelect, hiddenColumns, rowSel
                 <img src='/assets/images/settings-icon.png' />
             </div>
             <div className="table-setting-icon" onClick={(e) => exportToCsv(e)}>
-                <img src='/assets/images/download-icon.png'  alt='Export'/>
+                <img src='/assets/images/download-icon.png' alt='Export' />
             </div>
             {showContextMenu && <div className='column-hiding-contextmenu'>
                 <div>
@@ -251,6 +273,17 @@ export const ClassesTable = ({ columns, data, onRowSelect, hiddenColumns, rowSel
                         <tr>
                             <td className='table-no-results' colSpan="15">No results found</td>
                         </tr>}
+                    <tr>
+                        {loading ? (
+                            // Use our custom loading state to show a loading indicator
+                            <td colSpan="10000" style={{color:'red', fontWeight:'bold'}}>Loading...</td>
+                        ) : (
+                            <td colSpan="10000">
+                                Showing {page.length} of ~{numberOfRecords}{' '}
+                                results
+                            </td>
+                        )}
+                    </tr>
                 </tbody>
             </table>
             {/* 
@@ -258,16 +291,16 @@ export const ClassesTable = ({ columns, data, onRowSelect, hiddenColumns, rowSel
           This is just a very basic UI implementation:
         */}
             <div className="pagination">
-                <button onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
+                <button className='btn--pagination' onClick={() => gotoPage(0)} disabled={!canPreviousPage}>
                     {'<<'}
                 </button>{' '}
-                <button onClick={() => previousPage()} disabled={!canPreviousPage}>
+                <button className='btn--pagination' onClick={() => previousPage()} disabled={!canPreviousPage}>
                     {'<'}
                 </button>{' '}
-                <button onClick={() => nextPage()} disabled={!canNextPage}>
+                <button className='btn--pagination' onClick={() => nextPage()} disabled={!canNextPage}>
                     {'>'}
                 </button>{' '}
-                <button onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
+                <button className='btn--pagination' onClick={() => gotoPage(pageCount - 1)} disabled={!canNextPage}>
                     {'>>'}
                 </button>{' '}
                 <span>
@@ -286,13 +319,16 @@ export const ClassesTable = ({ columns, data, onRowSelect, hiddenColumns, rowSel
                             gotoPage(page)
                         }}
                         style={{ width: '100px' }}
+                        className='editable-input--cell'
                     />
                 </span>{' '}
                 <select
                     value={pageSize}
+                    style={{ width: '150px' }}
                     onChange={e => {
                         setPageSize(Number(e.target.value))
                     }}
+                    className='editable-input--cell'
                 >
                     {[10, 20, 30, 40, 50].map(pageSize => (
                         <option key={pageSize} value={pageSize}>
