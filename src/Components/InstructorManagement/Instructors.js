@@ -22,7 +22,6 @@ const Instructors = props => {
     };
 
     const triggerStartNewClass = () => {
-        console.log('test');
         setShowClassCreationPopup(true)
     }
 
