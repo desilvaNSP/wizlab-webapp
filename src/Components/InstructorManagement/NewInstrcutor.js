@@ -145,7 +145,6 @@ export const NewInstrcutor = props => {
 
     //Trigger create new teacher service
     const createNewTeacher = () => {
-        debugger;
         var payload = {
             "firstname": selectedFirstName,
             "middlename": selectedMiddleName,
@@ -166,6 +165,7 @@ export const NewInstrcutor = props => {
         }));
     }
 
+    //Trigger update teacher service
     const updateExistingTeacher = () => {
         var payload = {
             "id":selectedTeacher.id,
@@ -212,7 +212,7 @@ export const NewInstrcutor = props => {
                                 <div className='form-column'>
                                     <div className='item-name'>First Name</div>
                                     <div className='item-dropdown'>
-                                        <CustomInput initialValue={selectedFirstName} type="text" disable={false} updateInput={(value) => {
+                                        <CustomInput initialValue={selectedFirstName} type="text" disable={selectedTeacher == null ? false : true } updateInput={(value) => {
                                             updateFirstName(value)
                                         }} fieldValidation={instructorFieldValidation} required={true} placeHolder="First Name"></CustomInput>
                                     </div>
@@ -220,7 +220,7 @@ export const NewInstrcutor = props => {
                                 <div className='form-column'>
                                     <div className='item-name'>Middle Name</div>
                                     <div className='item-dropdown'>
-                                        <CustomInput initialValue={selectedMiddleName} type="text" disable={false} updateInput={(value) => {
+                                        <CustomInput initialValue={selectedMiddleName} type="text" disable={selectedTeacher == null ? false : true } updateInput={(value) => {
                                             updateMiddleName(value)
                                         }} fieldValidation={instructorFieldValidation} required={true} placeHolder="Middle Name"></CustomInput>
                                     </div>
@@ -230,7 +230,7 @@ export const NewInstrcutor = props => {
                                 <div className='form-column'>
                                     <div className='item-name'>Last Name</div>
                                     <div className='item-dropdown'>
-                                        <CustomInput initialValue={selectedLastName} type="text" disable={false} updateInput={(value) => {
+                                        <CustomInput initialValue={selectedLastName} type="text" disable={selectedTeacher == null ? false : true } updateInput={(value) => {
                                             updateLastName(value)
                                         }} fieldValidation={instructorFieldValidation} required={true} placeHolder="Last Name"></CustomInput>
                                     </div>

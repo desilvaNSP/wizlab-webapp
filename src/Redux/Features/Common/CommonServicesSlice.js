@@ -21,7 +21,8 @@ import {
     DELETE_LEVEL_ENDPOINT,
     DELETE_SUBJECT_ENDPOINT,
     CREATE_TEACHER_ENDPOINT, 
-    UPDATE_TEACHER_ENDPOINT} from "../../../Configs/ApgConfigs";
+    UPDATE_TEACHER_ENDPOINT,
+    GET_TEACHERS_ENDPOINT} from "../../../Configs/ApgConfigs";
 
 export const CommonServicesSlice = createSlice({
     name: 'common',
@@ -120,11 +121,21 @@ export const CommonServicesSlice = createSlice({
                 ...state,
                 Teachers: [...state.Teachers, obj]
             };
+        },
+        UpdateTeachers: (state, action) => {
+            let obj = action.payload;
+            return {
+                ...state,
+                Teachers:{
+                    teachers: obj?.teachers,
+                    totalNumberOfEntries: obj?.totalNumberOfEntries
+                }, 
+            };
         }
     },
 })
 
-export const { ShowLoading, HideLoading, UpdateMetaData, AddNewCourse, UpdateClasses, /*AddNewClass, UpdateExistingClass,*/ AddClassRoom, AddNewTeacher } = CommonServicesSlice.actions
+export const { ShowLoading, HideLoading, UpdateMetaData, AddNewCourse, UpdateClasses, /*AddNewClass, UpdateExistingClass,*/ AddClassRoom, AddNewTeacher, UpdateTeachers } = CommonServicesSlice.actions
 
 
 export const StartLoading = (message) => (dispatch) => {
@@ -448,8 +459,7 @@ export const GetSessions = (payload, callback) => (dispatch) => {
 
 export const CreateTeacher = (teacherPayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_TEACHER_ENDPOINT, teacherPayload).then(response => {
-        //response.data
-        dispatch(AddNewTeacher(response.data))
+        //dispatch(AddNewTeacher(response.data))
         callback(response.data, true);
     }).catch(
         error => {
@@ -459,7 +469,7 @@ export const CreateTeacher = (teacherPayload, callback) => (dispatch) => {
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    //error.response.data
+                    toast.error("Creating teacher failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");
@@ -470,8 +480,7 @@ export const CreateTeacher = (teacherPayload, callback) => (dispatch) => {
 
 export const UpdateTeacher = (teacherPayload, callback) => (dispatch) => {
     ServiceEngine.put(UPDATE_TEACHER_ENDPOINT, teacherPayload).then(response => {
-        //response.data
-        dispatch(AddNewTeacher(response.data))
+        //dispatch(AddNewTeacher(response.data))
         callback(response.data, true);
     }).catch(
         error => {
@@ -481,7 +490,7 @@ export const UpdateTeacher = (teacherPayload, callback) => (dispatch) => {
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    //error.response.data
+                    toast.error("Updating teacher failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");
@@ -490,6 +499,27 @@ export const UpdateTeacher = (teacherPayload, callback) => (dispatch) => {
         })
 }
 
-
+export const GetTeachers = (payload, callback) => (dispatch) => {
+    ServiceEngine.post(GET_TEACHERS_ENDPOINT, payload).then(response => {
+        dispatch(UpdateTeachers(response.data))
+        callback(response.data, true);
+    }).catch(
+        error => {
+            if (error.response !== undefined) {
+                if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                } else if (HTTP_STATUS_CODE_404_NOT_FOUND === error.response.status) {
+                    toast.warning("Teachers are not found for selected criteria")
+                } else {
+                    toast.error("Get teachers failed with " + error.response.data.message + " - " + error.response.status);
+                }
+            } else {
+                toast.error("Check your internet connection or network connectivity issue between servers");
+            }
+            callback(null, false);
+        })
+}
 
 export default CommonServicesSlice.reducer

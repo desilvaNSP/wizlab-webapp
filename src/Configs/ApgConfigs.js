@@ -79,3 +79,4 @@ export const PAYMENT_SEARCH_ENDPOINT = '/api/v1/payment/search'
 //teachers
 export const CREATE_TEACHER_ENDPOINT = '/api/v1/admin/teacher'
 export const UPDATE_TEACHER_ENDPOINT = '/api/v1/admin/teacher'
+export const GET_TEACHERS_ENDPOINT = '/api/v1/admin/teachers/search'
