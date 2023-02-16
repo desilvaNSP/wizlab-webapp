@@ -147,10 +147,10 @@ export const NewInstrcutor = props => {
     const createNewTeacher = () => {
         debugger;
         var payload = {
-            "firstName": selectedFirstName,
-            "middleName": selectedMiddleName,
-            "lastName": selectedLastName,
-            "phoneNumber": selectedPhoneNumber,
+            "firstname": selectedFirstName,
+            "middlename": selectedMiddleName,
+            "lastname": selectedLastName,
+            "phonenumber": selectedPhoneNumber,
             "education": selectedEducationQualification,
             "subjects": selectedSubjects
         }
@@ -169,10 +169,10 @@ export const NewInstrcutor = props => {
     const updateExistingTeacher = () => {
         var payload = {
             "id":selectedTeacher.id,
-            "firstName": selectedFirstName,
-            "middleName": selectedMiddleName,
-            "lastName": selectedLastName,
-            "phoneNumber": selectedPhoneNumber,
+            "firstname": selectedFirstName,
+            "middlename": selectedMiddleName,
+            "lastname": selectedLastName,
+            "phonenumber": selectedPhoneNumber,
             "education": selectedEducationQualification,
             "subjects": selectedSubjects
         }
