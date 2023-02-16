@@ -68,7 +68,10 @@ export const CommonServicesSlice = createSlice({
                 InstituteId: obj.institute?.id,
                 Location: obj.institute?.location,
                 InstituteName: obj.institute?.name,
-                Teachers: obj.institute?.teachers,
+                Teachers: {
+                    teachers: obj.institute?.teachers,
+                    totalNumberOfEntries: obj.institute?.teachers.length
+                },
                 Users: obj.institute?.users,
                 PaymentStatus: obj.paymentStatuses,
                 UserRoles: obj.userRoles

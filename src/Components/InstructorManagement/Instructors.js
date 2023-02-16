@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import { CommonTable } from "../CommonTable/CommonTable";
-import FilterDropdown from "../Custom/FilterDropdown";
+import { ClassesTable } from "../ClassManagement/Classes/Table/ClassesTable";
 import { ReactTableFullWidthStyles } from '../Custom/StyleComponents'
 import { NewInstrcutor } from "./NewInstrcutor";
-import { useSelector } from "react-redux";
+import FilterDropdown from "../Custom/FilterDropdown";
+import { useSelector, useDispatch } from "react-redux";
+import { GetTeachers, ShowLoading, StopLoading } from '../../Redux/Features/Common/CommonServicesSlice';
 
 const Instructors = props => {
 
@@ -12,18 +14,51 @@ const Instructors = props => {
     const LEVEL_SELECTION = "LEVEL_SELECTION";
     const SUBJECT_SELECTION = "SUBJECT_SELECTION";
 
+    const [selectedTeacher, setSelectedTeacher] = useState(null);
+    const [selectedRowOnTable, setSelectedRowOnTable] = useState(null);
+    const [showTeacherCreationPopup, setShowTeacherCreationPopup] = useState(false);
+
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedLevel, setSelectedLevel] = useState(null);
     const [selectedSubject, setSelectedSubject] = useState(null);
-    const [selectedTeacher, setSelectedTeacher] = useState(null)
-    const [selectedRowOnTable, setSelectedRowOnTable] = useState(null)
-    const [showTeacherCreationPopup, setShowTeacherCreationPopup] = useState(false)
+    
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = React.useState(false)
+    const [tablePageIndex, setTablePageIndex] = React.useState(0)
+    const [tablePageSize, setTablePageSize] = React.useState(10)
+    const [pageCount, setPageCount] = React.useState(0)
 
+    const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
 
-    const hiddenColumns = ["id"];
+    debugger;
 
-    const triggerStartNewTeacher = () => {
+    useEffect(() => {
+        if(common.Teachers != null){
+            setData(common.Teachers?.teschers)
+            setPageCount(Math.ceil(common.Teachers?.totalNumberOfEntries / tablePageSize))
+        }
+    }, [common.Teachers])
+
+    const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
+        var payload = {
+            "courseId": selectedCourse?.id,
+            "levelId": selectedLevel?.id,
+            "subjectId": selectedSubject?.id,
+            "pageSize": pageSize,
+            "pageNumber":  pageIndex + 1
+          }
+
+        setLoading(true)
+        setTablePageSize(pageSize);
+        //dispatch(ShowLoading("Loading Classes.."))
+        dispatch(GetTeachers(payload, function (response, success) {
+            setLoading(false)
+            //dispatch(StopLoading())
+        }));
+    }, [])
+
+    const triggerCreateNewTeacher = () => {
         setSelectedTeacher(null)
         setShowTeacherCreationPopup(true)
     }
@@ -41,7 +76,22 @@ const Instructors = props => {
      * Event handling for apply filters and retrive class data.
      */
     const handleApplyOnClick = () => {
-        alert("load teacher data")
+        var payload = {
+            "courseId": selectedCourse?.id,
+            "levelId": selectedLevel?.id,
+            "subjectId": selectedSubject?.id,
+            "pageSize": tablePageSize,
+            "pageNumber":  tablePageIndex + 1
+        }
+        dispatch(ShowLoading("Loading Teachers.."))
+        dispatch(GetTeachers(payload, function (response, success) {
+            if (success) {
+                //success handle
+            } else {
+                //error handle
+            }
+            dispatch(StopLoading())
+        }));
     };
 
      /**
@@ -77,6 +127,8 @@ const Instructors = props => {
                 break;
         }
     };
+
+    const hiddenColumns = ["id"];
 
     const columns = React.useMemo(
         () => [
@@ -134,6 +186,64 @@ const Instructors = props => {
         []
     )
 
+    // const columns = React.useMemo(
+    //     () => [
+    //         {
+    //             Header: 'Teacher/Lecturer',
+    //             accessor: data => {
+    //                 return data.teacher?.firstName + " " + data.teacher?.lastName
+    //             },
+    //             disableFilters: false
+    //         },
+    //         {
+    //             Header: 'Course/Program',
+    //             id: 'course',
+    //             accessor: data => {
+    //                 const results = data.course == null || data.course == "" ? [] : data.course.split(",");
+    //                 if (results.length > 0) {
+    //                     return results.map(function (each) {
+    //                         return (<span className="celltag--valid">{each}</span>)
+    //                     })
+    //                 } else {
+    //                     return (<span className="celltag--invalid">Not Allocated Yet</span>)
+    //                 }
+    //             },
+    //             disableFilters: true
+    //         },
+    //         {
+    //             Header: 'Level/Grade',
+    //             id: 'level',
+    //             accessor: data => {
+    //                 const results = data.level == null || data.level == "" ? [] : data.level.split(",");
+    //                 if (results.length > 0) {
+    //                     return results.map(function (each) {
+    //                         return (<span className="celltag--valid">{each}</span>)
+    //                     })
+    //                 } else {
+    //                     return (<span className="celltag--invalid">Not Allocated Yet</span>)
+    //                 }
+    //             },
+    //             disableFilters: true
+    //         },
+    //         {
+    //             Header: 'Subject',
+    //             id: 'subject',
+    //             accessor: data => {
+    //                 const results = data.subject == null || data.subject == "" ? [] : data.subject.split(",");
+    //                 if (results.length > 0) {
+    //                     return results.map(function (each) {
+    //                         return (<span className="celltag--valid">{each}</span>)
+    //                     })
+    //                 } else {
+    //                     return (<span className="celltag--invalid">Not Allocated Yet</span>)
+    //                 }
+    //             },
+    //             disableFilters: false
+    //         }
+    //     ],
+    //     []
+    // )
+
     const getCoursesList = () => {
         let coursesList = [];
         common.Courses?.forEach((course, index) => {
@@ -177,53 +287,6 @@ const Instructors = props => {
     }
 
 
-
-    const data = [
-        {
-            "course": "Year 05 Schoolarship Program",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Sandun Priyanka"
-        },
-        {
-            "course": "Year 05 Schoolarship Program",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Asitha Gunathilaka"
-        },
-        {
-            "course": "Year 05 Schoolarship Program",
-            "level": "",
-            "subject": "",
-            "teacher": "Sajith Premadasa"
-        },
-        {
-            "course": "Year 05 Schoolarship Program, IT Program",
-            "level": "Grade 01",
-            "subject": "Sinhala, Tamil",
-            "teacher": "Konarage Lasitha",
-        },
-        {
-            "course": "Year 05 Schoolarship Program, IT Program",
-            "level": "Grade 01",
-            "subject": "Sinhala, Maths",
-            "teacher": "Suriyapperumage Laaahiruni",
-        },
-        {
-            "course": "",
-            "level": "",
-            "subject": "",
-            "teacher": "Surya Kumar Yadav",
-        },
-        {
-            "course": "Year 05 Schoolarship Program",
-            "level": "Grade 01",
-            "subject": "Sinhala",
-            "teacher": "Buddhika Puthaa"
-        }
-    ]
-
-
     const teacherSelectionOnTable = (rows) => {
         if (rows.length > 0) {
             console.log(rows[0].original)
@@ -243,8 +306,8 @@ const Instructors = props => {
                 </div>
             }
             <div className='page-header'>
-                <div className="add-record" onClick={() => triggerStartNewTeacher()}>
-                    <img src="/assets/icons/icon-add.svg" alt="Start New Class" />
+                <div className="add-record" onClick={() => triggerCreateNewTeacher()}>
+                    <img src="/assets/icons/icon-add.svg" alt="Create New Teacher" />
                     <span>Create Teacher</span>
                 </div>
                 <div className={selectedRowOnTable != null ? "add-record" : "add-record--disabled"} onClick={() => triggerUpdateTeacher()} >
@@ -293,7 +356,18 @@ const Instructors = props => {
                 </div>
             </div>
             <ReactTableFullWidthStyles>
-                <CommonTable columns={columns} data={common.Teachers} onRowSelect={(rows) => { teacherSelectionOnTable(rows)}} hiddenColumns={hiddenColumns} rowSelection={true} />
+            <ClassesTable
+                    columns={columns}
+                    data={data}
+                    fetchData={fetchData}
+                    loading={loading}
+                    pageCount={pageCount}
+                    onRowSelect={(rows) => { teacherSelectionOnTable(rows) }}
+                    hiddenColumns={hiddenColumns}
+                    rowSelection={true}
+                    numberOfRecords={common.Teachers?.totalNumberOfEntries}
+                />
+                {/* <CommonTable columns={columns} data={common.Teachers} onRowSelect={(rows) => { teacherSelectionOnTable(rows)}} hiddenColumns={hiddenColumns} rowSelection={true} /> */}
             </ReactTableFullWidthStyles>
             {showTeacherCreationPopup &&
                 <NewInstrcutor show={showTeacherCreationPopup} handleReload={() => { }} handleClose={closeTeacherCreationPopup} selectedTeacher={selectedTeacher}></NewInstrcutor>
