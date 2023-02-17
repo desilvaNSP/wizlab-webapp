@@ -77,3 +77,7 @@ export const GET_ALL_STUDENTS_ENDPOINT = '/api/v1/admin/enrollments/search'
 //payments
 export const PAYMENT_UPDATE_ENDPOINT = '/api/v1/payment/update'
 export const PAYMENT_SEARCH_ENDPOINT = '/api/v1/payment/search'
+//teachers
+export const CREATE_TEACHER_ENDPOINT = '/api/v1/admin/teacher'
+export const UPDATE_TEACHER_ENDPOINT = '/api/v1/admin/teacher'
+export const GET_TEACHERS_ENDPOINT = '/api/v1/admin/teachers/search'

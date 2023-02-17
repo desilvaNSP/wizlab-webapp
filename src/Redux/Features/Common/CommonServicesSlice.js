@@ -20,7 +20,10 @@ import {
     UPDATE_SUBJECTS_BY_ID_ENDPOINT,
     DELETE_LEVEL_ENDPOINT,
     DELETE_SUBJECT_ENDPOINT,
-    CREATE_SUBJECTS_ENDPOINT} from "../../../Configs/ApgConfigs";
+    CREATE_SUBJECTS_ENDPOINT,
+    CREATE_TEACHER_ENDPOINT, 
+    UPDATE_TEACHER_ENDPOINT,
+    GET_TEACHERS_ENDPOINT} from "../../../Configs/ApgConfigs";
 
 export const CommonServicesSlice = createSlice({
     name: 'common',
@@ -66,7 +69,10 @@ export const CommonServicesSlice = createSlice({
                 InstituteId: obj.institute?.id,
                 Location: obj.institute?.location,
                 InstituteName: obj.institute?.name,
-                Teachers: obj.institute?.teachers,
+                Teachers: {
+                    teachers: obj.institute?.teachers,
+                    totalNumberOfEntries: obj.institute?.teachers.length
+                },
                 Users: obj.institute?.users,
                 PaymentStatus: obj.paymentStatuses,
                 UserRoles: obj.userRoles
@@ -127,11 +133,38 @@ export const CommonServicesSlice = createSlice({
                 ClassRooms: [...state.ClassRooms, obj]
             };
         },
+        AddNewTeacher:(state, action) => {
+            let obj = action.payload;
+            return {
+                ...state,
+                Teachers: [...state.Teachers, obj]
+            };
+        },
+        UpdateTeachers: (state, action) => {
+            let obj = action.payload;
+            return {
+                ...state,
+                Teachers:{
+                    teachers: obj?.teachers,
+                    totalNumberOfEntries: obj?.totalNumberOfEntries
+                }, 
+            };
+        }
     },
 })
 
-export const { ShowLoading, HideLoading, UpdateMetaData, AddNewCourse, UpdateClasses, /*AddNewClass, UpdateExistingClass,*/ AddClassRoom, DeleteSubjects, DeleteLevel } = CommonServicesSlice.actions
-
+export const { 
+    ShowLoading, 
+    HideLoading, 
+    UpdateMetaData, 
+    AddNewCourse, 
+    UpdateClasses,
+    AddClassRoom, 
+    DeleteSubjects, 
+    DeleteLevel, 
+    AddNewTeacher, 
+    UpdateTeachers
+} = CommonServicesSlice.actions
 
 export const StartLoading = (message) => (dispatch) => {
     dispatch(ShowLoading(message))
@@ -486,5 +519,69 @@ export const GetSessions = (payload, callback) => (dispatch) => {
         })
 }
 
+export const CreateTeacher = (teacherPayload, callback) => (dispatch) => {
+    ServiceEngine.post(CREATE_TEACHER_ENDPOINT, teacherPayload).then(response => {
+        //dispatch(AddNewTeacher(response.data))
+        callback(response.data, true);
+    }).catch(
+        error => {
+            if (error.response !== undefined) {
+                if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                } else {
+                    toast.error("Creating teacher failed with " + error.response.data.message + " - " + error.response.status);
+                }
+            } else {
+                toast.error("Check your internet connection or network connectivity issue between servers");
+            }
+            callback(null, false);
+        })
+}
+
+export const UpdateTeacher = (teacherPayload, callback) => (dispatch) => {
+    ServiceEngine.put(UPDATE_TEACHER_ENDPOINT, teacherPayload).then(response => {
+        //dispatch(AddNewTeacher(response.data))
+        callback(response.data, true);
+    }).catch(
+        error => {
+            if (error.response !== undefined) {
+                if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                } else {
+                    toast.error("Updating teacher failed with " + error.response.data.message + " - " + error.response.status);
+                }
+            } else {
+                toast.error("Check your internet connection or network connectivity issue between servers");
+            }
+            callback(null, false);
+        })
+}
+
+export const GetTeachers = (payload, callback) => (dispatch) => {
+    ServiceEngine.post(GET_TEACHERS_ENDPOINT, payload).then(response => {
+        dispatch(UpdateTeachers(response.data))
+        callback(response.data, true);
+    }).catch(
+        error => {
+            if (error.response !== undefined) {
+                if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                } else if (HTTP_STATUS_CODE_404_NOT_FOUND === error.response.status) {
+                    toast.warning("Teachers are not found for selected criteria")
+                } else {
+                    toast.error("Get teachers failed with " + error.response.data.message + " - " + error.response.status);
+                }
+            } else {
+                toast.error("Check your internet connection or network connectivity issue between servers");
+            }
+            callback(null, false);
+        })
+}
 
 export default CommonServicesSlice.reducer
