@@ -1308,7 +1308,8 @@ header .user-welcome-message {
 
 /* Toastify CSS style overide */
 .Toastify__toast-container {
-  width: 450px !important;
+  width: 550px !important;
+  font-weight: bold !important;
 }
 
 
@@ -1684,8 +1685,18 @@ a.datatable--link:hover {
   padding-top: 10px;
 }
 
+.form-group .form-group-col3 {
+  width: 75%;
+  padding: 0px 20px;
+}
+
 .form-group .form-group-col2 {
   width: 50%;
+  padding: 0px 20px;
+}
+
+.form-group .form-group-col1 {
+  width: 25%;
   padding: 0px 20px;
 }
 

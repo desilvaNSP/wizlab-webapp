@@ -89,7 +89,7 @@ const App = props => {
       </div>
       */}
     {isTokenExists() ? renderContent() : redirectToLoginPage()}
-    <ToastContainer autoClose={4000} />
+    <ToastContainer autoClose={5000} />
   </div>
 };
 

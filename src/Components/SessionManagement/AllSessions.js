@@ -3,11 +3,10 @@ import 'react-tabs/style/react-tabs.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { useDispatch, useSelector } from "react-redux";
-import { GetSessionByClassId, GetSessions, StartLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
+import { GetSessions, StartLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
 import { ReactTableFullWidthStyles } from '../Custom/StyleComponents'
 import * as dateFns from "date-fns";
 import { NewSession } from "../ClassManagement/Classes/NewSession";
-import { ClassesTable } from "../ClassManagement/Classes/Table/ClassesTable";
 import EventLayout from "../ClassManagement/Classes/EventLayout";
 import FilterDropdown from "../Custom/FilterDropdown";
 import { DateTimePicker } from "../Custom/DateTimePicker";
@@ -63,7 +62,6 @@ const AllSessions = ({ }) => {
         dispatch(StartLoading("Retrieving all sessions"))
         dispatch(GetSessions(payload, function (data, success) {
             if (success) {
-                console.log(data.sessions)
                 setData(data.sessions)
                 setPageCount(Math.ceil(data.totalNumberOfEntries / tablePageSize))
             }

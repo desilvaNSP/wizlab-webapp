@@ -17,26 +17,49 @@ const Sessions = ({ classId }) => {
     const [selectedSession, setSelectedSession] = useState([])
     const [selectedRowOnTable, setSelectedRowOnTable] = useState(null)
 
+    const [loading, setLoading] = React.useState(false)
+    const [tablePageSize, setTablePageSize] = React.useState(10)
+    const [pageCount, setPageCount] = React.useState(0)
+
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
 
-    useEffect(() => {
-        if (classId != null) {
-            dispatch(StartLoading("Get Sessions for Class"))
-            dispatch(GetSessionByClassId(classId, function (data, success) {
-                if (success) {
-                    setData(data)
-                }
-                dispatch(StopLoading())
-            }));
+    // useEffect(() => {
+    //     if (classId != null) {
+    //         dispatch(StartLoading("Get Sessions for Class"))
+    //         dispatch(GetSessionByClassId(classId, function (data, success) {
+    //             if (success) {
+    //                 setData(data)
+    //             }
+    //             dispatch(StopLoading())
+    //         }));
+    //     }
+    // }, [classId]);
+
+
+    const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
+        var payload = {
+            "classId": classId,
+            "pageSize": pageSize,
+            "pageNumber": pageIndex + 1
         }
-    }, [classId]);
+        setTablePageSize(pageSize)
+        dispatch(StartLoading("Get Sessions for Class"))
+        dispatch(GetSessionByClassId(payload, function (data, success) {
+            if (success) {
+                setData(data.sessions)
+                setPageCount(Math.ceil(data.totalNumberOfEntries / tablePageSize))
+            }
+            dispatch(StopLoading())
+        }));
+    }, [])
+
 
     const triggerStartSession = () => {
         setSelectedSession(null)
         setShowSessionCreationPopup(true)
     }
-   
+
     const triggerUpdateClass = () => {
         setSelectedSession(selectedRowOnTable);
         setShowSessionCreationPopup(true)
@@ -50,9 +73,27 @@ const Sessions = ({ classId }) => {
         // if any transaction is not set, then set null to selectedTransaction state.
         if (rows.length > 0) {
             setSelectedRowOnTable(rows[0].original)
-        }else {
+        } else {
             setSelectedRowOnTable(null)
         }
+    }
+
+    // When our cell renderer calls updateMyData, we'll use
+    // the rowIndex(ex: 9), columnId(ex: merchantName) and new value to update the
+    // original data
+    const updateMyData = (rowIndex, columnId, value, validity) => {
+        var dataUpdated = data.map((row, index) => {
+            if (index === rowIndex) {
+                var updatedRow = {
+                    ...data[rowIndex],
+                    [columnId]: value,
+                    ["updated"]: true
+                }
+                return updatedRow
+            }
+            return row
+        })
+        setData(dataUpdated)
     }
 
     const hiddenColumns = ["id"];
@@ -89,7 +130,7 @@ const Sessions = ({ classId }) => {
                 Header: 'Start Time',
                 id: 'startTime',
                 accessor: data => {
-                    return dateFns.format(new Date(data.time), formatDate) //  // need to update this as startTime
+                    return dateFns.format(new Date(data.startTime), formatDate) //  // need to update this as startTime
                 },
                 disableFilters: true
             },
@@ -136,7 +177,17 @@ const Sessions = ({ classId }) => {
                             Sessions
                         </div>
                         <ReactTableFullWidthStyles>
-                            <ClassesTable columns={columns} data={data} onRowSelect={selectSession} hiddenColumns={hiddenColumns} rowSelection={true} />
+                            <ClassesTable
+                                columns={columns}
+                                data={data}
+                                onRowSelect={selectSession}
+                                hiddenColumns={hiddenColumns}
+                                rowSelection={true}
+                                fetchData={fetchData}
+                                loading={loading}
+                                pageCount={pageCount}
+                                updateMyData={updateMyData}
+                                numberOfRecords={pageCount} />
                         </ReactTableFullWidthStyles>
                     </div>
                 </TabPanel>

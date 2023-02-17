@@ -44,7 +44,7 @@ const Courses = props => {
                         <div className="tile-widget" placeholder="Class Informations" onClick={() => { triggerUpdateCourse(course) }}>
                             <label>{course.name}</label>
                             <span>{course?.levels?.length} Levels</span>
-                            <span> 0 Subjects</span>
+                            {/* <span> 0 Subjects</span> */}
                         </div>
                     )}
                 </div>
