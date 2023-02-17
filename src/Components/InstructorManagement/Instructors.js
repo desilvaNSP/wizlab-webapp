@@ -34,11 +34,11 @@ const Instructors = props => {
     debugger;
 
     useEffect(() => {
-        if(common.Teachers != null){
-            setData(common.Teachers?.teschers)
-            setPageCount(Math.ceil(common.Teachers?.totalNumberOfEntries / tablePageSize))
+        if(common.Teachers?.teachers != null){
+            setData(common.Teachers?.teachers)
+            setPageCount(Math.ceil(common.Teachers?.teachers?.totalNumberOfEntries / tablePageSize))
         }
-    }, [common.Teachers])
+    }, [common.Teachers?.teachers])
 
     const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
         var payload = {
@@ -365,7 +365,7 @@ const Instructors = props => {
                     onRowSelect={(rows) => { teacherSelectionOnTable(rows) }}
                     hiddenColumns={hiddenColumns}
                     rowSelection={true}
-                    numberOfRecords={common.Teachers?.totalNumberOfEntries}
+                    numberOfRecords={common.Teachers?.teachers?.totalNumberOfEntries}
                 />
                 {/* <CommonTable columns={columns} data={common.Teachers} onRowSelect={(rows) => { teacherSelectionOnTable(rows)}} hiddenColumns={hiddenColumns} rowSelection={true} /> */}
             </ReactTableFullWidthStyles>
