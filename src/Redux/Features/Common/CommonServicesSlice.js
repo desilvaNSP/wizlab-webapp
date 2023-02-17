@@ -89,14 +89,14 @@ export const CommonServicesSlice = createSlice({
             let obj = action.payload;
             return {
                 ...state,
-                Courses: [...state.Courses.filter((course) => { return course.id != obj.courseId}), obj.course]
+                Courses: [...state.Courses.filter((course) => { return course.id != obj.course?.id}), obj.course]
             };
         },
         DeleteLevel: (state, action) => {
             let obj = action.payload;
             return {
                 ...state,
-                Courses: [...state.Courses, obj]
+                Courses: [...state.Courses.filter((course) => { return course.id != obj.course?.id}), obj.course]
             };
         },
         UpdateClasses: (state, action) => {
@@ -314,7 +314,7 @@ export const UpdateSubjectBySubjectId = (updatePayload, callback) => (dispatch) 
 // }  
 export const DeleteLevelById = (payload, callback) => (dispatch) => {
     ServiceEngine.delete(DELETE_LEVEL_ENDPOINT,  { data: payload }).then(response => {
-        //dispatch(DeleteLevel(response.data))
+        dispatch(DeleteLevel(response.data))
         callback(response.data, true);
     }).catch(
         error => {
@@ -337,14 +337,9 @@ export const DeleteLevelById = (payload, callback) => (dispatch) => {
 //     "id": 0
 // }
   
-export const DeleteSubjectById  = (payload, courseId, levelId, callback) => (dispatch) => {
+export const DeleteSubjectById  = (payload, callback) => (dispatch) => {
     ServiceEngine.delete(DELETE_SUBJECT_ENDPOINT, { data: payload }).then(response => {
-        var responseObj = {
-            "course": response.data,
-            "courseId":courseId,
-            "levelId":levelId
-        }
-        dispatch(DeleteSubjects(responseObj))
+        dispatch(DeleteSubjects(response.data))
         callback(response.data, true);
     }).catch(
         error => {

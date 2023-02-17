@@ -50,7 +50,7 @@ export const CREATE_USER_ENDPOINT = '/api/v1/admin/user'
 //courses
 export const CREATE_COURSE_ENDPOINT = '/api/v1/admin/course'
 export const GET_COURSE_BYID_ENDPOINT = '/api/v1/admin/courseinfo'
-export const ADD_NEWLEVELS_AND_SUBJECTS_ENDPOINT = '/api/v1/admin/cource/addlevel' //POST
+export const ADD_NEWLEVELS_AND_SUBJECTS_ENDPOINT = '/api/v1/admin/course/addlevel'
 export const CREATE_SUBJECTS_ENDPOINT = '/api/v1/admin/subject' //POST
 export const UPDATE_SUBJECTS_BY_ID_ENDPOINT = '/api/v1/admin/subject' //PUT
 export const DELETE_SUBJECT_ENDPOINT = '/api/v1/admin/subject' //DELETE

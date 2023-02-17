@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { EditableInputTextCell } from '../../Custom/Editable';
 import { ReactEditableTableFullWidthStyles } from '../../Custom/StyleComponents';
 import { SubjectsTable } from './Table/SubjectsTable';
@@ -9,6 +9,7 @@ import { InfoConfirmModal } from '../../Custom/Modals';
 
 export const NewSubjects = props => {
     const { selectedCourse, selectedLevel, levelInex, updateLevel } = props
+
     const [data, setData] = useState(selectedLevel.subjects)
 
     const [showInfoConfirmModal, setShowInfoConfirmModal] = useState(false);
@@ -20,6 +21,13 @@ export const NewSubjects = props => {
     const [currentDeleteRow, setCurrentDeleteRow] = useState(false);
 
     const dispatch = useDispatch();
+
+    useEffect(() =>{
+        if(selectedLevel != null){
+            var newItems = data.filter((item) => { return item.new});
+            setData([...selectedLevel.subjects, ...newItems])
+        }
+    },[selectedCourse])
 
     // listener for the add new row on the table.
     // added new row at the top of the table.
@@ -37,6 +45,10 @@ export const NewSubjects = props => {
         setData(newDataSet);
     }
 
+
+
+
+
     const closeConfirmModal = () => {
         setShowInfoConfirmModal(false)
     }
@@ -45,9 +57,10 @@ export const NewSubjects = props => {
         setShowInfoConfirmModal(false)
         dispatch(StartLoading("Deleting Subject.."))
         var payload = {
-            "id": currentDeleteRow.original.id
+            "id": currentDeleteRow.original.id,
+            "courseId": selectedCourse.id
         }
-        dispatch(DeleteSubjectById(payload, selectedCourse.id, selectedLevel.id, (response, success) => {
+        dispatch(DeleteSubjectById(payload, (response, success) => {
             dispatch(StopLoading())
         }));
     }

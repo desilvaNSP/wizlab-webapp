@@ -54,7 +54,7 @@ export const CustomTagInput = ({
 
     const onBlur = (e) => {
         const trimmedInput = input.trim();
-        if (trimmedInput.length > 0 && !tags.includes(trimmedInput)) {
+        if (trimmedInput.length > 0 && !tags.find(e => e.value === trimmedInput)) {
             fieldValidation(trimmedInput, (flag, message) => {
                 if (flag) {
                     setTags(prevState => [...prevState, {
