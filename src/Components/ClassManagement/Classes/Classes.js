@@ -246,7 +246,7 @@ const Classes = props => {
 
     const getTeachersList = () => {
         let teachersList = [];
-        common.Teachers?.forEach((teacher, index) => {
+        common.Teachers?.teachers?.forEach((teacher, index) => {
             let obj = {
                 id: teacher.id,
                 value: teacher.firstName + " " + teacher.lastName,

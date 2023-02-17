@@ -92,7 +92,7 @@ export const NewClass = props => {
                 break;
             case TEACHER_SELECTION:
                 var teacherObj = null
-                common.Teachers?.forEach((teacher, index) => {
+                common.Teachers?.teachers?.forEach((teacher, index) => {
                     if (teacher.id == item.id) {
                         teacherObj = teacher;
                     }
@@ -170,7 +170,7 @@ export const NewClass = props => {
 
     const getTeachersList = () => {
         let teachersList = [];
-        common.Teachers?.forEach((teacher, index) => {
+        common.Teachers?.teachers?.forEach((teacher, index) => {
             if (teacher != null) {
                 let obj = {
                     id: teacher.id,
