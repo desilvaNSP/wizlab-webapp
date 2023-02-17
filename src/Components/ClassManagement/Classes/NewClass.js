@@ -271,9 +271,6 @@ export const NewClass = props => {
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef, props);
 
-    console.log("selectedClassIdentifier", selectedClassIdentifier)
-    console.log("selectedClassFee", selectedClassFee)
-
     return (
         <div className={showHideClassName}>
             <section className="modal-detail" ref={wrapperRef} onClick={e => e.stopPropagation()}>

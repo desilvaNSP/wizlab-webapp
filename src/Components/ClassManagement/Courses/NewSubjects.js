@@ -34,7 +34,6 @@ export const NewSubjects = props => {
             }
         ]
         var newDataSet = [...data, ...newData]
-        console.log(newDataSet)
         setData(newDataSet);
     }
 
@@ -49,7 +48,6 @@ export const NewSubjects = props => {
             "id": currentDeleteRow.original.id
         }
         dispatch(DeleteSubjectById(payload, selectedCourse.id, selectedLevel.id, (response, success) => {
-            console.log("RESPONSE")
             dispatch(StopLoading())
         }));
     }
@@ -153,8 +151,6 @@ export const NewSubjects = props => {
             }
         }
     ];
-
-    console.log("data", data);
 
     return (
         <div className='subject-container'>

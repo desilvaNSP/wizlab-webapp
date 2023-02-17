@@ -24,7 +24,6 @@ const Institutes = props => {
     };
 
     const triggerStartNewClass = () => {
-        console.log('test');
         setShowClassCreationPopup(true)
     }
 
@@ -165,7 +164,6 @@ const Institutes = props => {
                         <FilterDropdown
                             defaultList={[]}
                             onItemChange={(item) => {
-                                console.log(item)
                             }}
                             initValue={""}
                             editable={true} />
@@ -174,7 +172,6 @@ const Institutes = props => {
                         <FilterDropdown
                             defaultList={[]}
                             onItemChange={(item) => {
-                                console.log(item)
                             }}
                             initValue={"Teacher"}
                             editable={false} />
@@ -183,7 +180,6 @@ const Institutes = props => {
                         <FilterDropdown
                             defaultList={[]}
                             onItemChange={(item) => {
-                                console.log(item)
                             }}
                             initValue={"Teacher"}
                             editable={false} />

@@ -207,7 +207,6 @@ export const CreateCourse = (coursePayload, callback) => (dispatch) => {
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    console.log(error.response.data)
                     toast.error("Creating course failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
@@ -245,7 +244,6 @@ export const AddNewLevelAndSubjects = (coursePayload, callback) => (dispatch) =>
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    console.log(error.response.data)
                     toast.error("Adding new levels failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
@@ -274,7 +272,6 @@ export const CreateSubjectsForLevel = (coursePayload, callback) => (dispatch) =>
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    console.log(error.response.data)
                     toast.error("Adding new levels failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
@@ -327,7 +324,6 @@ export const DeleteLevelById = (payload, callback) => (dispatch) => {
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    console.log(error.response.data)
                     toast.error("Deleting level failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
@@ -358,7 +354,6 @@ export const DeleteSubjectById  = (payload, courseId, levelId, callback) => (dis
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    console.log(error.response.data)
                     toast.error("Deleting subject failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
@@ -374,7 +369,6 @@ export const CreateClass = (classPayload, callback) => (dispatch) => {
         callback(response.data, true);
     }).catch(
         error => {
-            console.log(error.response)
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
                     toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)

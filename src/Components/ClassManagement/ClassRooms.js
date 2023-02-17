@@ -89,7 +89,6 @@ const ClassRooms = props => {
   }
 
   const updateVirtual = (value) => {
-    console.log("updateVirtual", value)
     setIsVirtual(value)
   }
 

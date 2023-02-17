@@ -375,7 +375,6 @@ const Payments = props => {
     )
 
     const DetailComponent = ({ row }) => {
-        console.log(row.original)
         var details = row.original;
         return (
             <div className='detail-container container'>
