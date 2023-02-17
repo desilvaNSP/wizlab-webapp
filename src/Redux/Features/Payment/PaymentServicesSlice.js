@@ -51,8 +51,6 @@ export const { UpdateFilteredPayments, UpdatePaymentStatus } = PaymentServicesSl
 
 export const SearchPayments = (paymentSearchPayload, callback) => (dispatch) => {
     ServiceEngine.post(PAYMENT_SEARCH_ENDPOINT, paymentSearchPayload).then(response => {
-        //response.data
-        console.log(response.data)
         dispatch(UpdateFilteredPayments(response.data))
         callback(response.data, true);
     }).catch(

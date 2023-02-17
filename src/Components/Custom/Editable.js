@@ -97,7 +97,6 @@ export const EditableCheckBoxCell = ({
     const onChange = e => {
         e.stopPropagation();
         var targetValue = e.target.checked
-        console.log(targetValue)
         setValue(targetValue)
     }
 

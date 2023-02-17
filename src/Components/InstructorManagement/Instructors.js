@@ -112,7 +112,6 @@ const Instructors = props => {
                 break;
             case LEVEL_SELECTION:
                 var levelObj = null
-                console.log("selectedCourse MM", selectedCourse)
                 selectedCourse?.levels.forEach((level, index) => {
                     if (level.id == item.id) {
                         levelObj = level;
@@ -289,7 +288,6 @@ const Instructors = props => {
 
     const teacherSelectionOnTable = (rows) => {
         if (rows.length > 0) {
-            console.log(rows[0].original)
             setSelectedRowOnTable(rows[0].original)
         } else {
             setSelectedRowOnTable(null)

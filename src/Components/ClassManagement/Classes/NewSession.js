@@ -111,7 +111,6 @@ export const NewSession = (props) => {
         // if any transaction is not set, then set null to selectedTransaction state.
         if (rows.length > 0) {
             var selectedClass = rows[0].original;
-            console.log("selectedClass", selectedClass)
             setSelectedClass(selectedClass)
         }
     }
@@ -120,7 +119,6 @@ export const NewSession = (props) => {
         // if any transaction is not set, then set null to selectedTransaction state.
         if (rows.length > 0) {
             var selectedClassRoom = rows[0].original;
-            console.log("selectedClassRoom", selectedClassRoom)
             setClassRoom(selectedClassRoom)
         }
     }

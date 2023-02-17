@@ -51,7 +51,7 @@ export const NewCourse = props => {
         });
         return tags
     }
-    
+
     /**
        * Event for continue confirm modal
        */
@@ -143,14 +143,12 @@ export const NewCourse = props => {
     }
 
     const updateCorrectLevel = (levelObj, levelInex) => {
-        console.log(levelObj);
         levels[levelInex] = levelObj;
         setLevels(levels.slice());
     }
 
     //Course name
     const updateCourseName = (value) => {
-        console.log("value", value)
         setCourse(value)
     }
 
@@ -181,7 +179,6 @@ export const NewCourse = props => {
             "courseId": selectedCourse.id,
             "levels": levels.filter((level) => { return level.id == undefined })
         }
-        console.log(newLevels);
         // Add newly created levels
         dispatch(StartLoading("Adding new levels.."))
         dispatch(AddNewLevelAndSubjects(newLevels, function (response, success) {

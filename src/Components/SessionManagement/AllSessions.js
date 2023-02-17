@@ -185,7 +185,6 @@ const AllSessions = ({ }) => {
                 break;
             case LEVEL_SELECTION:
                 var levelObj = null
-                console.log("selectedCourse MM", selectedCourse)
                 selectedCourse?.levels.forEach((level, index) => {
                     if (level.id == item.id) {
                         levelObj = level;

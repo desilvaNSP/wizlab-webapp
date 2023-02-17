@@ -48,7 +48,6 @@ const FilterDropdown = ({ defaultList, title, selection, initValue, onItemChange
   const selectItem = (item) => {
     setItem(item)
     setListOpen(false);
-    console.log(selection)
     onItemChange(item, selection)
   }
 

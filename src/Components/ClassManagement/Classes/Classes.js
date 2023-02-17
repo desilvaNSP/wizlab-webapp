@@ -260,7 +260,6 @@ const Classes = props => {
 
     const classSelectionOnTable = (rows) => {
         if (rows.length > 0) {
-            console.log(rows[0].original)
             setSelectedRowOnTable(rows[0].original)
         } else {
             setSelectedRowOnTable(null)
