@@ -4,7 +4,7 @@ import { CustomTagInput } from '../../Custom/CustomTagInput';
 import { CustomInput } from '../../Custom/CustomInput';
 import { Tab, TabList, TabPanel, Tabs } from 'react-tabs';
 import { NewSubjects } from './NewSubjects';
-import { CreateCourse, StartLoading, StopLoading } from '../../../Redux/Features/Common/CommonServicesSlice';
+import { AddNewLevelAndSubjects, CreateCourse, CreateSubjectsForLevel, DeleteLevel, DeleteLevelById, StartLoading, StopLoading, UpdateSubjectBySubjectId } from '../../../Redux/Features/Common/CommonServicesSlice';
 import { useDispatch } from 'react-redux';
 
 export const NewCourse = props => {
@@ -28,7 +28,7 @@ export const NewCourse = props => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        if(selectedCourse?.levels != null){
+        if (selectedCourse?.levels != null) {
             setTags(generateTagsByLevels(selectedCourse?.levels))
         }
     }, [selectedCourse?.levels])
@@ -43,18 +43,39 @@ export const NewCourse = props => {
     const generateTagsByLevels = (levelsArray) => {
         var tags = []
         levelsArray.forEach((element) => {
-            tags.push(element.desc);
+            var tag = {
+                "id": element.id,
+                "value": element.desc
+            }
+            tags.push(tag);
         });
         return tags
     }
+    
     /**
        * Event for continue confirm modal
        */
     const continueConfirmModal = () => {
         setShowInfoConfirmModal(false)
-        var newLevels = levels.filter((v) => { return v.desc != currentTagValue });
-        setLevels(newLevels)
-        setTags(generateTagsByLevels(newLevels))
+        if(currentTagValue?.id == null || currentTagValue.id == undefined){
+            var newLevels = levels.filter((v) => { return v.desc != currentTagValue.desc });
+            setLevels(newLevels)
+            setTags(generateTagsByLevels(newLevels))
+            dispatch(StopLoading())
+        }else{
+            dispatch(StartLoading("Deleting Level.."))
+            var payload = {
+                "id": currentTagValue.id
+            }
+            var newLevels = levels.filter((v) => { return v.id != currentTagValue.id });
+            dispatch(DeleteLevelById(payload, (response, success) => {
+                if(success){
+                    setLevels(newLevels)
+                    setTags(generateTagsByLevels(newLevels))
+                }
+                dispatch(StopLoading())
+            }));
+        }
     }
 
     /**
@@ -99,7 +120,7 @@ export const NewCourse = props => {
     const checkLevelAlreadyExistsOnState = (key) => {
         let isOk = false;
         levels.forEach(function (item) {
-            if (item.desc == key) {
+            if (item.desc == key.desc) {
                 isOk = true;
             }
         });
@@ -111,7 +132,7 @@ export const NewCourse = props => {
             // if key already exists no need create one.
             if (!checkLevelAlreadyExistsOnState(element)) {
                 var levelObj = {
-                    desc: element,
+                    desc: element.desc,
                     subjects: [
                     ]
                 }
@@ -122,6 +143,7 @@ export const NewCourse = props => {
     }
 
     const updateCorrectLevel = (levelObj, levelInex) => {
+        console.log(levelObj);
         levels[levelInex] = levelObj;
         setLevels(levels.slice());
     }
@@ -155,7 +177,63 @@ export const NewCourse = props => {
     }
 
     const updateExistingCourse = () => {
+        var newLevels = {
+            "courseId": selectedCourse.id,
+            "levels": levels.filter((level) => { return level.id == undefined })
+        }
+        console.log(newLevels);
+        // Add newly created levels
+        dispatch(StartLoading("Adding new levels.."))
+        dispatch(AddNewLevelAndSubjects(newLevels, function (response, success) {
+            if (success) {
 
+            } else {
+                //error handle
+            }
+            handleClose()
+            dispatch(StopLoading())
+        }));
+
+        //Loop existing levels
+        levels.filter((level) => { return level.id != undefined }).forEach(levelObj => {
+            // Assign new subject to existing levels.
+            var newlyAddedSubjects = levelObj.subjects.filter((subject) => {
+                return subject.new;
+            });
+
+            var newSubjectExstingLevel = {
+                levelId: levelObj.id,
+                subjects: newlyAddedSubjects
+            }
+
+            if (newSubjectExstingLevel.subjects.length > 0) {
+                dispatch(CreateSubjectsForLevel(newSubjectExstingLevel, function (response, success) {
+                    if (success) {
+
+                    } else {
+                        //error handle
+                    }
+                    handleClose()
+                    dispatch(StopLoading())
+                }));
+            }
+
+            // Update existing subjects
+            var updatedSubjects = levelObj.subjects.filter((subject) => {
+                return subject.id != undefined && subject.updated;
+            });
+            if (updatedSubjects.length > 0) {
+                dispatch(UpdateSubjectBySubjectId(updatedSubjects, function (response, success) {
+                    if (success) {
+
+                    } else {
+                        //error handle
+                    }
+                    handleClose()
+                    dispatch(StopLoading())
+                }));
+            }
+        });
     }
 
 
@@ -164,12 +242,12 @@ export const NewCourse = props => {
             <section className="modal-detail" ref={wrapperRef} onClick={e => e.stopPropagation()}>
                 {showInfoConfirmModal && <InfoConfirmModal continueTo={continueConfirmModal} handleClose={closeConfirmModal} show={true} children={modalContents.content} heading={modalContents.header}></InfoConfirmModal>}
                 <span className="close-icon modal-detail__close" onClick={handleClose}></span>
-                <div className="modal-detail__header modal-detail__header" style={{ fontSize: "24px", fontWeight: 600 }}>
+                <div className="modal-detail__header modal-detail__header" style={{ fontSize: "24px", fontWeight: 600 , marginBottom:'50px'}}>
                     {selectedCourse == null ? <span>Create New Course</span> : <span>Update Course</span>}
                 </div>
                 <div className="modal-detail__content">
                     <div className='form-group'>
-                        <div className='form-group-col2'>
+                        <div className='form-group-col2' style={{width:'40%'}}>
                             <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
                                 <div className='form-column'>
                                     <label>Basic Information</label>
@@ -197,12 +275,7 @@ export const NewCourse = props => {
                                 </div>
                             </div>
                         </div>
-                        <div className='form-group-col2'>
-
-                        </div>
-                    </div>
-                    <div className='form-group'>
-                        <div className='form-group-col'>
+                        <div className='form-group-col2' style={{width:'60%'}}>
                             <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
                                 <div className='form-column'>
                                     <label>Subjects/Modules</label>
@@ -224,13 +297,18 @@ export const NewCourse = props => {
                             </Tabs>
                         </div>
                     </div>
+                    {/* <div className='form-group'>
+                        <div className='form-group-col'>
+
+                        </div>
+                    </div> */}
                 </div>
                 <div className="modal-detail__footer">
                     {selectedCourse == null ?
                         <button className="btn btn--success" onClick={() => createNewCourse()}>
                             Create New Course
                         </button> :
-                        <button className="btn btn--success" disabled={true} onClick={updateExistingCourse} placeholder="Sorry! restricted update course for now">
+                        <button className="btn btn--success" disabled={false} onClick={updateExistingCourse} placeholder="Sorry! restricted update course for now">
                             Update Course
                         </button>
                     }

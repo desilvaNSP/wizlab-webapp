@@ -20,6 +20,7 @@ import {
     UPDATE_SUBJECTS_BY_ID_ENDPOINT,
     DELETE_LEVEL_ENDPOINT,
     DELETE_SUBJECT_ENDPOINT,
+    CREATE_SUBJECTS_ENDPOINT,
     CREATE_TEACHER_ENDPOINT, 
     UPDATE_TEACHER_ENDPOINT,
     GET_TEACHERS_ENDPOINT} from "../../../Configs/ApgConfigs";
@@ -84,6 +85,20 @@ export const CommonServicesSlice = createSlice({
                 Courses: [...state.Courses, obj]
             };
         },
+        DeleteSubjects: (state, action) => {
+            let obj = action.payload;
+            return {
+                ...state,
+                Courses: [...state.Courses.filter((course) => { return course.id != obj.courseId}), obj.course]
+            };
+        },
+        DeleteLevel: (state, action) => {
+            let obj = action.payload;
+            return {
+                ...state,
+                Courses: [...state.Courses, obj]
+            };
+        },
         UpdateClasses: (state, action) => {
             let obj = action.payload;
             return {
@@ -138,8 +153,18 @@ export const CommonServicesSlice = createSlice({
     },
 })
 
-export const { ShowLoading, HideLoading, UpdateMetaData, AddNewCourse, UpdateClasses, /*AddNewClass, UpdateExistingClass,*/ AddClassRoom, AddNewTeacher, UpdateTeachers } = CommonServicesSlice.actions
-
+export const { 
+    ShowLoading, 
+    HideLoading, 
+    UpdateMetaData, 
+    AddNewCourse, 
+    UpdateClasses,
+    AddClassRoom, 
+    DeleteSubjects, 
+    DeleteLevel, 
+    AddNewTeacher, 
+    UpdateTeachers
+} = CommonServicesSlice.actions
 
 export const StartLoading = (message) => (dispatch) => {
     dispatch(ShowLoading(message))
@@ -231,6 +256,35 @@ export const AddNewLevelAndSubjects = (coursePayload, callback) => (dispatch) =>
 }
 
 // {
+//     "title": "string",
+//     "medium": "string",
+//     "subjectCode": "string",
+//     "credits": 0,
+//     "levelId": 0
+//   }
+export const CreateSubjectsForLevel = (coursePayload, callback) => (dispatch) => {
+    ServiceEngine.post(CREATE_SUBJECTS_ENDPOINT, coursePayload).then(response => {
+        // dispatch(AddNewCourse(response.data))
+        callback(response.data, true);
+    }).catch(
+        error => {
+            if (error.response !== undefined) {
+                if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                } else {
+                    console.log(error.response.data)
+                    toast.error("Adding new levels failed with " + error.response.data.message + " - " + error.response.status);
+                }
+            } else {
+                toast.error("Check your internet connection or network connectivity issue between servers");
+            }
+            callback(null, false);
+        })
+}
+
+// {
 //     "id": 0,
 //     "title": "string",
 //     "medium": "string",
@@ -262,8 +316,8 @@ export const UpdateSubjectBySubjectId = (updatePayload, callback) => (dispatch) 
 //     "id": 0
 // }  
 export const DeleteLevelById = (payload, callback) => (dispatch) => {
-    ServiceEngine.post(DELETE_LEVEL_ENDPOINT, payload).then(response => {
-        // dispatch(AddNewCourse(response.data))
+    ServiceEngine.delete(DELETE_LEVEL_ENDPOINT,  { data: payload }).then(response => {
+        //dispatch(DeleteLevel(response.data))
         callback(response.data, true);
     }).catch(
         error => {
@@ -274,7 +328,7 @@ export const DeleteLevelById = (payload, callback) => (dispatch) => {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
                     console.log(error.response.data)
-                    toast.error("Adding new levels failed with " + error.response.data.message + " - " + error.response.status);
+                    toast.error("Deleting level failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");
@@ -287,9 +341,14 @@ export const DeleteLevelById = (payload, callback) => (dispatch) => {
 //     "id": 0
 // }
   
-export const DeleteSubjectById  = (payload, callback) => (dispatch) => {
-    ServiceEngine.post(DELETE_SUBJECT_ENDPOINT, payload).then(response => {
-        // dispatch(AddNewCourse(response.data))
+export const DeleteSubjectById  = (payload, courseId, levelId, callback) => (dispatch) => {
+    ServiceEngine.delete(DELETE_SUBJECT_ENDPOINT, { data: payload }).then(response => {
+        var responseObj = {
+            "course": response.data,
+            "courseId":courseId,
+            "levelId":levelId
+        }
+        dispatch(DeleteSubjects(responseObj))
         callback(response.data, true);
     }).catch(
         error => {
@@ -300,7 +359,7 @@ export const DeleteSubjectById  = (payload, callback) => (dispatch) => {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
                     console.log(error.response.data)
-                    toast.error("Adding new levels failed with " + error.response.data.message + " - " + error.response.status);
+                    toast.error("Deleting subject failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");
@@ -418,8 +477,8 @@ export const CreateSession = (sessionPayload, callback) => (dispatch) => {
         })
 }
 
-export const GetSessionByClassId = (classId, callback) => (dispatch) => {
-    ServiceEngine.get(GET_SESSIONS_BY_CLASSID_ENDPOINT + "?classId=" + classId).then(response => {
+export const GetSessionByClassId = (payload, callback) => (dispatch) => {
+    ServiceEngine.post(GET_SESSIONS_BY_CLASSID_ENDPOINT, payload).then(response => {
         callback(response.data, true);
     }).catch(
         error => {

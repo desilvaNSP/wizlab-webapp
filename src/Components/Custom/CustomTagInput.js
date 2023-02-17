@@ -35,7 +35,9 @@ export const CustomTagInput = ({
             e.preventDefault();
             fieldValidation(trimmedInput, (flag, message) => {
                 if (flag) {
-                    setTags(prevState => [...prevState, trimmedInput]);
+                    setTags(prevState => [...prevState, {
+                        "value": trimmedInput
+                    }]);
                 }
             });
             setInput('');
@@ -56,7 +58,9 @@ export const CustomTagInput = ({
         if (trimmedInput.length > 0 && !tags.includes(trimmedInput)) {
             fieldValidation(trimmedInput, (flag, message) => {
                 if (flag) {
-                    setTags(prevState => [...prevState, trimmedInput]);
+                    setTags(prevState => [...prevState, {
+                        "value": trimmedInput
+                    }]);
                 }
             })
             setInput('');
@@ -80,7 +84,7 @@ export const CustomTagInput = ({
             <div className="taginput-container">
                 {tags?.map((tag, index) => (
                     <div className="tag">
-                        {tag}
+                        {tag.value}
                         <img className="tag--clear" alt='clear input' src={closeIcon} onClick={(e) => { deleteTag(index) }
                         }></img>
                     </div>
