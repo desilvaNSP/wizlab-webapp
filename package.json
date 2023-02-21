@@ -28,6 +28,7 @@
     "react-redux": "^7.2.9",
     "react-router-dom": "^6.8.0",
     "react-scripts": "5.0.1",
+    "react-step-wizard": "^5.3.11",
     "react-table": "^7.8.0",
     "react-tabs": "^6.0.0",
     "react-time-picker": "^5.2.0",

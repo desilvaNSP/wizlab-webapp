@@ -38,9 +38,9 @@ export const NewClass = props => {
 
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
-    
+
     useEffect(() => {
-        if(indentifiers.length > 0){
+        if (indentifiers.length > 0) {
             var string = indentifiers.join('-');
             setSelectedClassIdentifier(string)
         }
@@ -208,7 +208,7 @@ export const NewClass = props => {
 
     const updateExistingClass = () => {
         var payload = {
-            "id":selectedClass.id,
+            "id": selectedClass.id,
             "identifier": selectedClassIdentifier,
             "subjectId": selectedSubject?.id,
             "classfee": selectedClassFee,
@@ -300,7 +300,7 @@ export const NewClass = props => {
                                             selection={COURSE_SELECTION}
                                             onItemChange={handleItemChange}
                                             initValue={selectedClass == null ? selectedCourse?.id : selectedCourse?.name}
-                                            editable={selectedClass == null ? true : false }
+                                            editable={selectedClass == null ? true : false}
                                         />
                                     </div>
                                 </div>
@@ -312,7 +312,7 @@ export const NewClass = props => {
                                             selection={LEVEL_SELECTION}
                                             onItemChange={handleItemChange}
                                             initValue={selectedClass == null ? selectedLevel?.id : selectedLevel?.desc}
-                                            editable={selectedClass == null ? true : false }
+                                            editable={selectedClass == null ? true : false}
                                         />
                                     </div>
                                 </div>
@@ -325,8 +325,8 @@ export const NewClass = props => {
                                             defaultList={getSubjectByCourseAndLevels()}
                                             selection={SUBJECT_SELECTION}
                                             onItemChange={handleItemChange}
-                                            initValue={selectedClass == null ? selectedSubject?.id : selectedSubject?.title }
-                                            editable={selectedClass == null ? true : false }
+                                            initValue={selectedClass == null ? selectedSubject?.id : selectedSubject?.title}
+                                            editable={selectedClass == null ? true : false}
                                         />
                                     </div>
                                 </div>
@@ -345,9 +345,10 @@ export const NewClass = props => {
                                 <div className='form-column'>
                                     <div className='item-name'>Payment Due Date</div>
                                     <div className='item-dropdown'>
-                                        <DateSelectionPicker
-                                            title={""}
-                                            onDateSelect={(dateTime, selection) => updatePaymentDueDate(dateTime, selection)}
+                                        <CustomInput
+                                            initialValue={selectedDueDate} type="number" updateInput={(value) => {
+                                                updatePaymentDueDate(value);
+                                            }} fieldValidation={courseFeeFieldValidation} required={true} placeHolder="Please enter payment due date"
                                         />
                                     </div>
                                 </div>
@@ -376,7 +377,7 @@ export const NewClass = props => {
                                     </div>
                                 </div>
                                 <div className='form-column'>
-                                    <div className='item-name'>Indetifier<span style={{color:'yellowgreen'}}>(you can change!)</span></div>
+                                    <div className='item-name'>Indetifier<span style={{ color: 'yellowgreen' }}>(you can change!)</span></div>
                                     <div className='item-dropdown'>
                                         <CustomInput
                                             initialValue={selectedClassIdentifier} type="text" updateInput={(value) => {

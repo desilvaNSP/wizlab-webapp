@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
-import { ClassesTable } from "./Table/ClassesTable";
 import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
 import { NewClass } from "./NewClass";
 import FilterDropdown from "../../Custom/FilterDropdown";
 import { useSelector, useDispatch } from "react-redux";
 import { GetClasses, ShowLoading, StopLoading } from "../../../Redux/Features/Common/CommonServicesSlice";
+import { ClassTable } from "./Table/ClassTable";
 
 const Classes = props => {
 
@@ -51,10 +51,10 @@ const Classes = props => {
 
         setLoading(true)
         setTablePageSize(pageSize);
-        //dispatch(ShowLoading("Loading Classes.."))
+        dispatch(ShowLoading("Loading Classes.."))
         dispatch(GetClasses(payload, function (response, success) {
             setLoading(false)
-            //dispatch(StopLoading())
+            dispatch(StopLoading())
         }));
     }, [])
 
@@ -334,7 +334,7 @@ const Classes = props => {
                 </div>
             </div>
             <ReactTableFullWidthStyles>
-                <ClassesTable
+                <ClassTable
                     columns={columns}
                     data={data}
                     fetchData={fetchData}

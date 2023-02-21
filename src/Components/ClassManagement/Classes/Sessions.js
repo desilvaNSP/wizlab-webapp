@@ -6,9 +6,9 @@ import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { useDispatch, useSelector } from "react-redux";
 import { GetSessionByClassId, StartLoading, StopLoading } from "../../../Redux/Features/Common/CommonServicesSlice";
-import { ClassesTable } from "./Table/ClassesTable";
 import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
 import * as dateFns from "date-fns";
+import { ClassTable } from "./Table/ClassTable";
 
 const Sessions = ({ classId }) => {
 
@@ -177,7 +177,7 @@ const Sessions = ({ classId }) => {
                             Sessions
                         </div>
                         <ReactTableFullWidthStyles>
-                            <ClassesTable
+                            <ClassTable
                                 columns={columns}
                                 data={data}
                                 onRowSelect={selectSession}

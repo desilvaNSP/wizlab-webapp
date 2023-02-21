@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
-import { ClassesTable } from "./Table/ClassesTable";
 import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
 import { GetStudentsByClassId, StartLoading, StopLoading } from "../../../Redux/Features/Common/CommonServicesSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { EditableInputCurrencyCell, EditableInputNumberCell } from "../../Custom/Editable";
 import { GetEnrollmentsById, UpdateEnrollment, UpdateEnrollmentById } from "../../../Redux/Features/Enrollments/EnrollmentServicesSlice";
 import { EnrollmentTable } from "./Table/EnrollmentTable";
+import { GroupEnrollmentTable } from "../../StudentManagment/Table/GroupEnrollmentTable";
 
 
 const EnrollmentUpdateComponent = ({ rowRecord }) => {
@@ -68,38 +68,38 @@ const EnrollmentUpdateComponent = ({ rowRecord }) => {
     )
 }
 
-const Students = ({ selectedClass }) => {
+const Students = ({ classId }) => {
 
     const [data, setData] = useState([])
+    const [loading, setLoading] = React.useState(false)
+    const [tablePageSize, setTablePageSize] = React.useState(10)
+    const [pageCount, setPageCount] = React.useState(0)
 
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
     const enrollments = useSelector((state) => state.enrollments);
 
     useEffect(() => {
-        if (enrollments.Enrollments != null) {
-            setData(enrollments.Enrollments)
+        if (enrollments.Enrollments.enrollments != null) {
+            setData(enrollments.Enrollments?.enrollments)
+            setPageCount(Math.ceil(enrollments.Enrollments?.totalNumberOfEntries / tablePageSize))
         }
     }, [enrollments.Enrollments])
 
-    useEffect(() => {
-        if (selectedClass != null) {
-            var payload = {
-                "classId": selectedClass.id,
-                "pageSize": 100,
-                "pageNumber": 1
-            }
-            dispatch(StartLoading("Getting Enrollments"))
-            dispatch(GetEnrollmentsById(payload, function (data, success) {
-                if (success) {
-
-                } else {
-                    //error handle
-                }
-                dispatch(StopLoading())
-            }));
+    const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
+        var payload = {
+            "classId": classId,
+            "pageSize": pageSize,
+            "pageNumber": pageIndex + 1
         }
-    }, [selectedClass]);
+        setLoading(true)
+        setTablePageSize(pageSize)
+        dispatch(StartLoading("Getting enrollments"))
+        dispatch(GetEnrollmentsById(payload, function (data, success) {
+            setLoading(false)
+            dispatch(StopLoading())
+        }));
+    }, [])
 
     const hiddenColumns = ["id", "parentName"];
 
@@ -227,10 +227,21 @@ const Students = ({ selectedClass }) => {
                 </div>
             }
             <div className='page-header'>
-              STUDENT ENROLLMENTS
+                STUDENT ENROLLMENTS
             </div>
             <ReactTableFullWidthStyles>
-                <EnrollmentTable columns={columns} data={data} onRowSelect={(rows) => { }} hiddenColumns={hiddenColumns} rowSelection={true} updateMyData={updateMyData} />
+                <GroupEnrollmentTable
+                    columns={columns}
+                    data={data}
+                    onRowSelect={(rows) => { }}
+                    hiddenColumns={hiddenColumns}
+                    rowSelection={true}
+                    fetchData={fetchData}
+                    loading={loading}
+                    pageCount={pageCount}
+                    updateMyData={updateMyData} 
+                    numberOfRecords={enrollments.Enrollments?.totalNumberOfEntries}
+                />
             </ReactTableFullWidthStyles>
         </div>
     );

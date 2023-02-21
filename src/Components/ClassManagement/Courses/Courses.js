@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
 import { NewCourse } from "./NewCourse";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 
 const Courses = props => {
 
@@ -14,10 +14,10 @@ const Courses = props => {
         if(selectedCourse != null && common.Courses != null ){
             var filteredCourses = common.Courses.filter((course) => { return course.id == selectedCourse.id})
             if(filteredCourses.length > 0){
-                console.log("filteredCourses[0]", filteredCourses[0])
                 setSelectedCourse(filteredCourses[0])
             }
         }
+        console.log("common.Courses"+ common.Courses)
     }, [common.Courses])
 
     const triggerStartNewCourse = () => {

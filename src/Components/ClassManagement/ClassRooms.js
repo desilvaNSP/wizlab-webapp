@@ -29,7 +29,10 @@ const ClassRooms = props => {
     dispatch(StartLoading("Creating new Classroom"));
     dispatch(CreateClassRoom(payload, function (response, success) {
       if (success) {
-
+        setAudNo("")
+        setCapacity(0)
+        setIsVirtual(false)
+        setAddress("")
       } else {
         //error handle
       }
@@ -109,7 +112,7 @@ const ClassRooms = props => {
               <div className='item-name'>Auditorium No</div>
               <div className='item-dropdown'>
                 <CustomInput
-                  initialValue={""} type="text" updateInput={(value) => {
+                  initialValue={audNo} type="text" updateInput={(value) => {
                     updateAudNo(value);
                   }} fieldValidation={noNeedFieldValidation} required={true} placeHolder=""
                 />
@@ -119,7 +122,7 @@ const ClassRooms = props => {
               <div className='item-name'>Capacity</div>
               <div className='item-dropdown'>
                 <CustomInput
-                  initialValue={""} type="number" updateInput={(value) => {
+                  initialValue={capacity} type="number" updateInput={(value) => {
                     updateCapacity(value);
                   }} fieldValidation={noNeedFieldValidation} required={true} placeHolder=""
                 />
@@ -131,7 +134,7 @@ const ClassRooms = props => {
               <div className='item-name'>Address</div>
               <div className='item-dropdown'>
                 <CustomInput
-                  initialValue={""} type="text" updateInput={(value) => {
+                  initialValue={address} type="text" updateInput={(value) => {
                     updateAddress(value);
                   }} fieldValidation={noNeedFieldValidation} required={true} placeHolder=""
                 />
@@ -148,7 +151,7 @@ const ClassRooms = props => {
               <div className='item-name'>Virtual Room</div>
               <div className='item-dropdown'>
                 <CustomCheckBox
-                  initialValue={""} updateInput={(value) => {
+                  initialValue={isVirtual} updateInput={(value) => {
                     updateVirtual(value);
                   }} required={true}
                 />

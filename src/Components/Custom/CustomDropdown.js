@@ -121,7 +121,7 @@ const CustomDropdown = ({ defaultList, initValue, selection, onItemChange, isNul
         </ul>}
       </div>
       {required && item == null && <label className='required-text'>
-        {"Required"}
+        {"*"}
       </label>}
       {!editable && <label className='warning-text'>
         {warningMessage}

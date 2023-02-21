@@ -7,8 +7,8 @@ import { HideLoading, ShowLoading } from "../../Redux/Features/Common/CommonServ
 import "./login.css";
 
 const LoginPage = (props) => {
-  const [UserName, setUserName] = useState("sandunp");
-  const [Password, setPassword] = useState("Npriyanka");
+  const [UserName, setUserName] = useState("");
+  const [Password, setPassword] = useState("");
 
   // Cookies...
   // AdminUser

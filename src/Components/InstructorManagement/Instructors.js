@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from "react";
 import 'react-tabs/style/react-tabs.css';
-import { CommonTable } from "../CommonTable/CommonTable";
-import { ClassesTable } from "../ClassManagement/Classes/Table/ClassesTable";
 import { ReactTableFullWidthStyles } from '../Custom/StyleComponents'
 import { NewInstrcutor } from "./NewInstrcutor";
 import FilterDropdown from "../Custom/FilterDropdown";
 import { useSelector, useDispatch } from "react-redux";
 import { GetTeachers, ShowLoading, StopLoading } from '../../Redux/Features/Common/CommonServicesSlice';
+import { ClassTable } from "../ClassManagement/Classes/Table/ClassTable";
 
 const Instructors = props => {
 
@@ -355,7 +354,7 @@ const Instructors = props => {
                 </div>
             </div>
             <ReactTableFullWidthStyles>
-            <ClassesTable
+            <ClassTable
                     columns={columns}
                     data={data}
                     fetchData={fetchData}
