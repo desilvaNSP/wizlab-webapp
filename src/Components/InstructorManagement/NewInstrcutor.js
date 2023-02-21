@@ -125,7 +125,6 @@ export const NewInstrcutor = props => {
         for (const key in allLevels) {
             // if key already exists no need create one.
             if (!checkSubjectAlreadyExists(key)) {
-                debugger;
                 if (Object.hasOwnProperty.call(allLevels, key)) {
                     const element = allLevels[key];
                     if (element) {

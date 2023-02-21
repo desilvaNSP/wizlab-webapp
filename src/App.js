@@ -20,7 +20,7 @@ const App = props => {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    dispatch(StartLoading("Loading Meta Data.."))
+    dispatch(StartLoading("initializing.."))
     dispatch(FetchMetaData(function (response, success) {
       if (success) {
 
@@ -37,7 +37,8 @@ const App = props => {
   };
 
   const isTokenExists = () => {
-    if (token?.token == "" || token?.token == undefined) {
+    console.log(tokenExpiry)
+    if ((token?.token == "" || token?.token == undefined)) {
       return false;
     } else {
       SetAuthHeader(token?.token, instituteId?.institute_id);

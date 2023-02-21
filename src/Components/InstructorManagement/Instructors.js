@@ -31,8 +31,6 @@ const Instructors = props => {
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
 
-    debugger;
-
     useEffect(() => {
         if(common.Teachers?.teachers != null){
             setData(common.Teachers?.teachers)
@@ -133,7 +131,10 @@ const Instructors = props => {
         () => [
             {
                 Header: 'Teacher/Lecturer',
-                accessor: 'teacher',
+                id: 'teacher',
+                accessor: data => {
+                    return data.firstName + " " + data.lastName;
+                },
                 disableFilters: false
             },
             {
