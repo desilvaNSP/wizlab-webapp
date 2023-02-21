@@ -110,7 +110,7 @@ const Payments = props => {
     const payment = useSelector((state) => state.payment);
 
     useEffect(() => {
-        if(payment.FilteredPayments?.studentPaymentHistoryResults != null){
+        if (payment.FilteredPayments?.studentPaymentHistoryResults != null) {
             setData(payment.FilteredPayments?.studentPaymentHistoryResults)
             setPageCount(Math.ceil(payment.FilteredPayments?.totalNumberOfEntries / tablePageSize))
         }
@@ -255,7 +255,7 @@ const Payments = props => {
                 width: "10%",
                 Cell: ({ value: initialValue, row: row, column: { id }, updateMyData }) => {
                     return (
-                        <EditableInputCurrencyCell initialValue={""}  placeholderText={row.original?.isFullyPaid ? "Already fully paid." : "Enter amount"} row={row} columnId={id} updateMyData={updateMyData} disabled={row.original?.isFullyPaid} ></EditableInputCurrencyCell>
+                        <EditableInputCurrencyCell initialValue={""} placeholderText={row.original?.isFullyPaid ? "Already fully paid." : "Enter amount"} row={row} columnId={id} updateMyData={updateMyData} disabled={row.original?.isFullyPaid} ></EditableInputCurrencyCell>
                     )
                 }
             },
@@ -355,6 +355,7 @@ const Payments = props => {
             "pageNumber": tablePageIndex + 1
         }
 
+        setLoading(true)
         dispatch(ShowLoading("Loading Payment Records.."))
         dispatch(SearchPayments(payload, function (response, success) {
             if (success) {
@@ -362,6 +363,7 @@ const Payments = props => {
             } else {
                 //error handle
             }
+            setLoading(false)
             dispatch(StopLoading())
         }));
     };
@@ -493,7 +495,7 @@ const Payments = props => {
                                 }}
                                 placeholder={`Search by Phone number or Name`}
                                 style={{
-                                    border: '0', width: "100%", float:"left"
+                                    border: '0', width: "100%", float: "left"
                                 }}
                             />
                         </span>

@@ -71,10 +71,11 @@ const EnrollmentUpdateComponent = ({ rowRecord }) => {
 const AllStudents = ({ }) => {
 
     const [instituteId, setInstituteId] = useCookies(['institute_id']);
-    const [selectedKeyValue, setSelectedKeyValue] = useState(null);
+    const [selectedKeyValue, setSelectedKeyValue] = useState("");
     const [data, setData] = useState([])
     const [loading, setLoading] = React.useState(false)
     const [tablePageSize, setTablePageSize] = React.useState(10)
+    const [tablePageIndex, setTablePageIndex] = React.useState(0)
     const [pageCount, setPageCount] = React.useState(0)
 
     const hiddenColumns = ["id", "selection", "parentName"];
@@ -93,7 +94,7 @@ const AllStudents = ({ }) => {
     const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
         var payload = {
             "instituteId": instituteId?.institute_id,
-            "keyWord": "",
+            "keyWord": selectedKeyValue,
             "pageSize": pageSize,
             "pageNumber": pageIndex + 1
         }
@@ -110,7 +111,18 @@ const AllStudents = ({ }) => {
      * Event handling for apply filters and retrive class data.
      */
     const handleApplyOnClick = () => {
-
+        var payload = {
+            "instituteId": instituteId?.institute_id,
+            "keyWord": selectedKeyValue,
+            "pageSize": tablePageSize,
+            "pageNumber": tablePageIndex + 1
+        }
+        setLoading(true)
+        dispatch(StartLoading("Getting enrollments"))
+        dispatch(GetAllEnrollments(payload, function (response, success) {
+            setLoading(false)
+            dispatch(StopLoading())
+        }));
     };
 
     // When our cell renderer calls updateMyData, we'll use
@@ -274,8 +286,8 @@ const AllStudents = ({ }) => {
                     </div>
                     <div className='filter-box-column apply-filter'>
                         <button style={{
-                            float:'left'
-                            }}
+                            float: 'left'
+                        }}
                             onClick={() => handleApplyOnClick()}
                             className="btn btn--primary"
                             type="submit"
@@ -295,8 +307,8 @@ const AllStudents = ({ }) => {
                     fetchData={fetchData}
                     loading={loading}
                     pageCount={pageCount}
-                    updateMyData={updateMyData} 
-                    numberOfRecords={enrollments.Enrollments?.totalNumberOfEntries}/>
+                    updateMyData={updateMyData}
+                    numberOfRecords={enrollments.Enrollments?.totalNumberOfEntries} />
             </ReactTableFullWidthStyles>
         </div>
     );

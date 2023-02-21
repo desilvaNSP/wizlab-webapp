@@ -70,9 +70,11 @@ const EnrollmentUpdateComponent = ({ rowRecord }) => {
 
 const Students = ({ classId }) => {
 
+    const [selectedKeyValue, setSelectedKeyValue] = useState("");
     const [data, setData] = useState([])
     const [loading, setLoading] = React.useState(false)
     const [tablePageSize, setTablePageSize] = React.useState(10)
+    const [tablePageIndex, setTablePageIndex] = React.useState(0)
     const [pageCount, setPageCount] = React.useState(0)
 
     const dispatch = useDispatch();
@@ -100,6 +102,24 @@ const Students = ({ classId }) => {
             dispatch(StopLoading())
         }));
     }, [])
+
+    /**
+     * Event handling for apply filters and retrive class data.
+     */
+    const handleApplyOnClick = () => {
+        var payload = {
+            "classId": classId,
+            "keyWord": selectedKeyValue,
+            "pageSize": tablePageSize,
+            "pageNumber": tablePageIndex + 1
+        }
+        setLoading(true)
+        dispatch(StartLoading("Getting enrollments"))
+        dispatch(GetEnrollmentsById(payload, function (response, success) {
+            setLoading(false)
+            dispatch(StopLoading())
+        }));
+    };
 
     const hiddenColumns = ["id", "parentName"];
 
@@ -134,6 +154,14 @@ const Students = ({ classId }) => {
     const columns = React.useMemo(
         () => [
             {
+                Header: 'Phone Number',
+                id: 'phoneNumber',
+                disableFilters: false,
+                accessor: data => {
+                    return data.student?.parent?.phoneNumber;
+                }
+            },
+            {
                 Header: 'First Name',
                 id: 'firstName',
                 disableFilters: false,
@@ -166,19 +194,27 @@ const Students = ({ classId }) => {
                 }
             },
             {
-                Header: 'Phone Number',
-                id: 'phoneNumber',
-                disableFilters: false,
-                accessor: data => {
-                    return data.student?.parent?.phoneNumber;
-                }
-            },
-            {
                 Header: 'Patent Name',
                 id: 'parentName',
                 disableFilters: false,
                 accessor: data => {
                     return data.student?.parent?.name;
+                }
+            },
+            {
+                Header: 'Class',
+                id: 'class',
+                disableFilters: false,
+                accessor: data => {
+                    return data.class?.classIdentifier;
+                }
+            },
+            {
+                Header: 'Subject',
+                id: 'subject',
+                disableFilters: false,
+                accessor: data => {
+                    return data.class?.subject?.title;
                 }
             },
             {
@@ -227,7 +263,37 @@ const Students = ({ classId }) => {
                 </div>
             }
             <div className='page-header'>
-                STUDENT ENROLLMENTS
+                Student Enrollments
+            </div>
+            <div className='classes-filter-box'>
+                <div className='filter-box-row'>
+                    <div className='filter-box-column' >
+                        <span className='global-filter'>
+                            <input
+                                value={selectedKeyValue}
+                                onChange={e => {
+                                    setSelectedKeyValue(e.target.value);
+                                    //onChange(e.target.value);
+                                }}
+                                placeholder={`Search by Phone number or Name`}
+                                style={{
+                                    border: '0', width: "100%"
+                                }}
+                            />
+                        </span>
+                    </div>
+                    <div className='filter-box-column apply-filter'>
+                        <button style={{
+                            float: 'left'
+                        }}
+                            onClick={() => handleApplyOnClick()}
+                            className="btn btn--primary"
+                            type="submit"
+                        >
+                            Apply
+                        </button>
+                    </div>
+                </div>
             </div>
             <ReactTableFullWidthStyles>
                 <GroupEnrollmentTable
@@ -239,7 +305,7 @@ const Students = ({ classId }) => {
                     fetchData={fetchData}
                     loading={loading}
                     pageCount={pageCount}
-                    updateMyData={updateMyData} 
+                    updateMyData={updateMyData}
                     numberOfRecords={enrollments.Enrollments?.totalNumberOfEntries}
                 />
             </ReactTableFullWidthStyles>
