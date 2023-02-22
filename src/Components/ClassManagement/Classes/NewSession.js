@@ -128,7 +128,7 @@ export const NewSession = (props) => {
             "classId": selectedClass.id,
             "startTime": startTime,
             "duration": duration,
-            "classRoomId": 1,
+            "classRoomId": classRoom?.id,
             "link": virtualLink
         }
         dispatch(StartLoading("Creating New Session.."))

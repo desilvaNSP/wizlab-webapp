@@ -275,7 +275,7 @@ export const CreateSubjectsForLevel = (coursePayload, callback) => (dispatch) =>
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
-                    toast.error("Adding new levels failed with " + error.response.data.message + " - " + error.response.status);
+                    toast.error("Adding new subjects to the level failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");

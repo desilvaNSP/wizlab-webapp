@@ -22,12 +22,12 @@ export const NewSubjects = props => {
 
     const dispatch = useDispatch();
 
-    useEffect(() =>{
-        if(selectedLevel != null){
-            var newItems = data.filter((item) => { return item.new});
-            setData([...selectedLevel.subjects, ...newItems])
-        }
-    },[selectedCourse])
+    // useEffect(() =>{
+    //     if(selectedLevel != null){
+    //         var newItems = data.filter((item) => { return item.new});
+    //         setData([...selectedLevel.subjects, ...newItems])
+    //     }
+    // },[selectedLevel])
 
     // listener for the add new row on the table.
     // added new row at the top of the table.

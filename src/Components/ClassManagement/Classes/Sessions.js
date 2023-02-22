@@ -103,14 +103,6 @@ const Sessions = ({ classId }) => {
     const columns = React.useMemo(
         () => [
             {
-                Header: 'Class',
-                id: 'classIdentifier',
-                accessor: data => {
-                    return data.classRoom?.desc
-                },
-                disableFilters: true
-            },
-            {
                 Header: 'Class Room',
                 id: 'classRoomId',
                 accessor: data => {
