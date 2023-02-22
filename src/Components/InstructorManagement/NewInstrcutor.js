@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { InfoConfirmModal } from '../Custom/Modals';
-import { CustomTagInput } from '../Custom/CustomTagInput';
 import { CustomInput } from '../Custom/CustomInput';
 import { CreateTeacher, ShowLoading, StopLoading, UpdateTeacher } from '../../Redux/Features/Common/CommonServicesSlice';
 import { useDispatch } from 'react-redux';
@@ -28,12 +27,8 @@ export const NewInstrcutor = props => {
     const [selectedEducationQualification, setSelectedEducationQualification] = useState(selectedTeacher?.education);
     const [selectedSubjects, setSelectedSubjects] = useState(selectedTeacher?.subjects);
 
-    // useDispatch() hook is equivalent of mapDispatchToProps.
     const dispatch = useDispatch();
-
-    // useEffect(() => {
-
-    // }, [])
+    //const common = useSelector((state) => state.common);
 
     /**
      * Event for close confirm modal
@@ -107,40 +102,6 @@ export const NewInstrcutor = props => {
     const updateSubjects = (value) => {
         setSelectedSubjects(value)
     }
-
-
-    //Subjects
-    const checkSubjectAlreadyExists = (key) => {
-        let isOk = false;
-        selectedSubjects.forEach(function (item) {
-            if (item.description == key) {
-                isOk = true;
-            }
-        });
-        return isOk;
-    }
-
-
-    const handleNewSubjects = (allLevels) => {
-        for (const key in allLevels) {
-            // if key already exists no need create one.
-            if (!checkSubjectAlreadyExists(key)) {
-                if (Object.hasOwnProperty.call(allLevels, key)) {
-                    const element = allLevels[key];
-                    if (element) {
-                        var levelObj = {
-                            description: key,
-                            subjects: [
-                            ]
-                        }
-                        selectedSubjects.push(levelObj)
-                    }
-                }
-            }
-        }
-        setSelectedSubjects(selectedSubjects.slice());
-    }
-
 
     //Trigger create new teacher service
     const createNewTeacher = () => {
@@ -255,22 +216,9 @@ export const NewInstrcutor = props => {
                                 <div className='form-column'>
                                     <div className='item-name'>Subjects</div>
                                     <div className='item-dropdown'>
-
-                                        {/* <CustomTagInput initialTags={() => {
-                                            var tags = []
-                                            selectedSubjects.forEach((element) => {
-                                                tags.push(element.desc);
-                                            });
-                                            return tags
-                                        }} disable={false} fieldValidation={instructorFieldValidation} required={true} updateTags={(value) => {
-                                            handleNewSubjects(value);
-                                        }}></CustomTagInput> */}
-
-
                                         <CustomInput initialValue={selectedSubjects} type="text" disable={false} updateInput={(value) => {
                                             updateSubjects(value)
                                         }} fieldValidation={instructorFieldValidation} required={true} placeHolder="Subjects"></CustomInput>
-                                    
                                     </div>
                                 </div>
                             </div>
