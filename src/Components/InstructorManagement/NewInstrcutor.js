@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react'
 import { InfoConfirmModal } from '../Custom/Modals';
 import { CustomInput } from '../Custom/CustomInput';
-import { CreateTeacher, ShowLoading, StopLoading, UpdateTeacher } from '../../Redux/Features/Common/CommonServicesSlice';
+import { CreateTeacher, StartLoading, StopLoading, UpdateTeacher } from '../../Redux/Features/Common/CommonServicesSlice';
 import { useDispatch } from 'react-redux';
 
 export const NewInstrcutor = props => {
@@ -113,7 +113,7 @@ export const NewInstrcutor = props => {
             "education": selectedEducationQualification,
             "subjects": selectedSubjects
         }
-        dispatch(ShowLoading("Creating New Teacher.."))
+        dispatch(StartLoading("Creating New Teacher.."))
         dispatch(CreateTeacher(payload, function (response, success) {
             if (success) {
 
@@ -136,7 +136,7 @@ export const NewInstrcutor = props => {
             "education": selectedEducationQualification,
             "subjects": selectedSubjects
         }
-        dispatch(ShowLoading("Updating Teacher.."))
+        dispatch(StartLoading("Updating Teacher..", "UpdateTeacher"))
         dispatch(UpdateTeacher(payload, function (response, success) {
             if (success) {
 
@@ -144,7 +144,7 @@ export const NewInstrcutor = props => {
                 //error handle
             }
             handleClose()
-            dispatch(StopLoading())
+            dispatch(StopLoading("UpdateTeacher"))
         }));
     }
 

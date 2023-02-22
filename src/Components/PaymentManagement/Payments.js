@@ -9,7 +9,7 @@ import FilterDropdown from "../Custom/FilterDropdown";
 import { useDispatch, useSelector } from "react-redux";
 import { MonthPicker } from "../Custom/MonthPicker";
 import { PaymentUpdate, SearchPayments } from "../../Redux/Features/Payment/PaymentServicesSlice";
-import { ShowLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
+import { StartLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
 import { useCookies } from "react-cookie";
 import { format } from "date-fns";
 import { PaymentTable } from "./Table/PaymentTable";
@@ -132,10 +132,10 @@ const Payments = props => {
 
         setLoading(true)
         setTablePageSize(pageSize);
-        dispatch(ShowLoading("Loading Payment Records.."))
+        dispatch(StartLoading("Loading Payment Records..", "SearchPayments"))
         dispatch(SearchPayments(payload, function (response, success) {
             setLoading(false)
-            dispatch(StopLoading())
+            dispatch(StopLoading("SearchPayments"))
         }));
     }, [])
 
@@ -356,7 +356,7 @@ const Payments = props => {
         }
 
         setLoading(true)
-        dispatch(ShowLoading("Loading Payment Records.."))
+        dispatch(StartLoading("Loading Payment Records..", "SearchPayments"))
         dispatch(SearchPayments(payload, function (response, success) {
             if (success) {
                 //success handle
@@ -364,7 +364,7 @@ const Payments = props => {
                 //error handle
             }
             setLoading(false)
-            dispatch(StopLoading())
+            dispatch(StopLoading("SearchPayments"))
         }));
     };
 
@@ -476,12 +476,6 @@ const Payments = props => {
 
     return (
         <div className="classes-container">
-            {common.IsLoading &&
-                <div className="main-loader"  >
-                    <img src="assets/images/loading.svg" alt="loader" />
-                    <div className="main-loader__txt">{common.LoadingMessage}</div>
-                </div>
-            }
             <div className='page-header'>Monthly Settlement</div>
             <div className='classes-filter-box'>
                 <div className='filter-box-row'>

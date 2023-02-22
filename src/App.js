@@ -5,7 +5,7 @@ import { SetAuthHeader } from "./Services/ServiceEngine";
 import Header from "./Components/Header";
 import Footer from "./Components/Footer";
 import Slider from "./Components/Slider/Slider";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import useCookies from "react-cookie/cjs/useCookies";
 import { FetchMetaData, StartLoading, StopLoading } from "./Redux/Features/Common/CommonServicesSlice";
 import { ToastContainer } from "react-toastify";
@@ -18,16 +18,17 @@ const App = props => {
   const [instituteId, setInstituteId] = useCookies(['institute_id']);
 
   const dispatch = useDispatch();
+  const common = useSelector((state) => state.common);
 
   useEffect(() => {
-    dispatch(StartLoading("initializing.."))
+    dispatch(StartLoading("initializing..", "FetchMetaData"))
     dispatch(FetchMetaData(function (response, success) {
       if (success) {
 
       } else {
         //error handle
       }
-      dispatch(StopLoading())
+      dispatch(StopLoading("FetchMetaData"))
     }));
   }, [token?.token])
 
@@ -83,12 +84,12 @@ const App = props => {
   );
 
   return <div className="App">
-    {/*auth.IsLoading &&
+    {common.IsLoading > 0 &&
       <div className="main-loader"  >
         <img src="/assets/images/loading.svg" alt="loader" />
-        <div className="main-loader__txt">{auth.LoadingMessage}</div>
+        <div className="main-loader__txt">{common.LoadingMessage.length > 0 ? common.LoadingMessage[0].message : ""}</div>
       </div>
-      */}
+      }
     {isTokenExists() ? renderContent() : redirectToLoginPage()}
     <ToastContainer autoClose={5000} />
   </div>

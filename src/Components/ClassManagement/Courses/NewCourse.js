@@ -35,7 +35,7 @@ export const NewCourse = props => {
 
     useEffect(() => {
         console.log("selectedCourse", selectedCourse)
-        if(selectedCourse != null){
+        if (selectedCourse != null) {
             setCourse(selectedCourse)
             setLevels(selectedCourse?.levels == null ? [] : selectedCourse.levels)
         }
@@ -65,24 +65,24 @@ export const NewCourse = props => {
        */
     const continueConfirmModal = () => {
         setShowInfoConfirmModal(false)
-        if(currentTagValue?.id == null || currentTagValue.id == undefined){
+        if (currentTagValue?.id == null || currentTagValue.id == undefined) {
             var newLevels = levels.filter((v) => { return v.desc != currentTagValue.value });
             setLevels(newLevels)
             setTags(generateTagsByLevels(newLevels))
             dispatch(StopLoading())
-        }else{
-            dispatch(StartLoading("Deleting Level.."))
+        } else {
+            dispatch(StartLoading("Deleting Level..", "DeleteLevelById"))
             var payload = {
                 "id": currentTagValue.id,
-                "courseId":course.id
+                "courseId": course.id
             }
             var newLevels = levels.filter((v) => { return v.id != currentTagValue.id });
             dispatch(DeleteLevelById(payload, (response, success) => {
-                if(success){
+                if (success) {
                     setLevels(newLevels)
                     setTags(generateTagsByLevels(newLevels))
                 }
-                dispatch(StopLoading())
+                dispatch(StopLoading("DeleteLevelById"))
             }));
         }
     }
@@ -167,7 +167,7 @@ export const NewCourse = props => {
             "course": course,
             "levels": levels
         }
-        dispatch(StartLoading("Creating New Course.."))
+        dispatch(StartLoading("Creating New Course..", "CreateCourse"))
         dispatch(CreateCourse(payload, function (response, success) {
             if (success) {
 
@@ -175,11 +175,11 @@ export const NewCourse = props => {
                 //error handle
             }
             handleClose()
-            dispatch(StopLoading())
+            dispatch(StopLoading("CreateCourse"))
         }));
         setTimeout(function () {
             setShowInfoConfirmModal(false)
-            dispatch(StopLoading())
+            dispatch(StopLoading("CreateCourse"))
         }, 20000)
     }
 
@@ -188,17 +188,20 @@ export const NewCourse = props => {
             "courseId": selectedCourse.id,
             "levels": levels.filter((level) => { return level.id == undefined })
         }
-        // Add newly created levels
-        dispatch(StartLoading("Adding new levels.."))
-        dispatch(AddNewLevelAndSubjects(newLevels, function (response, success) {
-            if (success) {
 
-            } else {
-                //error handle
-            }
-            handleClose()
-            dispatch(StopLoading())
-        }));
+        if (newLevels.levels?.length > 0) {
+                        // Add newly created levels
+            dispatch(StartLoading("Adding new levels..", "AddNewLevelAndSubjects"))
+            dispatch(AddNewLevelAndSubjects(newLevels, function (response, success) {
+                if (success) {
+
+                } else {
+                    //error handle
+                }
+                handleClose()
+                dispatch(StopLoading("AddNewLevelAndSubjects"))
+            }));
+        }
 
         //Loop existing levels
         levels.filter((level) => { return level.id != undefined }).forEach(levelObj => {
@@ -212,7 +215,8 @@ export const NewCourse = props => {
                 subjects: newlyAddedSubjects
             }
 
-            if (newSubjectExstingLevel.subjects.length > 0) {
+            if (newlyAddedSubjects.length > 0) {
+                dispatch(StartLoading("Adding new subjects..", "CreateSubjectsForLevel"))
                 dispatch(CreateSubjectsForLevel(newSubjectExstingLevel, function (response, success) {
                     if (success) {
 
@@ -220,7 +224,7 @@ export const NewCourse = props => {
                         //error handle
                     }
                     handleClose()
-                    dispatch(StopLoading())
+                    dispatch(StopLoading("CreateSubjectsForLevel"))
                 }));
             }
 
@@ -229,6 +233,7 @@ export const NewCourse = props => {
                 return subject.id != undefined && subject.updated;
             });
             if (updatedSubjects.length > 0) {
+                dispatch(StartLoading("Updating Subjects", "UpdateSubjectBySubjectId"))
                 dispatch(UpdateSubjectBySubjectId(updatedSubjects, function (response, success) {
                     if (success) {
 
@@ -236,7 +241,7 @@ export const NewCourse = props => {
                         //error handle
                     }
                     handleClose()
-                    dispatch(StopLoading())
+                    dispatch(StopLoading("UpdateSubjectBySubjectId"))
                 }));
             }
         });
@@ -248,12 +253,12 @@ export const NewCourse = props => {
             <section className="modal-detail" ref={wrapperRef} onClick={e => e.stopPropagation()}>
                 {showInfoConfirmModal && <InfoConfirmModal continueTo={continueConfirmModal} handleClose={closeConfirmModal} show={true} children={modalContents.content} heading={modalContents.header}></InfoConfirmModal>}
                 <span className="close-icon modal-detail__close" onClick={handleClose}></span>
-                <div className="modal-detail__header modal-detail__header" style={{ fontSize: "24px", fontWeight: 600 , marginBottom:'50px'}}>
+                <div className="modal-detail__header modal-detail__header" style={{ fontSize: "24px", fontWeight: 600, marginBottom: '50px' }}>
                     {selectedCourse == null ? <span>Create New Course</span> : <span>Update Course</span>}
                 </div>
                 <div className="modal-detail__content">
                     <div className='form-group'>
-                        <div className='form-group-col2' style={{width:'40%'}}>
+                        <div className='form-group-col2' style={{ width: '40%' }}>
                             <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
                                 <div className='form-column'>
                                     <label>Basic Information</label>
@@ -281,7 +286,7 @@ export const NewCourse = props => {
                                 </div>
                             </div>
                         </div>
-                        <div className='form-group-col2' style={{width:'60%'}}>
+                        <div className='form-group-col2' style={{ width: '60%' }}>
                             <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
                                 <div className='form-column'>
                                     <label>Subjects/Modules</label>

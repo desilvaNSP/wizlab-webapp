@@ -118,10 +118,10 @@ const AllStudents = ({ }) => {
             "pageNumber": tablePageIndex + 1
         }
         setLoading(true)
-        dispatch(StartLoading("Getting enrollments"))
+        dispatch(StartLoading("Getting enrollments", "GetAllEnrollments"))
         dispatch(GetAllEnrollments(payload, function (response, success) {
             setLoading(false)
-            dispatch(StopLoading())
+            dispatch(StopLoading("GetAllEnrollments"))
         }));
     };
 
@@ -258,12 +258,6 @@ const AllStudents = ({ }) => {
 
     return (
         <div className="classes-container">
-            {common.IsLoading &&
-                <div className="main-loader"  >
-                    <img src="assets/images/loading.svg" alt="loader" />
-                    <div className="main-loader__txt">{common.LoadingMessage}</div>
-                </div>
-            }
             <div className='page-header'>
                 Student Enrollments
             </div>

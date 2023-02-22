@@ -44,13 +44,13 @@ const Sessions = ({ classId }) => {
             "pageNumber": pageIndex + 1
         }
         setTablePageSize(pageSize)
-        dispatch(StartLoading("Get Sessions for Class"))
+        dispatch(StartLoading("Get Sessions for Class", "GetSessionByClassId"))
         dispatch(GetSessionByClassId(payload, function (data, success) {
             if (success) {
                 setData(data.sessions)
                 setPageCount(Math.ceil(data.totalNumberOfEntries / tablePageSize))
             }
-            dispatch(StopLoading())
+            dispatch(StopLoading("GetSessionByClassId"))
         }));
     }, [])
 
@@ -103,14 +103,6 @@ const Sessions = ({ classId }) => {
     const columns = React.useMemo(
         () => [
             {
-                Header: 'Class',
-                id: 'classIdentifier',
-                accessor: data => {
-                    return data.classRoom?.desc
-                },
-                disableFilters: true
-            },
-            {
                 Header: 'Class Room',
                 id: 'classRoomId',
                 accessor: data => {
@@ -150,12 +142,6 @@ const Sessions = ({ classId }) => {
 
     return (
         <div className="classes-container">
-            {common.IsLoading &&
-                <div className="main-loader"  >
-                    <img src="/assets/images/loading.svg" alt="loader" />
-                    <div className="main-loader__txt">{common.LoadingMessage}</div>
-                </div>
-            }
             <div className='page-header'>
                 <div className="add-record" onClick={() => triggerStartSession()}>
                     <img src="/assets/icons/icon-add.svg" alt="Start New Class" />

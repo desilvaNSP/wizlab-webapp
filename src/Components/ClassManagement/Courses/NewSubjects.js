@@ -22,12 +22,12 @@ export const NewSubjects = props => {
 
     const dispatch = useDispatch();
 
-    useEffect(() =>{
-        if(selectedLevel != null){
-            var newItems = data.filter((item) => { return item.new});
-            setData([...selectedLevel.subjects, ...newItems])
-        }
-    },[selectedCourse])
+    // useEffect(() =>{
+    //     if(selectedLevel != null){
+    //         var newItems = data.filter((item) => { return item.new});
+    //         setData([...selectedLevel.subjects, ...newItems])
+    //     }
+    // },[selectedLevel])
 
     // listener for the add new row on the table.
     // added new row at the top of the table.
@@ -55,13 +55,13 @@ export const NewSubjects = props => {
 
     const continueConfirmModal = () => {
         setShowInfoConfirmModal(false)
-        dispatch(StartLoading("Deleting Subject.."))
+        dispatch(StartLoading("Deleting Subject..", "DeleteSubjectById"))
         var payload = {
             "id": currentDeleteRow.original.id,
             "courseId": selectedCourse.id
         }
         dispatch(DeleteSubjectById(payload, (response, success) => {
-            dispatch(StopLoading())
+            dispatch(StopLoading("DeleteSubjectById"))
         }));
     }
 

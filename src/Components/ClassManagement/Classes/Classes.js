@@ -4,7 +4,7 @@ import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
 import { NewClass } from "./NewClass";
 import FilterDropdown from "../../Custom/FilterDropdown";
 import { useSelector, useDispatch } from "react-redux";
-import { GetClasses, ShowLoading, StopLoading } from "../../../Redux/Features/Common/CommonServicesSlice";
+import { GetClasses, StartLoading, StopLoading } from "../../../Redux/Features/Common/CommonServicesSlice";
 import { ClassTable } from "./Table/ClassTable";
 
 const Classes = props => {
@@ -51,10 +51,10 @@ const Classes = props => {
 
         setLoading(true)
         setTablePageSize(pageSize);
-        dispatch(ShowLoading("Loading Classes.."))
+        dispatch(StartLoading("Loading Classes..", "GetClasses"))
         dispatch(GetClasses(payload, function (response, success) {
             setLoading(false)
-            dispatch(StopLoading())
+            dispatch(StopLoading("GetClasses"))
         }));
     }, [])
 
@@ -84,7 +84,7 @@ const Classes = props => {
             "pageSize": tablePageSize,
             "pageNumber":  tablePageIndex + 1
         }
-        dispatch(ShowLoading("Loading Classes.."))
+        dispatch(StartLoading("Loading Classes.."))
         dispatch(GetClasses(payload, function (response, success) {
             if (success) {
                 //success handle
@@ -268,12 +268,6 @@ const Classes = props => {
 
     return (
         <div className="classes-container">
-            {common.IsLoading &&
-                <div className="main-loader"  >
-                    <img src="/assets/images/loading.svg" alt="loader" />
-                    <div className="main-loader__txt">{common.LoadingMessage}</div>
-                </div>
-            }
             <div className='page-header'>
                 <div className="add-record" onClick={() => triggerStartNewClass()}>
                     <img src="/assets/icons/icon-add.svg" alt="Start New Class" />

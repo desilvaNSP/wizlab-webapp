@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { useTable, usePagination, useExpanded } from 'react-table'
+import { useTable, usePagination, useExpanded, useRowSelect } from 'react-table'
 
 const IndeterminateCheckbox = React.forwardRef(
   ({ indeterminate, ...rest }, ref) => {
@@ -29,7 +29,8 @@ export const ClassTable = ({
   loading,
   pageCount: controlledPageCount,
   numberOfRecords,
-  renderRowSubComponent
+  onRowSelect,
+  rowSelection = true
 }) => {
 
   const [showContextMenu, setShowContextMenu] = useState(false);
@@ -55,10 +56,12 @@ export const ClassTable = ({
     setPageIndex,
     setPageSize,
     allColumns,
+    selectedFlatRows,
+    toggleAllRowsSelected,
     getToggleHideAllColumnsProps,
     visibleColumns,
     // Get the state from the instance
-    state: { pageIndex, pageSize },
+    state: { selectedRowIds, pageIndex, pageSize },
   } = useTable(
     {
       columns,
@@ -72,13 +75,44 @@ export const ClassTable = ({
       updateMyData
     },
     useExpanded,
-    usePagination
+    usePagination,
+    useRowSelect,
+    hooks => {
+      hooks.visibleColumns.push(columns => [
+        // Let's make a column for selection
+        {
+          id: 'selection',
+          // The header can use the table's getToggleAllRowsSelectedProps method
+          // to render a checkbox
+          Header: ({ getToggleAllRowsSelectedProps }) => (
+            // <div>
+            //   <IndeterminateCheckbox {...getToggleAllRowsSelectedProps()} />
+            // </div>
+            <></>
+          ),
+          // The cell can use the individual row's getToggleRowSelectedProps method
+          // to the render a checkbox
+          Cell: ({ row }) => (
+            <div>
+              <IndeterminateCheckbox {...row.getToggleRowSelectedProps()} />
+            </div>
+          ),
+        },
+        ...columns,
+      ])
+    }
   )
 
   // Listen for changes in pagination and use the state to fetch our new data
   React.useEffect(() => {
     fetchData({ pageIndex, pageSize })
   }, [fetchData, pageIndex, pageSize])
+
+  React.useEffect(() => {
+    if (rowSelection) {
+      onRowSelect(selectedFlatRows);
+    }
+  }, [selectedFlatRows]);
 
   const downloadFile = ({ data, fileName, fileType }) => {
     const blob = new Blob([data], { type: fileType })
@@ -176,21 +210,21 @@ export const ClassTable = ({
         <tbody {...getTableBodyProps()}>
           {page.map((row, i) => {
             prepareRow(row)
+            var className = row.isSelected ? 'row row--highlighted' : 'row';
             return (
-              <React.Fragment>
-                <tr {...row.getRowProps()}>
-                  {row.cells.map(cell => {
-                    return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
-                  })}
-                </tr>
-                {row.isExpanded ? (
-                  <tr>
-                    <td colSpan={visibleColumns.length}>
-                      {renderRowSubComponent({ row })}
-                    </td>
-                  </tr>
-                ) : null}
-              </React.Fragment>
+              <tr {...row.getRowProps()} className={className} onClick={() => {
+                // This below two line change for enable one row selection for the entire table
+                toggleAllRowsSelected(false)
+                if (row.isSelected) {
+                  row.toggleRowSelected(false)
+                } else {
+                  row.toggleRowSelected(true)
+                }
+              }}>
+                {row.cells.map(cell => {
+                  return <td {...cell.getCellProps()}>{cell.render('Cell')}</td>
+                })}
+              </tr>
             )
           })}
           <tr>

@@ -26,7 +26,7 @@ const ClassRooms = props => {
       "auditoriumNo": audNo,
       "address": address
     }
-    dispatch(StartLoading("Creating new Classroom"));
+    dispatch(StartLoading("Creating new Classroom", "CreateClassRoom"));
     dispatch(CreateClassRoom(payload, function (response, success) {
       if (success) {
         setAudNo("")
@@ -36,7 +36,7 @@ const ClassRooms = props => {
       } else {
         //error handle
       }
-      dispatch(StopLoading());
+      dispatch(StopLoading("CreateClassRoom"));
     }));
   }
 
