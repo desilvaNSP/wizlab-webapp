@@ -33,6 +33,14 @@ export const NewCourse = props => {
         }
     }, [selectedCourse?.levels])
 
+    useEffect(() => {
+        console.log("selectedCourse", selectedCourse)
+        if(selectedCourse != null){
+            setCourse(selectedCourse)
+            setLevels(selectedCourse?.levels == null ? [] : selectedCourse.levels)
+        }
+    }, [selectedCourse])
+
     /**
      * Event for close confirm modal
      */
@@ -58,14 +66,15 @@ export const NewCourse = props => {
     const continueConfirmModal = () => {
         setShowInfoConfirmModal(false)
         if(currentTagValue?.id == null || currentTagValue.id == undefined){
-            var newLevels = levels.filter((v) => { return v.desc != currentTagValue.desc });
+            var newLevels = levels.filter((v) => { return v.desc != currentTagValue.value });
             setLevels(newLevels)
             setTags(generateTagsByLevels(newLevels))
             dispatch(StopLoading())
         }else{
             dispatch(StartLoading("Deleting Level.."))
             var payload = {
-                "id": currentTagValue.id
+                "id": currentTagValue.id,
+                "courseId":course.id
             }
             var newLevels = levels.filter((v) => { return v.id != currentTagValue.id });
             dispatch(DeleteLevelById(payload, (response, success) => {
@@ -120,7 +129,7 @@ export const NewCourse = props => {
     const checkLevelAlreadyExistsOnState = (key) => {
         let isOk = false;
         levels.forEach(function (item) {
-            if (item.desc == key.desc) {
+            if (item.desc == key.value) {
                 isOk = true;
             }
         });
@@ -132,7 +141,7 @@ export const NewCourse = props => {
             // if key already exists no need create one.
             if (!checkLevelAlreadyExistsOnState(element)) {
                 var levelObj = {
-                    desc: element.desc,
+                    desc: element.value,
                     subjects: [
                     ]
                 }

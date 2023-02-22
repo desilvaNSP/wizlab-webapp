@@ -10,7 +10,6 @@ import { DateTimePicker } from '../../Custom/DateTimePicker';
 import FilterDropdown from '../../Custom/FilterDropdown';
 import { useDispatch, useSelector } from 'react-redux';
 import { CreateSession, StartLoading, StopLoading } from '../../../Redux/Features/Common/CommonServicesSlice';
-import { ClassesTable } from './Table/ClassesTable';
 
 export const NewSession = (props) => {
     const { handleClose, show, classId, selectedSession } = props
@@ -253,7 +252,7 @@ export const NewSession = (props) => {
                     {selectedSession == null ? <span>Create Session</span> : <span>Update Session</span>}
                 </div>
                 <div className="modal-detail__content">
-                    {selectedSession == null ?
+                    {selectedClass == null ?
                         <div className='form-group'>
                             <div className='form-group-col'>
                                 <ReactTableFullWidthStyles>

@@ -22,7 +22,7 @@ const ClassesIndex = props => {
       <Tabs>
         <TabList>
 
-          <Tab>Cources(පාඨමාලා)</Tab>
+          <Tab>Courses(පාඨමාලා)</Tab>
           <Tab>Classes(පන්ති)</Tab>
           <Tab>Auditoriums(දේශන ශාලා)</Tab>
         </TabList>

@@ -47,11 +47,11 @@ export const CustomCurrencyInput = ({ initialValue, updateInput, type, disable =
     return (
         <div style={{textAlign:'left'}}>
             <input className={customInputClassName} value={value} onChange={onChange} onBlur={onBlur} type={type} disabled={disable} placeholder={placeHolder} />
-            {!valid && <label className='validation-error-text' style={{marginLeft:'200px'}}>
+            {!valid && <label className='validation-error-text'>
                 {invalidMessage}
             </label>}
-            {(valid && (value == "" || value == null) && required) && <label className='required-text' style={{marginLeft:'200px'}}>
-                {"Required"}
+            {(valid && (value == "" || value == null) && required) && <label className='required-text'>
+                {"*"}
             </label>}
         </div>
     )

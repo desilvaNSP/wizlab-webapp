@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, current } from '@reduxjs/toolkit'
 import { toast } from 'react-toastify';
 import { ServiceEngine } from "../../../Services/ServiceEngine";
 import { 
@@ -85,47 +85,48 @@ export const CommonServicesSlice = createSlice({
                 Courses: [...state.Courses, obj]
             };
         },
+        UpdateCourse : (state, action) => {
+            let obj = action.payload;
+            return {
+                ...state,
+                Courses: [...state.Courses.filter((course) => { return course.id != obj.course?.id}), obj.course]
+            };
+        },
         DeleteSubjects: (state, action) => {
             let obj = action.payload;
             return {
                 ...state,
-                Courses: [...state.Courses.filter((course) => { return course.id != obj.courseId}), obj.course]
+                Courses: [...state.Courses.filter((course) => { return course.id != obj.course?.id}), obj.course]
             };
         },
         DeleteLevel: (state, action) => {
             let obj = action.payload;
             return {
                 ...state,
-                Courses: [...state.Courses, obj]
+                Courses: [...state.Courses.filter((course) => { return course.id != obj.course?.id}), obj.course]
             };
         },
         UpdateClasses: (state, action) => {
             let obj = action.payload;
             return {
                 ...state,
-                Classes:{
+                Classes:{ 
                     classes: obj?.classes,
                     totalNumberOfEntries: obj?.totalNumberOfEntries
                 }, 
             };
         },
-        // AddNewClass: (state, action) => {
-        //     let obj = action.payload;
-        //     return {
-        //         ...state,
-        //         Classes: [...state.Classes, obj.classobj]
-        //     };
-        // },
-        // UpdateExistingClass: (state, action) => {
-        //     let obj = action.payload;
-        //     return {
-        //         ...state,
-        //         Classes: [
-        //             ...state.Classes.filter(classObj => classObj.id != obj.id), 
-        //             ...state.Classes.filter(classObj => classObj.id == obj.id) //update this with obj.classObj after backend issue fixed.
-        //         ]
-        //     };
-        // },
+        AddNewClass: (state, action) => {
+            let obj = action.payload;
+            var classesState = current(state).Classes;
+            return {
+                ...state,
+                Classes:{
+                    classes: [...classesState?.classes, obj?.classobj],
+                    totalNumberOfEntries: classesState?.totalNumberOfEntries + 1
+                }, 
+            };
+        },
         AddClassRoom:(state, action) => {
             let obj = action.payload;
             return {
@@ -158,6 +159,8 @@ export const {
     HideLoading, 
     UpdateMetaData, 
     AddNewCourse, 
+    UpdateCourse,
+    AddNewClass,
     UpdateClasses,
     AddClassRoom, 
     DeleteSubjects, 
@@ -234,7 +237,7 @@ export const CreateCourse = (coursePayload, callback) => (dispatch) => {
 //   }
 export const AddNewLevelAndSubjects = (coursePayload, callback) => (dispatch) => {
     ServiceEngine.post(ADD_NEWLEVELS_AND_SUBJECTS_ENDPOINT, coursePayload).then(response => {
-        // dispatch(AddNewCourse(response.data))
+        dispatch(UpdateCourse(response.data))
         callback(response.data, true);
     }).catch(
         error => {
@@ -262,7 +265,7 @@ export const AddNewLevelAndSubjects = (coursePayload, callback) => (dispatch) =>
 //   }
 export const CreateSubjectsForLevel = (coursePayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_SUBJECTS_ENDPOINT, coursePayload).then(response => {
-        // dispatch(AddNewCourse(response.data))
+        dispatch(UpdateCourse(response.data))
         callback(response.data, true);
     }).catch(
         error => {
@@ -290,7 +293,7 @@ export const CreateSubjectsForLevel = (coursePayload, callback) => (dispatch) =>
 //   }
 export const UpdateSubjectBySubjectId = (updatePayload, callback) => (dispatch) => {
     ServiceEngine.put(UPDATE_SUBJECTS_BY_ID_ENDPOINT, updatePayload).then(response => {
-        // dispatch(UpdateExistingClass(response.data))
+        dispatch(UpdateCourse(response.data))
         callback(response.data, true);
     }).catch(
         error => {
@@ -314,7 +317,7 @@ export const UpdateSubjectBySubjectId = (updatePayload, callback) => (dispatch) 
 // }  
 export const DeleteLevelById = (payload, callback) => (dispatch) => {
     ServiceEngine.delete(DELETE_LEVEL_ENDPOINT,  { data: payload }).then(response => {
-        //dispatch(DeleteLevel(response.data))
+        dispatch(DeleteLevel(response.data))
         callback(response.data, true);
     }).catch(
         error => {
@@ -337,14 +340,9 @@ export const DeleteLevelById = (payload, callback) => (dispatch) => {
 //     "id": 0
 // }
   
-export const DeleteSubjectById  = (payload, courseId, levelId, callback) => (dispatch) => {
+export const DeleteSubjectById  = (payload, callback) => (dispatch) => {
     ServiceEngine.delete(DELETE_SUBJECT_ENDPOINT, { data: payload }).then(response => {
-        var responseObj = {
-            "course": response.data,
-            "courseId":courseId,
-            "levelId":levelId
-        }
-        dispatch(DeleteSubjects(responseObj))
+        dispatch(DeleteSubjects(response.data))
         callback(response.data, true);
     }).catch(
         error => {
@@ -365,7 +363,7 @@ export const DeleteSubjectById  = (payload, courseId, levelId, callback) => (dis
 
 export const CreateClass = (classPayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_CLASS_ENDPOINT, classPayload).then(response => {
-        // dispatch(AddNewClass(response.data))
+        dispatch(AddNewClass(response.data))
         callback(response.data, true);
     }).catch(
         error => {
