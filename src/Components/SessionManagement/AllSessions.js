@@ -59,13 +59,13 @@ const AllSessions = ({ }) => {
             "pageNumber": pageIndex + 1
         }
         setTablePageSize(pageSize)
-        dispatch(StartLoading("Retrieving all sessions"))
+        dispatch(StartLoading("Retrieving all sessions", "GetSessions"))
         dispatch(GetSessions(payload, function (data, success) {
             if (success) {
                 setData(data.sessions)
                 setPageCount(Math.ceil(data.totalNumberOfEntries / tablePageSize))
             }
-            dispatch(StopLoading())
+            dispatch(StopLoading("GetSessions"))
         }));
     }, [])
 
@@ -301,12 +301,6 @@ const AllSessions = ({ }) => {
 
     return (
         <div className="classes-container">
-            {common.IsLoading &&
-                <div className="main-loader"  >
-                    <img src="/assets/images/loading.svg" alt="loader" />
-                    <div className="main-loader__txt">{common.LoadingMessage}</div>
-                </div>
-            }
             <div className='page-header'>
                 <div className="add-record" onClick={() => triggerStartSession()}>
                     <img src="/assets/icons/icon-add.svg" alt="Start New Class" />

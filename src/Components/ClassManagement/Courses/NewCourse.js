@@ -71,7 +71,7 @@ export const NewCourse = props => {
             setTags(generateTagsByLevels(newLevels))
             dispatch(StopLoading())
         } else {
-            dispatch(StartLoading("Deleting Level.."))
+            dispatch(StartLoading("Deleting Level..", "DeleteLevelById"))
             var payload = {
                 "id": currentTagValue.id,
                 "courseId": course.id
@@ -82,7 +82,7 @@ export const NewCourse = props => {
                     setLevels(newLevels)
                     setTags(generateTagsByLevels(newLevels))
                 }
-                dispatch(StopLoading())
+                dispatch(StopLoading("DeleteLevelById"))
             }));
         }
     }
@@ -167,7 +167,7 @@ export const NewCourse = props => {
             "course": course,
             "levels": levels
         }
-        dispatch(StartLoading("Creating New Course.."))
+        dispatch(StartLoading("Creating New Course..", "CreateCourse"))
         dispatch(CreateCourse(payload, function (response, success) {
             if (success) {
 
@@ -175,11 +175,11 @@ export const NewCourse = props => {
                 //error handle
             }
             handleClose()
-            dispatch(StopLoading())
+            dispatch(StopLoading("CreateCourse"))
         }));
         setTimeout(function () {
             setShowInfoConfirmModal(false)
-            dispatch(StopLoading())
+            dispatch(StopLoading("CreateCourse"))
         }, 20000)
     }
 
@@ -191,7 +191,7 @@ export const NewCourse = props => {
 
         if (newLevels.levels?.length > 0) {
                         // Add newly created levels
-            dispatch(StartLoading("Adding new levels.."))
+            dispatch(StartLoading("Adding new levels..", "AddNewLevelAndSubjects"))
             dispatch(AddNewLevelAndSubjects(newLevels, function (response, success) {
                 if (success) {
 
@@ -199,7 +199,7 @@ export const NewCourse = props => {
                     //error handle
                 }
                 handleClose()
-                dispatch(StopLoading())
+                dispatch(StopLoading("AddNewLevelAndSubjects"))
             }));
         }
 
@@ -216,7 +216,7 @@ export const NewCourse = props => {
             }
 
             if (newlyAddedSubjects.length > 0) {
-                dispatch(StartLoading("Adding new subjects.."))
+                dispatch(StartLoading("Adding new subjects..", "CreateSubjectsForLevel"))
                 dispatch(CreateSubjectsForLevel(newSubjectExstingLevel, function (response, success) {
                     if (success) {
 
@@ -224,7 +224,7 @@ export const NewCourse = props => {
                         //error handle
                     }
                     handleClose()
-                    dispatch(StopLoading())
+                    dispatch(StopLoading("CreateSubjectsForLevel"))
                 }));
             }
 
@@ -233,7 +233,7 @@ export const NewCourse = props => {
                 return subject.id != undefined && subject.updated;
             });
             if (updatedSubjects.length > 0) {
-                dispatch(StartLoading("Updating Subjects"))
+                dispatch(StartLoading("Updating Subjects", "UpdateSubjectBySubjectId"))
                 dispatch(UpdateSubjectBySubjectId(updatedSubjects, function (response, success) {
                     if (success) {
 
@@ -241,7 +241,7 @@ export const NewCourse = props => {
                         //error handle
                     }
                     handleClose()
-                    dispatch(StopLoading())
+                    dispatch(StopLoading("UpdateSubjectBySubjectId"))
                 }));
             }
         });

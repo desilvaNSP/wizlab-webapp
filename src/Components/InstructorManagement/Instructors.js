@@ -4,7 +4,7 @@ import { ReactTableFullWidthStyles } from '../Custom/StyleComponents'
 import { NewInstrcutor } from "./NewInstrcutor";
 import FilterDropdown from "../Custom/FilterDropdown";
 import { useSelector, useDispatch } from "react-redux";
-import { GetTeachers, ShowLoading, StopLoading } from '../../Redux/Features/Common/CommonServicesSlice';
+import { GetTeachers, StartLoading, StopLoading } from '../../Redux/Features/Common/CommonServicesSlice';
 import { ClassTable } from "../ClassManagement/Classes/Table/ClassTable";
 
 const Instructors = props => {
@@ -48,10 +48,10 @@ const Instructors = props => {
 
         setLoading(true)
         setTablePageSize(pageSize);
-        //dispatch(ShowLoading("Loading Classes.."))
+        dispatch(StartLoading("Loading Teachers..", "GetTeachers"))
         dispatch(GetTeachers(payload, function (response, success) {
             setLoading(false)
-            //dispatch(StopLoading())
+            dispatch(StopLoading("GetTeachers"))
         }));
     }, [])
 
@@ -80,14 +80,14 @@ const Instructors = props => {
             "pageSize": tablePageSize,
             "pageNumber":  tablePageIndex + 1
         }
-        dispatch(ShowLoading("Loading Teachers.."))
+        dispatch(StartLoading("Loading Teachers..", "GetTeachers"))
         dispatch(GetTeachers(payload, function (response, success) {
             if (success) {
                 //success handle
             } else {
                 //error handle
             }
-            dispatch(StopLoading())
+            dispatch(StopLoading("GetTeachers"))
         }));
     };
 
@@ -297,12 +297,6 @@ const Instructors = props => {
 
     return (
         <div className="classes-container">
-            {common.IsLoading &&
-                <div className="main-loader"  >
-                    <img src="/assets/images/loading.svg" alt="loader" />
-                    <div className="main-loader__txt">{common.LoadingMessage}</div>
-                </div>
-            }
             <div className='page-header'>
                 <div className="add-record" onClick={() => triggerCreateNewTeacher()}>
                     <img src="/assets/icons/icon-add.svg" alt="Create New Teacher" />

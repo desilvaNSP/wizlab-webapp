@@ -55,13 +55,13 @@ export const NewSubjects = props => {
 
     const continueConfirmModal = () => {
         setShowInfoConfirmModal(false)
-        dispatch(StartLoading("Deleting Subject.."))
+        dispatch(StartLoading("Deleting Subject..", "DeleteSubjectById"))
         var payload = {
             "id": currentDeleteRow.original.id,
             "courseId": selectedCourse.id
         }
         dispatch(DeleteSubjectById(payload, (response, success) => {
-            dispatch(StopLoading())
+            dispatch(StopLoading("DeleteSubjectById"))
         }));
     }
 

@@ -1,13 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react'
 
 import { InfoConfirmModal } from '../../Custom/Modals';
-import CustomDropdown from '../../Custom/CustomDropdown';
 import { CustomInput } from '../../Custom/CustomInput';
 import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents';
 import { CommonTable } from '../../CommonTable/CommonTable';
-import { format } from 'date-fns'
 import { DateTimePicker } from '../../Custom/DateTimePicker';
-import FilterDropdown from '../../Custom/FilterDropdown';
 import { useDispatch, useSelector } from 'react-redux';
 import { CreateSession, StartLoading, StopLoading } from '../../../Redux/Features/Common/CommonServicesSlice';
 
@@ -41,9 +38,11 @@ export const NewSession = (props) => {
 
     const SelectClassById = () => {
         var selectedClass = null;
-        var filteredClass = common.Classes?.classes.filter(function (val) {
+        var filteredClass = common.Classes?.classes?.filter(function (val) {
             return val.id == classId;
         });
+        console.log("filteredClass", common.Classes?.classes)
+        console.log("filteredClass", filteredClass)
         if (filteredClass.length > 0) {
             selectedClass = filteredClass[0]
         }
@@ -55,7 +54,7 @@ export const NewSession = (props) => {
         if (filteredClass != null) {
             setSelectedClass(filteredClass)
         }
-    }, [common.Classes?.classes, classId])
+    }, [classId])
 
 
     /**
@@ -131,14 +130,14 @@ export const NewSession = (props) => {
             "classRoomId": classRoom?.id,
             "link": virtualLink
         }
-        dispatch(StartLoading("Creating New Session.."))
+        dispatch(StartLoading("Creating New Session..", "CreateSession"))
         dispatch(CreateSession(payload, function (response, success) {
             if (success) {
 
             } else {
                 //error handle
             }
-            dispatch(StopLoading());
+            dispatch(StopLoading("CreateSession"));
         }));
     }
 
@@ -252,7 +251,7 @@ export const NewSession = (props) => {
                     {selectedSession == null ? <span>Create Session</span> : <span>Update Session</span>}
                 </div>
                 <div className="modal-detail__content">
-                    {selectedClass == null ?
+                    {selectedSession !== null ?
                         <div className='form-group'>
                             <div className='form-group-col'>
                                 <ReactTableFullWidthStyles>

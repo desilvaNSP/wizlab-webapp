@@ -4,8 +4,9 @@ import { InfoConfirmModal } from '../../Custom/Modals';
 import CustomDropdown from '../../Custom/CustomDropdown';
 import { CustomInput } from '../../Custom/CustomInput';
 import { useDispatch, useSelector } from 'react-redux';
-import { CreateClass, ShowLoading, StopLoading, UpdateClass } from '../../../Redux/Features/Common/CommonServicesSlice';
+import { CreateClass, StartLoading, StopLoading, UpdateClass } from '../../../Redux/Features/Common/CommonServicesSlice';
 import { DateSelectionPicker } from '../../Custom/DateSelectionPicker';
+import { CustomCurrencyInput } from '../../Custom/CustomCurrencyInput';
 
 export const NewClass = props => {
     const { handleClose, show, selectedClass } = props
@@ -193,7 +194,7 @@ export const NewClass = props => {
             "teacherId": selectedTeacher?.id,
             "paymentDueDate": selectedDueDate
         }
-        dispatch(ShowLoading("Creating New Class.."))
+        dispatch(StartLoading("Creating New Class..", "CreateClass"))
         dispatch(CreateClass(payload, function (response, success) {
             if (success) {
 
@@ -201,7 +202,7 @@ export const NewClass = props => {
                 //error handle
             }
             handleClose()
-            dispatch(StopLoading())
+            dispatch(StopLoading("CreateClass"))
         }));
 
     }
@@ -216,7 +217,7 @@ export const NewClass = props => {
             "paymentDueDate": selectedDueDate
         }
 
-        dispatch(ShowLoading("Updating Class.."))
+        dispatch(StartLoading("Updating Class..", "UpdateClass"))
         dispatch(UpdateClass(payload, function (response, success) {
             if (success) {
 
@@ -224,12 +225,24 @@ export const NewClass = props => {
                 //error handle
             }
             handleClose()
-            dispatch(StopLoading())
+            dispatch(StopLoading("UpdateClass"))
         }));
     }
 
     const courseFeeFieldValidation = (value, callback) => {
-        callback(true, "");
+        if(value >= 0){
+            callback(true, "");
+        }else{
+            callback(false, "value should currency value");
+        }
+    }
+
+    const paymentDueDateValidation = (value, callback) => {
+        if(value > 0 && value <= 31){
+            callback(true, "");
+        }else{
+            callback(false, "value should inbetween 1-31");
+        }
     }
 
     /**
@@ -333,7 +346,7 @@ export const NewClass = props => {
                                 <div className='form-column'>
                                     <div className='item-name'>Course Fee</div>
                                     <div className='item-dropdown'>
-                                        <CustomInput
+                                        <CustomCurrencyInput
                                             initialValue={selectedClassFee} type="number" updateInput={(value) => {
                                                 updateClassFee(value);
                                             }} fieldValidation={courseFeeFieldValidation} required={true} placeHolder="Please enter course fee in ruppees"
@@ -348,7 +361,7 @@ export const NewClass = props => {
                                         <CustomInput
                                             initialValue={selectedDueDate} type="number" updateInput={(value) => {
                                                 updatePaymentDueDate(value);
-                                            }} fieldValidation={courseFeeFieldValidation} required={true} placeHolder="Please enter payment due date"
+                                            }} fieldValidation={paymentDueDateValidation} required={true} max={31} min={1} placeHolder="Please enter payment due date"
                                         />
                                     </div>
                                 </div>

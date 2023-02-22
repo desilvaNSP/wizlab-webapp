@@ -13,12 +13,6 @@ const ClassesIndex = props => {
 
   return (
     <div className="main-container">
-      {common.IsLoading &&
-        <div className="main-loader"  >
-          <img src="assets/images/loading.svg" alt="loader" />
-          <div className="main-loader__txt">{common.LoadingMessage}</div>
-        </div>
-      }
       <Tabs>
         <TabList>
 

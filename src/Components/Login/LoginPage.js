@@ -3,7 +3,7 @@ import useCookies from "react-cookie/cjs/useCookies";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { FetchAuthenticationInfo } from "../../Redux/Features/Auth/AuthenticationSlice";
-import { HideLoading, ShowLoading } from "../../Redux/Features/Common/CommonServicesSlice";
+import { HideLoading, StartLoading } from "../../Redux/Features/Common/CommonServicesSlice";
 import "./login.css";
 
 const LoginPage = (props) => {
@@ -26,7 +26,7 @@ const LoginPage = (props) => {
   const common = useSelector((state) => state.common);
 
   const handleLogin = () => {
-    dispatch(ShowLoading("Authenticating " + UserName));
+    dispatch(StartLoading("Authenticating " + UserName, "FetchAuthenticationInfo"));
     dispatch(FetchAuthenticationInfo(UserName, Password, function (response, success) {
       if (success) {
         setAdminUser('admin_user', response.firstName, { path: '/' });
@@ -37,18 +37,12 @@ const LoginPage = (props) => {
       } else {
         //error handle
       }
-      dispatch(HideLoading())
+      dispatch(HideLoading("FetchAuthenticationInfo"))
     }));
   };
 
   return (
     <div className="master-container">
-      {common.IsLoading &&
-        <div className="main-loader"  >
-          <img src="assets/images/loading.svg" alt="loader" />
-          <div className="main-loader__txt">{common.LoadingMessage}</div>
-        </div>
-      }
       <main className="main-page login-page">
         <img className="back-image" src="assets/images/cover-photo.jpg"></img>
         <section className="login-section-wrapper">

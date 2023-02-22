@@ -38,22 +38,27 @@ export const CommonServicesSlice = createSlice({
         Users: [],
         PaymentStatus: [],
         UserRoles: [],
-        IsLoading: false,
-        LoadingMessage: ""
+        IsLoading: 0,
+        LoadingMessage: []
     },
     reducers: {
         ShowLoading: (state, action) => {
+            var loadingPayload = {
+                key: action.payload.index,
+                message: action.payload.message
+            }
             return {
                 ...state,
-                IsLoading: true,
-                LoadingMessage: action.payload
+                IsLoading: current(state).IsLoading +  1,
+                LoadingMessage: [...current(state).LoadingMessage, loadingPayload]
             };
         },
         HideLoading: (state, action) => {
+            var filteredMessageArray = current(state).LoadingMessage?.filter((obj) => { return obj.key != action.payload })
             return {
                 ...state,
-                IsLoading: false,
-                LoadingMessage: ""
+                IsLoading: current(state).IsLoading -  1,
+                LoadingMessage: filteredMessageArray
             };
         },
         UpdateMetaData: (state, action) => {
@@ -169,12 +174,16 @@ export const {
     UpdateTeachers
 } = CommonServicesSlice.actions
 
-export const StartLoading = (message) => (dispatch) => {
-    dispatch(ShowLoading(message))
+export const StartLoading = (message, index) => (dispatch) => {
+    var payload = {
+        message: message,
+        index:index
+    }
+    dispatch(ShowLoading(payload))
 }
 
-export const StopLoading = () => (dispatch) => {
-    dispatch(HideLoading())
+export const StopLoading = (index) => (dispatch) => {
+    dispatch(HideLoading(index))
 }
 
 export const FetchMetaData = (callback) => (dispatch) => {

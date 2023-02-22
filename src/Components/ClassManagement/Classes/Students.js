@@ -96,10 +96,10 @@ const Students = ({ classId }) => {
         }
         setLoading(true)
         setTablePageSize(pageSize)
-        dispatch(StartLoading("Getting enrollments"))
+        dispatch(StartLoading("Getting enrollments", "GetEnrollmentsById"))
         dispatch(GetEnrollmentsById(payload, function (data, success) {
             setLoading(false)
-            dispatch(StopLoading())
+            dispatch(StopLoading("GetEnrollmentsById"))
         }));
     }, [])
 
@@ -114,10 +114,10 @@ const Students = ({ classId }) => {
             "pageNumber": tablePageIndex + 1
         }
         setLoading(true)
-        dispatch(StartLoading("Getting enrollments"))
+        dispatch(StartLoading("Getting enrollments", "GetEnrollmentsById"))
         dispatch(GetEnrollmentsById(payload, function (response, success) {
             setLoading(false)
-            dispatch(StopLoading())
+            dispatch(StopLoading("GetEnrollmentsById"))
         }));
     };
 
@@ -256,12 +256,6 @@ const Students = ({ classId }) => {
 
     return (
         <div className="classes-container">
-            {common.IsLoading &&
-                <div className="main-loader"  >
-                    <img src="/assets/images/loading.svg" alt="loader" />
-                    <div className="main-loader__txt">{common.LoadingMessage}</div>
-                </div>
-            }
             <div className='page-header'>
                 Student Enrollments
             </div>

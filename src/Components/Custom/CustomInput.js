@@ -1,6 +1,16 @@
 import React, { useState, useEffect } from 'react'
 // Create an editable cell renderer
-export const CustomInput = ({ initialValue, updateInput, type, disable = false, fieldValidation, required = false, placeHolder="" }) => {
+export const CustomInput = ({ 
+    initialValue, 
+    updateInput, 
+    type, 
+    disable = false, 
+    fieldValidation, 
+    required = false, 
+    placeHolder="",  
+    min=0, 
+    max 
+}) => {
     // We need to keep and update the state of the cell normally
     const [value, setValue] = useState(initialValue)
     const [valid, setValid] = useState(true)
@@ -33,7 +43,7 @@ export const CustomInput = ({ initialValue, updateInput, type, disable = false, 
 
     return (
         <div style={{textAlign:'left'}}>
-            <input className={customInputClassName} value={value} onChange={onChange} onBlur={onBlur} type={type} disabled={disable} placeholder={placeHolder} />
+            <input className={customInputClassName} value={value} onChange={onChange} onBlur={onBlur} type={type} disabled={disable} placeholder={placeHolder} max={max} min={min}/>
             {!valid && <label className='validation-error-text'>
                 {invalidMessage}
             </label>}
