@@ -1,19 +1,17 @@
 import { createSlice, current } from '@reduxjs/toolkit'
 import { toast } from 'react-toastify';
+import update from 'react-addons-update';
 import { ServiceEngine } from "../../../Services/ServiceEngine";
-import { 
-    METADATA_ENDPOINT, 
-    CREATE_COURSE_ENDPOINT, 
-    HTTP_STATUS_CODE_401_UNAUTHORIZED, 
-    HTTP_STATUS_CODE_403_FORBIDDEN, 
-    CREATE_CLASS_ENDPOINT, 
-    CREATE_CLASSROOM_ENDPOINT, 
-    CREATE_SESSION_ENDPOINT, 
-    GET_SESSIONS_BY_CLASSID_ENDPOINT, 
-    UPDATE_CLASS_ENDPOINT, 
-    ERROR_MESSAGE_401_UNAUTHORIZED, 
-    ERROR_MESSAGE_403_FORBIDDEN, 
-    GET_ALL_SESSIONS_ENDPOINT,
+import {
+    METADATA_ENDPOINT,
+    CREATE_COURSE_ENDPOINT,
+    HTTP_STATUS_CODE_401_UNAUTHORIZED,
+    HTTP_STATUS_CODE_403_FORBIDDEN,
+    CREATE_CLASS_ENDPOINT,
+    CREATE_CLASSROOM_ENDPOINT,
+    UPDATE_CLASS_ENDPOINT,
+    ERROR_MESSAGE_401_UNAUTHORIZED,
+    ERROR_MESSAGE_403_FORBIDDEN,
     GET_CLASSES_ENDPOINT,
     HTTP_STATUS_CODE_404_NOT_FOUND,
     ADD_NEWLEVELS_AND_SUBJECTS_ENDPOINT,
@@ -21,9 +19,10 @@ import {
     DELETE_LEVEL_ENDPOINT,
     DELETE_SUBJECT_ENDPOINT,
     CREATE_SUBJECTS_ENDPOINT,
-    CREATE_TEACHER_ENDPOINT, 
+    CREATE_TEACHER_ENDPOINT,
     UPDATE_TEACHER_ENDPOINT,
-    GET_TEACHERS_ENDPOINT} from "../../../Configs/ApgConfigs";
+    GET_TEACHERS_ENDPOINT
+} from "../../../Configs/ApgConfigs";
 
 export const CommonServicesSlice = createSlice({
     name: 'common',
@@ -49,7 +48,7 @@ export const CommonServicesSlice = createSlice({
             }
             return {
                 ...state,
-                IsLoading: current(state).IsLoading +  1,
+                IsLoading: current(state).IsLoading + 1,
                 LoadingMessage: [...current(state).LoadingMessage, loadingPayload]
             };
         },
@@ -57,7 +56,7 @@ export const CommonServicesSlice = createSlice({
             var filteredMessageArray = current(state).LoadingMessage?.filter((obj) => { return obj.key != action.payload })
             return {
                 ...state,
-                IsLoading: current(state).IsLoading -  1,
+                IsLoading: current(state).IsLoading - 1,
                 LoadingMessage: filteredMessageArray
             };
         },
@@ -66,10 +65,10 @@ export const CommonServicesSlice = createSlice({
             return {
                 ...state,
                 ClassRooms: obj.institute?.classRooms,
-                Classes:{
+                Classes: {
                     classes: obj.institute?.classes,
                     totalNumberOfEntries: obj.institute?.classes.length
-                }, 
+                },
                 Courses: obj.institute?.courses,
                 InstituteId: obj.institute?.id,
                 Location: obj.institute?.location,
@@ -90,35 +89,35 @@ export const CommonServicesSlice = createSlice({
                 Courses: [...state.Courses, obj]
             };
         },
-        UpdateCourse : (state, action) => {
+        UpdateCourse: (state, action) => {
             let obj = action.payload;
             return {
                 ...state,
-                Courses: [...state.Courses.filter((course) => { return course.id != obj.course?.id}), obj.course]
+                Courses: [...state.Courses.filter((course) => { return course.id != obj.course?.id }), obj.course]
             };
         },
         DeleteSubjects: (state, action) => {
             let obj = action.payload;
             return {
                 ...state,
-                Courses: [...state.Courses.filter((course) => { return course.id != obj.course?.id}), obj.course]
+                Courses: [...state.Courses.filter((course) => { return course.id != obj.course?.id }), obj.course]
             };
         },
         DeleteLevel: (state, action) => {
             let obj = action.payload;
             return {
                 ...state,
-                Courses: [...state.Courses.filter((course) => { return course.id != obj.course?.id}), obj.course]
+                Courses: [...state.Courses.filter((course) => { return course.id != obj.course?.id }), obj.course]
             };
         },
         UpdateClasses: (state, action) => {
             let obj = action.payload;
             return {
                 ...state,
-                Classes:{ 
+                Classes: {
                     classes: obj?.classes,
                     totalNumberOfEntries: obj?.totalNumberOfEntries
-                }, 
+                },
             };
         },
         AddNewClass: (state, action) => {
@@ -126,20 +125,45 @@ export const CommonServicesSlice = createSlice({
             var classesState = current(state).Classes;
             return {
                 ...state,
-                Classes:{
+                Classes: {
                     classes: [...classesState?.classes, obj?.classobj],
                     totalNumberOfEntries: classesState?.totalNumberOfEntries + 1
-                }, 
+                },
             };
         },
-        AddClassRoom:(state, action) => {
+        UpdateExistingClass(state, action) {
+            var classesState = current(state).Classes
+            var existingClasses = classesState.classes;
+            var updateClassDetails = action.payload?.classobj;
+            const updatedClasses = existingClasses.map(classObj => {
+                if (updateClassDetails.id == classObj.id) {
+                    let updateClass = update(classObj, {
+                        classFee: { $set: updateClassDetails?.classFee },
+                        paymentDueDate: { $set: updateClassDetails?.paymentDueDate },
+                        classIdentifier: { $set: updateClassDetails?.classIdentifier },
+                        teacher: { $set: updateClassDetails?.teacher }
+                    })
+                    return updateClass;
+                } else {
+                    return classObj;
+                }
+            });
+            return {
+                ...state,
+                Classes: {
+                    classes: updatedClasses,
+                    totalNumberOfEntries: classesState.totalNumberOfEntries
+                }
+            };
+        },
+        AddClassRoom: (state, action) => {
             let obj = action.payload;
             return {
                 ...state,
                 ClassRooms: [...state.ClassRooms, obj]
             };
         },
-        AddNewTeacher:(state, action) => {
+        AddNewTeacher: (state, action) => {
             let obj = action.payload;
             var teacherState = current(state).Teachers;
             return {
@@ -154,34 +178,35 @@ export const CommonServicesSlice = createSlice({
             let obj = action.payload;
             return {
                 ...state,
-                Teachers:{
+                Teachers: {
                     teachers: obj?.teachers,
                     totalNumberOfEntries: obj?.totalNumberOfEntries
-                }, 
+                },
             };
         }
     },
 })
 
-export const { 
-    ShowLoading, 
-    HideLoading, 
-    UpdateMetaData, 
-    AddNewCourse, 
+export const {
+    ShowLoading,
+    HideLoading,
+    UpdateMetaData,
+    AddNewCourse,
     UpdateCourse,
     AddNewClass,
+    UpdateExistingClass,
     UpdateClasses,
-    AddClassRoom, 
-    DeleteSubjects, 
-    DeleteLevel, 
-    AddNewTeacher, 
+    AddClassRoom,
+    DeleteSubjects,
+    DeleteLevel,
+    AddNewTeacher,
     UpdateTeachers
 } = CommonServicesSlice.actions
 
 export const StartLoading = (message, index) => (dispatch) => {
     var payload = {
         message: message,
-        index:index
+        index: index
     }
     dispatch(ShowLoading(payload))
 }
@@ -232,22 +257,6 @@ export const CreateCourse = (coursePayload, callback) => (dispatch) => {
         })
 }
 
-// {
-//     "courseId": 0,
-//     "levels": [
-//       {
-//         "desc": "string",
-//         "subjects": [
-//           {
-//             "title": "string",
-//             "medium": "string",
-//             "subjectCode": "string",
-//             "credits": 0
-//           }
-//         ]
-//       }
-//     ]
-//   }
 export const AddNewLevelAndSubjects = (coursePayload, callback) => (dispatch) => {
     ServiceEngine.post(ADD_NEWLEVELS_AND_SUBJECTS_ENDPOINT, coursePayload).then(response => {
         dispatch(UpdateCourse(response.data))
@@ -269,13 +278,6 @@ export const AddNewLevelAndSubjects = (coursePayload, callback) => (dispatch) =>
         })
 }
 
-// {
-//     "title": "string",
-//     "medium": "string",
-//     "subjectCode": "string",
-//     "credits": 0,
-//     "levelId": 0
-//   }
 export const CreateSubjectsForLevel = (coursePayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_SUBJECTS_ENDPOINT, coursePayload).then(response => {
         dispatch(UpdateCourse(response.data))
@@ -297,13 +299,6 @@ export const CreateSubjectsForLevel = (coursePayload, callback) => (dispatch) =>
         })
 }
 
-// {
-//     "id": 0,
-//     "title": "string",
-//     "medium": "string",
-//     "subjectCode": "string",
-//     "credits": 0
-//   }
 export const UpdateSubjectBySubjectId = (updatePayload, callback) => (dispatch) => {
     ServiceEngine.put(UPDATE_SUBJECTS_BY_ID_ENDPOINT, updatePayload).then(response => {
         dispatch(UpdateCourse(response.data))
@@ -325,11 +320,8 @@ export const UpdateSubjectBySubjectId = (updatePayload, callback) => (dispatch) 
         })
 }
 
-// {
-//     "id": 0
-// }  
 export const DeleteLevelById = (payload, callback) => (dispatch) => {
-    ServiceEngine.delete(DELETE_LEVEL_ENDPOINT,  { data: payload }).then(response => {
+    ServiceEngine.delete(DELETE_LEVEL_ENDPOINT, { data: payload }).then(response => {
         dispatch(DeleteLevel(response.data))
         callback(response.data, true);
     }).catch(
@@ -349,11 +341,7 @@ export const DeleteLevelById = (payload, callback) => (dispatch) => {
         })
 }
 
-// {
-//     "id": 0
-// }
-  
-export const DeleteSubjectById  = (payload, callback) => (dispatch) => {
+export const DeleteSubjectById = (payload, callback) => (dispatch) => {
     ServiceEngine.delete(DELETE_SUBJECT_ENDPOINT, { data: payload }).then(response => {
         dispatch(DeleteSubjects(response.data))
         callback(response.data, true);
@@ -397,7 +385,7 @@ export const CreateClass = (classPayload, callback) => (dispatch) => {
 
 export const UpdateClass = (classPayload, callback) => (dispatch) => {
     ServiceEngine.put(UPDATE_CLASS_ENDPOINT, classPayload).then(response => {
-        // dispatch(UpdateExistingClass(response.data))
+        dispatch(UpdateExistingClass(response.data))
         callback(response.data, true);
     }).catch(
         error => {
@@ -430,7 +418,7 @@ export const GetClasses = (payload, callback) => (dispatch) => {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else if (HTTP_STATUS_CODE_404_NOT_FOUND === error.response.status) {
                     toast.warning("Classes are not found for selected criteria")
-                    dispatch(UpdateClasses(error.response.data))
+                    dispatch(UpdateClasses({ "classes": [], "totalNumberOfEntries": 0 }))
                 } else {
                     toast.error("Get classes failed with " + error.response.data.message + " - " + error.response.status);
                 }

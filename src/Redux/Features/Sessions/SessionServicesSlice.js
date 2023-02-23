@@ -9,7 +9,8 @@ import {
     GET_SESSIONS_BY_CLASSID_ENDPOINT,
     HTTP_STATUS_CODE_401_UNAUTHORIZED, 
     HTTP_STATUS_CODE_403_FORBIDDEN,
-    HTTP_STATUS_CODE_404_NOT_FOUND
+    HTTP_STATUS_CODE_404_NOT_FOUND,
+    UPDATE_SESSION_ENDPOINT
  } from "../../../Configs/ApgConfigs";
 import { toast } from 'react-toastify';
 
@@ -30,12 +31,12 @@ export const SessionServicesSlice = createSlice({
                 }
             };
         },
-        UpdateSessions: (state, action) => {
+        UpdateExistingSession: (state, action) => {
             let obj = action.payload;
             return {
                 ...state,
                 Sessions:{ 
-                    sessions: obj?.sessions,
+                    sessions: [...state.Sessions?.sessions.filter((session) => { return session.id != obj?.id}), obj],
                     totalNumberOfEntries: obj?.totalNumberOfEntries
                 }, 
             };
@@ -54,7 +55,7 @@ export const SessionServicesSlice = createSlice({
     },
 })
 
-export const { SetAllSessions, UpdateSessions, AddNewSession } = SessionServicesSlice.actions
+export const { SetAllSessions, AddNewSession , UpdateExistingSession} = SessionServicesSlice.actions
 
 export const CreateSession = (sessionPayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_SESSION_ENDPOINT, sessionPayload).then(response => {
@@ -70,6 +71,27 @@ export const CreateSession = (sessionPayload, callback) => (dispatch) => {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
                     toast.error("Creating session failed with " + error.response.data.message + " - " + error.response.status);
+                }
+            } else {
+                toast.error("Check your internet connection or network connectivity issue between servers");
+            }
+            callback(null, false);
+        })
+}
+
+export const UpdateSession = (sessionPayload, callback) => (dispatch) => {
+    ServiceEngine.put(UPDATE_SESSION_ENDPOINT, sessionPayload).then(response => {
+        dispatch(UpdateExistingSession(response.data))
+        callback(response.data, true);
+    }).catch(
+        error => {
+            if (error.response !== undefined) {
+                if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
+                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
+                } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
+                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
+                } else {
+                    toast.error("Updating class failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");

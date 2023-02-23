@@ -11,8 +11,9 @@ const ClassRooms = props => {
 
   const [audNo, setAudNo] = useState(null);
   const [capacity, setCapacity] = useState(0);
-  const [isVirtual, setIsVirtual] = useState(false);
+  const [isVirtual, setIsVirtual] = useState(true);
   const [address, setAddress] = useState(null);
+  const [formValidation, setFormValidation] = useState([]);
 
   const dispatch = useDispatch();
   const common = useSelector((state) => state.common);
@@ -73,8 +74,36 @@ const ClassRooms = props => {
     []
   )
 
-  const noNeedFieldValidation = (value, callback) => {
-    callback(true, "");
+  const audNoFieldValidation = (value, callback) => {
+    var validity = false;
+    if (value == "" || value == null) {
+      validity = false
+      callback(false, "cannot be empty");
+    } else {
+      validity = true
+      callback(true, "");
+    }
+    var index = "audno"
+    setFormValidation([...formValidation.filter((item) => { return item.name != index}), {
+      name: index,
+      validity: validity
+    }])
+  }
+
+  const capacityFieldValidation = (value, callback) => {
+    var validity = false;
+    if (value > 0) {
+      validity = true
+      callback(true, "");
+    } else {
+      validity = false
+      callback(false, "capacity should be greater than 0");
+    }
+    var index = "capacity"
+    setFormValidation([...formValidation.filter((item) => { return item.name != index}), {
+      name: index,
+      validity: validity
+    }])
   }
 
   const hiddenColumns = ["selection"];
@@ -109,22 +138,31 @@ const ClassRooms = props => {
           </div>
           <div className='form-row'>
             <div className='form-column' style={{ width: "80%" }}>
-              <div className='item-name'>Auditorium No</div>
+              <div className='item-name'>
+                Auditorium No
+                <label className='required-text'>
+                  {"*"}
+                </label>
+              </div>
               <div className='item-dropdown'>
                 <CustomInput
                   initialValue={audNo} type="text" updateInput={(value) => {
                     updateAudNo(value);
-                  }} fieldValidation={noNeedFieldValidation} required={true} placeHolder=""
+                  }} fieldValidation={audNoFieldValidation} required={true} placeHolder=""
                 />
               </div>
             </div>
             <div className='form-column' style={{ width: "80%" }}>
-              <div className='item-name'>Capacity</div>
+              <div className='item-name'>
+                Capacity
+                <label className='required-text'>
+                  {"*"}
+                </label></div>
               <div className='item-dropdown'>
                 <CustomInput
                   initialValue={capacity} type="number" updateInput={(value) => {
                     updateCapacity(value);
-                  }} fieldValidation={noNeedFieldValidation} required={true} placeHolder=""
+                  }} fieldValidation={capacityFieldValidation} required={true} placeHolder=""
                 />
               </div>
             </div>
@@ -136,7 +174,7 @@ const ClassRooms = props => {
                 <CustomInput
                   initialValue={address} type="text" updateInput={(value) => {
                     updateAddress(value);
-                  }} fieldValidation={noNeedFieldValidation} required={true} placeHolder=""
+                  }} fieldValidation={(value, callback) => { callback(true, "")}} required={true} placeHolder=""
                 />
               </div>
             </div>
@@ -148,7 +186,9 @@ const ClassRooms = props => {
             <div className='form-column' style={{ width: "80%" }}>
             </div>
             <div className='form-column' style={{ width: "80%" }}>
-              <div className='item-name'>Virtual Room</div>
+              <div className='item-name'>
+                Virtual Room
+              </div>
               <div className='item-dropdown'>
                 <CustomCheckBox
                   initialValue={isVirtual} updateInput={(value) => {
@@ -160,7 +200,7 @@ const ClassRooms = props => {
           </div>
           <div className='form-row' style={{ marginTop: "40px" }}>
             <div className='form-column' style={{ width: "80%" }}>
-              <button className="btn btn--success" onClick={() => { createNewClassRoom() }}>
+              <button className="btn btn--success" onClick={() => { createNewClassRoom() }} disabled={!(formValidation.filter((item) => { return item.validity}).length > 0)}>
                 Create Auditoriums
               </button>
             </div>

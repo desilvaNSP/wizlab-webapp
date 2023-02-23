@@ -9,7 +9,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { GetClasses, StartLoading, StopLoading } from '../../../Redux/Features/Common/CommonServicesSlice';
 import FilterDropdown from '../../Custom/FilterDropdown';
 import { ClassTable } from './Table/ClassTable';
-import { CreateSession } from '../../../Redux/Features/Sessions/SessionServicesSlice';
+import { CreateSession, UpdateSession } from '../../../Redux/Features/Sessions/SessionServicesSlice';
+import CustomDropdown from '../../Custom/CustomDropdown';
 
 export const NewSession = (props) => {
     const { handleClose, show, classId, selectedSession } = props
@@ -24,17 +25,20 @@ export const NewSession = (props) => {
         "content": ""
     });
 
+    console.log("selectedSession", selectedSession)
+
     const COURSE_SELECTION = "COURSE_SELECTION";
     const LEVEL_SELECTION = "LEVEL_SELECTION";
     const SUBJECT_SELECTION = "SUBJECT_SELECTION";
     const TEACHER_SELECTION = "TEACHER_SELECTION";
+    const CLASSROOM_SELECTION = "CLASSROOM_SELECTION";
 
     const [selectedClass, setSelectedClass] = useState(selectedSession != null ? selectedSession.class : null);
     const [newClass, setNewClass] = useState(null);
-    const [startTime, setStartTime] = useState(today);
-    const [duration, setDuration] = useState(null);
-    const [virtualLink, setVirtualLink] = useState(null);
-    const [classRoom, setClassRoom] = useState(null);
+    const [startTime, setStartTime] = useState(selectedSession != null ? new Date(selectedSession.startTime) : today);
+    const [duration, setDuration] = useState(selectedSession != null ? selectedSession.duration : null);
+    const [virtualLink, setVirtualLink] = useState(selectedSession != null ? selectedSession.link : null);
+    const [classRoom, setClassRoom] = useState(selectedSession != null ? selectedSession.classRoom : null);
 
     const [selectedCourse, setSelectedCourse] = useState(null);
     const [selectedLevel, setSelectedLevel] = useState(null);
@@ -83,7 +87,7 @@ export const NewSession = (props) => {
     }, [common.Classes])
 
     const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
-        if(selectedClass == null){
+        if (selectedClass == null) {
             var payload = {
                 "courseId": selectedCourse?.id,
                 "levelId": selectedLevel?.id,
@@ -92,7 +96,7 @@ export const NewSession = (props) => {
                 "pageSize": pageSize,
                 "pageNumber": pageIndex + 1
             }
-    
+
             setLoading(true)
             setTablePageSize(pageSize);
             dispatch(StartLoading("Loading Classes..", "GetClasses"))
@@ -156,6 +160,9 @@ export const NewSession = (props) => {
                 break;
             case TEACHER_SELECTION:
                 setSelectedTeacher(item !== null ? item : null)
+                break;
+            case CLASSROOM_SELECTION:
+                setClassRoom(item !== null ? item : null)
                 break;
             default:
                 break;
@@ -246,6 +253,29 @@ export const NewSession = (props) => {
             handleClose();
         }));
     }
+
+    const updateExistingSession = () => {
+        var payload = {
+            "id": selectedSession.id,
+            "startTime":startTime,
+            "duration": duration,
+            "classRoomId": classRoom?.id,
+            "link": virtualLink
+        }
+
+        dispatch(StartLoading("Updating Session..", "UpdateSession"))
+        dispatch(UpdateSession(payload, function (response, success) {
+            if (success) {
+
+            } else {
+                //error handle
+            }
+            handleClose()
+            dispatch(StopLoading("UpdateSession"))
+        }));
+    }
+
+
 
     const classColumns = React.useMemo(
         () => [
@@ -357,6 +387,24 @@ export const NewSession = (props) => {
             teachersList.push(obj);
         });
         return teachersList;
+    }
+
+    const getAuditoriumsList = () => {
+        let auditoriumList = [];
+        console.log(common.ClassRooms)
+        common.ClassRooms?.forEach((room, index) => {
+            if (room != null) {
+                var virtual = room.isVirtual ? "[VIRTUAL]" : "[PHYSICAL]"
+                let obj = {
+                    id: room.id,
+                    value: room.desc + "[cap:" + room.capacity + "]" + virtual,
+                    code: room.id,
+                    selected: false
+                };
+                auditoriumList.push(obj);
+            }
+        });
+        return auditoriumList;
     }
 
     const columns = React.useMemo(
@@ -498,7 +546,7 @@ export const NewSession = (props) => {
                         </div>
                     </div>
                     <div className='form-group'>
-                        <div className='form-group-col2' style={{ border: "1px solid #efefef", background:"#efefef", borderRadius: "10px" }}>
+                        <div className='form-group-col2' style={{ border: "1px solid #efefef", background: "#efefef" }}>
                             <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
                                 <div className='form-column'>
                                     <label><span style={{ fontWeight: 'bold' }}>Step 02: </span>Basic Information</label>
@@ -513,7 +561,7 @@ export const NewSession = (props) => {
                                     <div className='item-dropdown'>
                                         <DateTimePicker
                                             title={""}
-                                            initDateTime={today}
+                                            initDateTime={startTime}
                                             onDateTimeChange={(dateTime, selection) => onDateTimeChange(dateTime, selection)}
                                         />
                                     </div>
@@ -522,7 +570,7 @@ export const NewSession = (props) => {
                                     <div className='item-name'>Duration (Minitues)</div>
                                     <div className='item-dropdown'>
                                         <CustomInput
-                                            initialValue={""} type="number" updateInput={(value) => {
+                                            initialValue={duration} type="number" updateInput={(value) => {
                                                 updateDuration(value);
                                             }} fieldValidation={noNeedFieldValidation} required={true} placeHolder="Please enter class duration"
                                         />
@@ -534,7 +582,7 @@ export const NewSession = (props) => {
                                     <div className='item-name'>Virtual Link</div>
                                     <div className='item-dropdown'>
                                         <CustomInput
-                                            initialValue={""} type="text" updateInput={(value) => {
+                                            initialValue={virtualLink} type="text" updateInput={(value) => {
                                                 updateVirtualLink(value);
                                             }} fieldValidation={noNeedFieldValidation} required={true} placeHolder="Please paste online session link here"
                                         />
@@ -542,27 +590,36 @@ export const NewSession = (props) => {
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    <div className='form-group'>
-                        <div className='form-group-col2'>
+                        <div className='form-group-col2' style={{ border: "1px solid #efefef", background: "#efefef" }}>
                             <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
                                 <div className='form-column'>
-                                    <label><span style={{ fontWeight: 'bold' }}>Step 03: </span>Select Auditorium/Class Room</label>
+                                    <label><span style={{ fontWeight: 'bold' }}>Step 03: </span>Select Auditorium</label>
                                 </div>
                                 <div className='form-column'>
 
                                 </div>
                             </div>
-                            <ReactTableFullWidthStyles>
-                                <CommonTable columns={columns} data={common.ClassRooms} onRowSelect={selectClassRoom} rowSelection={true} hiddenColumns={hiddenColumns} pagination={false} settings={false} globalsearch={false} downloadcsv={false} />
-                            </ReactTableFullWidthStyles>
+                            <div className='form-row'>
+                                <div className='form-column'>
+                                    <div className='item-name'>Auditorium/Class Room</div>
+                                    <div className='item-dropdown'>
+                                        <CustomDropdown
+                                            defaultList={getAuditoriumsList()}
+                                            selection={CLASSROOM_SELECTION}
+                                            onItemChange={handleItemChange}
+                                            initValue={classRoom?.id}
+                                            editable={true}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div className="modal-detail__footer">
                     {selectedSession == null ? <button className="btn btn--success" onClick={() => { createNewSession() }}>
                         Create New Session
-                    </button> : <button className="btn btn--success" onClick={() => { createNewSession() }}>
+                    </button> : <button className="btn btn--success" onClick={() => { updateExistingSession() }}>
                         Update Session
                     </button>}
                 </div>
