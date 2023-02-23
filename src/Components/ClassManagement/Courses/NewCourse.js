@@ -190,7 +190,7 @@ export const NewCourse = props => {
         }
 
         if (newLevels.levels?.length > 0) {
-                        // Add newly created levels
+            // Add newly created levels
             dispatch(StartLoading("Adding new levels..", "AddNewLevelAndSubjects"))
             dispatch(AddNewLevelAndSubjects(newLevels, function (response, success) {
                 if (success) {
@@ -211,6 +211,7 @@ export const NewCourse = props => {
             });
 
             var newSubjectExstingLevel = {
+                courseId: selectedCourse.id,
                 levelId: levelObj.id,
                 subjects: newlyAddedSubjects
             }

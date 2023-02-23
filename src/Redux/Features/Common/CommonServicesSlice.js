@@ -414,7 +414,7 @@ export const GetClasses = (payload, callback) => (dispatch) => {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else if (HTTP_STATUS_CODE_404_NOT_FOUND === error.response.status) {
                     toast.warning("Classes are not found for selected criteria")
-                    dispatch(UpdateClasses(error.response.data))
+                    dispatch(UpdateClasses({ "classes": [], "totalNumberOfEntries": 0 }))
                 } else {
                     toast.error("Get classes failed with " + error.response.data.message + " - " + error.response.status);
                 }
