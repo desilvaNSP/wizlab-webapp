@@ -1839,12 +1839,17 @@ a.datatable--link:hover {
   overflow: scroll;
 }
 
+.transaction-table p.celltag{
+  margin: 0.1em 0 0.5em;
+  font-size: 12px !important;
+}
+
 .transaction-table span.celltag--valid {
   background-color: navy;
   color: white;
   padding: 3px;
   border-radius: 5px;
-  margin: 0px 5px;
+  margin: 0px 10px 0px 0px;
 }
 
 .transaction-table span.celltag--invalid {
@@ -1852,5 +1857,5 @@ a.datatable--link:hover {
   color: white;
   padding: 3px;
   border-radius: 5px;
-  margin: 0px 5px;
+  margin: 0px 10px 0px 0px;
 }
