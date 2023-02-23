@@ -141,9 +141,13 @@ export const CommonServicesSlice = createSlice({
         },
         AddNewTeacher:(state, action) => {
             let obj = action.payload;
+            var teacherState = current(state).Teachers;
             return {
                 ...state,
-                Teachers: [...state.Teachers, obj]
+                Teachers:{
+                    teachers: [...teacherState?.teachers, obj],
+                    totalNumberOfEntries: teacherState?.totalNumberOfEntries + 1
+                }, 
             };
         },
         UpdateTeachers: (state, action) => {
@@ -460,8 +464,9 @@ export const CreateClassRoom = (classRoomPayload, callback) => (dispatch) => {
 
 export const CreateTeacher = (teacherPayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_TEACHER_ENDPOINT, teacherPayload).then(response => {
-        //dispatch(AddNewTeacher(response.data))
+        dispatch(AddNewTeacher(response.data))
         callback(response.data, true);
+        toast.success("Teacher created successfully");
     }).catch(
         error => {
             if (error.response !== undefined) {
@@ -481,8 +486,9 @@ export const CreateTeacher = (teacherPayload, callback) => (dispatch) => {
 
 export const UpdateTeacher = (teacherPayload, callback) => (dispatch) => {
     ServiceEngine.put(UPDATE_TEACHER_ENDPOINT, teacherPayload).then(response => {
-        //dispatch(AddNewTeacher(response.data))
+        //dispatch(UpdateExistingTeacher(response.data))
         callback(response.data, true);
+        toast.success("Teacher updated successfully");
     }).catch(
         error => {
             if (error.response !== undefined) {
@@ -513,6 +519,7 @@ export const GetTeachers = (payload, callback) => (dispatch) => {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else if (HTTP_STATUS_CODE_404_NOT_FOUND === error.response.status) {
                     toast.warning("Teachers are not found for selected criteria")
+                    dispatch(UpdateTeachers(error.response.data))
                 } else {
                     toast.error("Get teachers failed with " + error.response.data.message + " - " + error.response.status);
                 }

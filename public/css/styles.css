@@ -1839,8 +1839,9 @@ a.datatable--link:hover {
   overflow: scroll;
 }
 
-.transaction-table p.celltag, .transaction-table p.celltag{
+.transaction-table p.celltag{
   margin: 0.1em 0 0.5em;
+  font-size: 12px !important;
 }
 
 .transaction-table span.celltag--valid {
