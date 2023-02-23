@@ -236,6 +236,7 @@ export const CreateCourse = (coursePayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_COURSE_ENDPOINT, coursePayload).then(response => {
         dispatch(AddNewCourse(response.data))
         callback(response.data, true);
+        toast.success("Course created successfully.")
     }).catch(
         error => {
             if (error.response !== undefined) {
@@ -257,6 +258,7 @@ export const AddNewLevelAndSubjects = (coursePayload, callback) => (dispatch) =>
     ServiceEngine.post(ADD_NEWLEVELS_AND_SUBJECTS_ENDPOINT, coursePayload).then(response => {
         dispatch(UpdateCourse(response.data))
         callback(response.data, true);
+        toast.success("New Levels created successfully.")
     }).catch(
         error => {
             if (error.response !== undefined) {
@@ -278,6 +280,7 @@ export const CreateSubjectsForLevel = (coursePayload, callback) => (dispatch) =>
     ServiceEngine.post(CREATE_SUBJECTS_ENDPOINT, coursePayload).then(response => {
         dispatch(UpdateCourse(response.data))
         callback(response.data, true);
+        toast.success("New Subjects created successfully.")
     }).catch(
         error => {
             if (error.response !== undefined) {
@@ -299,6 +302,7 @@ export const UpdateSubjectBySubjectId = (updatePayload, callback) => (dispatch) 
     ServiceEngine.put(UPDATE_SUBJECTS_BY_ID_ENDPOINT, updatePayload).then(response => {
         dispatch(UpdateCourse(response.data))
         callback(response.data, true);
+        toast.success("Subjects updated successfully.")
     }).catch(
         error => {
             if (error.response !== undefined) {
@@ -320,6 +324,7 @@ export const DeleteLevelById = (payload, callback) => (dispatch) => {
     ServiceEngine.delete(DELETE_LEVEL_ENDPOINT, { data: payload }).then(response => {
         dispatch(DeleteLevel(response.data))
         callback(response.data, true);
+        toast.success("Level deleted successfully.")
     }).catch(
         error => {
             if (error.response !== undefined) {
@@ -341,6 +346,7 @@ export const DeleteSubjectById = (payload, callback) => (dispatch) => {
     ServiceEngine.delete(DELETE_SUBJECT_ENDPOINT, { data: payload }).then(response => {
         dispatch(DeleteSubjects(response.data))
         callback(response.data, true);
+        toast.success("Subject deleted successfully.")
     }).catch(
         error => {
             if (error.response !== undefined) {
@@ -362,6 +368,7 @@ export const CreateClass = (classPayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_CLASS_ENDPOINT, classPayload).then(response => {
         dispatch(AddNewClass(response.data))
         callback(response.data, true);
+        toast.success("Class created successfully.")
     }).catch(
         error => {
             if (error.response !== undefined) {
@@ -383,6 +390,7 @@ export const UpdateClass = (classPayload, callback) => (dispatch) => {
     ServiceEngine.put(UPDATE_CLASS_ENDPOINT, classPayload).then(response => {
         dispatch(UpdateExistingClass(response.data))
         callback(response.data, true);
+        toast.success("Class updated successfully.")
     }).catch(
         error => {
             if (error.response !== undefined) {
@@ -429,6 +437,7 @@ export const CreateClassRoom = (classRoomPayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_CLASSROOM_ENDPOINT, classRoomPayload).then(response => {
         dispatch(AddClassRoom(response.data))
         callback(response.data, true);
+        toast.success("Create auditorium successfully.")
     }).catch(
         error => {
             if (error.response !== undefined) {
