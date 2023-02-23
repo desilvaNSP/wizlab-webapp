@@ -5,10 +5,11 @@ import EventLayout from "./EventLayout";
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { useDispatch, useSelector } from "react-redux";
-import { GetSessionByClassId, StartLoading, StopLoading } from "../../../Redux/Features/Common/CommonServicesSlice";
+import { StartLoading, StopLoading } from "../../../Redux/Features/Common/CommonServicesSlice";
 import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents'
 import * as dateFns from "date-fns";
 import { ClassTable } from "./Table/ClassTable";
+import { GetSessionByClassId } from "../../../Redux/Features/Sessions/SessionServicesSlice";
 
 const Sessions = ({ classId }) => {
 
@@ -23,18 +24,15 @@ const Sessions = ({ classId }) => {
 
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
+    const sessions = useSelector((state) => state.sessions);
 
-    // useEffect(() => {
-    //     if (classId != null) {
-    //         dispatch(StartLoading("Get Sessions for Class"))
-    //         dispatch(GetSessionByClassId(classId, function (data, success) {
-    //             if (success) {
-    //                 setData(data)
-    //             }
-    //             dispatch(StopLoading())
-    //         }));
-    //     }
-    // }, [classId]);
+    useEffect(() => {
+        if(sessions.Sessions?.sessions != null){
+            console.log("sessions.Sessions?.sessions", sessions.Sessions?.sessions)
+            setData(sessions.Sessions?.sessions)
+            setPageCount(Math.ceil(sessions.Sessions?.totalNumberOfEntries / tablePageSize))
+        }
+    }, [sessions.Sessions?.sessions])
 
 
     const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
@@ -43,13 +41,11 @@ const Sessions = ({ classId }) => {
             "pageSize": pageSize,
             "pageNumber": pageIndex + 1
         }
+        setLoading(true)
         setTablePageSize(pageSize)
         dispatch(StartLoading("Get Sessions for Class", "GetSessionByClassId"))
         dispatch(GetSessionByClassId(payload, function (data, success) {
-            if (success) {
-                setData(data.sessions)
-                setPageCount(Math.ceil(data.totalNumberOfEntries / tablePageSize))
-            }
+            setLoading(false)
             dispatch(StopLoading("GetSessionByClassId"))
         }));
     }, [])

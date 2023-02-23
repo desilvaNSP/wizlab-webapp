@@ -20,7 +20,7 @@ const IndeterminateCheckbox = React.forwardRef(
     }
 )
 
-export const CommonTable = ({ columns, data, onRowSelect, hiddenColumns, rowSelection = false, pagination = true, settings = true, globalsearch = true, downloadcsv=true }) => {
+export const CommonTable = ({ columns, data, onRowSelect, hiddenColumns, rowSelection = false, pagination = true, settings = true, globalsearch = true, downloadcsv = true }) => {
 
     const [showContextMenu, setShowContextMenu] = useState(false);
 
@@ -67,9 +67,9 @@ export const CommonTable = ({ columns, data, onRowSelect, hiddenColumns, rowSele
         setShowContextMenu(!showContextMenu);
     }
 
-    const initialState = { 
-        hiddenColumns: hiddenColumns ,
-        pageSize:1000
+    const initialState = {
+        hiddenColumns: hiddenColumns,
+        pageSize: 1000
     };
 
     const {
@@ -189,13 +189,13 @@ export const CommonTable = ({ columns, data, onRowSelect, hiddenColumns, rowSele
     // Render the UI for your table
     return (
         <>
-            {settings &&             <div className="table-setting-icon" onClick={() => showContextMenuEvent()}>
+            {settings && <div className="table-setting-icon" onClick={() => showContextMenuEvent()}>
                 <img src='assets/images/settings-icon.png' />
             </div>
-}            {downloadcsv &&  
-            <div className="table-setting-icon" onClick={(e) => exportToCsv(e)}>
-                <img src='assets/images/download-icon.png' alt='Export' />
-            </div>}
+            }            {downloadcsv &&
+                <div className="table-setting-icon" onClick={(e) => exportToCsv(e)}>
+                    <img src='assets/images/download-icon.png' alt='Export' />
+                </div>}
 
             {showContextMenu && <div className='column-hiding-contextmenu'>
                 <div>

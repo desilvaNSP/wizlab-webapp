@@ -36,6 +36,7 @@ const FilterDropdown = ({ defaultList, title, selection, initValue, onItemChange
 
   const clearSelectedItem = (item) => {
     setItem(null)
+    onItemChange(null, selection)
   }
 
   const handleChange = (e) => {

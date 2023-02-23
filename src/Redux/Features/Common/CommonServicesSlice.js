@@ -418,6 +418,7 @@ export const GetClasses = (payload, callback) => (dispatch) => {
         callback(response.data, true);
     }).catch(
         error => {
+            console.log(error)
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
                     toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
@@ -425,6 +426,7 @@ export const GetClasses = (payload, callback) => (dispatch) => {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else if (HTTP_STATUS_CODE_404_NOT_FOUND === error.response.status) {
                     toast.warning("Classes are not found for selected criteria")
+                    dispatch(UpdateClasses(error.response.data))
                 } else {
                     toast.error("Get classes failed with " + error.response.data.message + " - " + error.response.status);
                 }
@@ -448,70 +450,6 @@ export const CreateClassRoom = (classRoomPayload, callback) => (dispatch) => {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else {
                     toast.error("Creating class room failed with " + error.response.data.message + " - " + error.response.status);
-                }
-            } else {
-                toast.error("Check your internet connection or network connectivity issue between servers");
-            }
-            callback(null, false);
-        })
-}
-
-export const CreateSession = (sessionPayload, callback) => (dispatch) => {
-    ServiceEngine.post(CREATE_SESSION_ENDPOINT, sessionPayload).then(response => {
-        //response.data
-        //dispatch(AddNewClass(response.data))
-        callback(response.data, true);
-    }).catch(
-        error => {
-            if (error.response !== undefined) {
-                if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
-                } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
-                } else {
-                    toast.error("Creating session failed with " + error.response.data.message + " - " + error.response.status);
-                }
-            } else {
-                toast.error("Check your internet connection or network connectivity issue between servers");
-            }
-            callback(null, false);
-        })
-}
-
-export const GetSessionByClassId = (payload, callback) => (dispatch) => {
-    ServiceEngine.post(GET_SESSIONS_BY_CLASSID_ENDPOINT, payload).then(response => {
-        callback(response.data, true);
-    }).catch(
-        error => {
-            if (error.response !== undefined) {
-                if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
-                } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
-                } else {
-                    toast.error("Get sessions by class failed with " + error.response.data.message + " - " + error.response.status);
-                }
-            } else {
-                toast.error("Check your internet connection or network connectivity issue between servers");
-            }
-            callback(null, false);
-        })
-}
-
-export const GetSessions = (payload, callback) => (dispatch) => {
-    ServiceEngine.post(GET_ALL_SESSIONS_ENDPOINT, payload).then(response => {
-        callback(response.data, true);
-    }).catch(
-        error => {
-            if (error.response !== undefined) {
-                if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
-                    toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)
-                } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
-                    toast.error(ERROR_MESSAGE_403_FORBIDDEN)
-                } else if (HTTP_STATUS_CODE_404_NOT_FOUND === error.response.status) {
-                    toast.warning("Sessions are not found for selected criteria")
-                }else {
-                    toast.error("Get sessions failed with " + error.response.data.message + " - " + error.response.status);
                 }
             } else {
                 toast.error("Check your internet connection or network connectivity issue between servers");

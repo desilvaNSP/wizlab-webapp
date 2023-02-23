@@ -3,7 +3,7 @@ import 'react-tabs/style/react-tabs.css';
 import 'react-big-calendar/lib/css/react-big-calendar.css'
 import { Tab, TabList, TabPanel, Tabs } from "react-tabs";
 import { useDispatch, useSelector } from "react-redux";
-import { GetSessions, StartLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
+import { StartLoading, StopLoading } from "../../Redux/Features/Common/CommonServicesSlice";
 import { ReactTableFullWidthStyles } from '../Custom/StyleComponents'
 import * as dateFns from "date-fns";
 import { NewSession } from "../ClassManagement/Classes/NewSession";
@@ -12,6 +12,8 @@ import FilterDropdown from "../Custom/FilterDropdown";
 import { DateTimePicker } from "../Custom/DateTimePicker";
 import { SessionsTable } from "./Table/SessionsTable";
 import { format } from "date-fns/esm";
+import { GetSessions } from "../../Redux/Features/Sessions/SessionServicesSlice";
+import { ClassTable } from "../ClassManagement/Classes/Table/ClassTable";
 
 const AllSessions = ({ }) => {
 
@@ -46,6 +48,14 @@ const AllSessions = ({ }) => {
 
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
+    const sessions = useSelector((state) => state.sessions);
+
+    useEffect(() => {
+        if(sessions.Sessions?.sessions != null){
+            setData(sessions.Sessions?.sessions)
+            setPageCount(Math.ceil(sessions.Sessions?.totalNumberOfEntries / tablePageSize))
+        }
+    }, [sessions.Sessions?.sessions])
 
     const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
         var payload = {
@@ -58,13 +68,11 @@ const AllSessions = ({ }) => {
             "pageSize": pageSize,
             "pageNumber": pageIndex + 1
         }
+        setLoading(true)
         setTablePageSize(pageSize)
         dispatch(StartLoading("Retrieving all sessions", "GetSessions"))
         dispatch(GetSessions(payload, function (data, success) {
-            if (success) {
-                setData(data.sessions)
-                setPageCount(Math.ceil(data.totalNumberOfEntries / tablePageSize))
-            }
+            setLoading(false)
             dispatch(StopLoading("GetSessions"))
         }));
     }, [])
@@ -177,7 +185,7 @@ const AllSessions = ({ }) => {
             case COURSE_SELECTION:
                 var courseObj = null
                 common.Courses?.forEach((course, index) => {
-                    if (course.id == item.id) {
+                    if (course.id == item?.id) {
                         courseObj = course;
                     }
                 });
@@ -186,7 +194,7 @@ const AllSessions = ({ }) => {
             case LEVEL_SELECTION:
                 var levelObj = null
                 selectedCourse?.levels.forEach((level, index) => {
-                    if (level.id == item.id) {
+                    if (level.id == item?.id) {
                         levelObj = level;
                     }
                 });
@@ -254,10 +262,18 @@ const AllSessions = ({ }) => {
     const columns = React.useMemo(
         () => [
             {
-                Header: 'Class Room',
+                Header: 'Class',
                 id: 'classIdentifier',
                 accessor: data => {
-                    return data.classRoom?.desc
+                    return data.class?.classIdentifier
+                },
+                disableFilters: true
+            },
+            {
+                Header: 'Class Fee[Payment Due Date]',
+                id: 'classFee',
+                accessor: data => {
+                    return data.class?.classFee + "[" + data.class?.paymentDueDate + "]"
                 },
                 disableFilters: true
             },
@@ -391,7 +407,7 @@ const AllSessions = ({ }) => {
                             Sessions
                         </div>
                         <ReactTableFullWidthStyles>
-                            <SessionsTable
+                            <ClassTable
                                 columns={columns}
                                 data={data}
                                 onRowSelect={selectSession}
