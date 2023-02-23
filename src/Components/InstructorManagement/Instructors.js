@@ -33,7 +33,7 @@ const Instructors = props => {
     useEffect(() => {
         if(common.Teachers?.teachers != null){
             setData(common.Teachers?.teachers)
-            setPageCount(Math.ceil(common.Teachers?.teachers?.totalNumberOfEntries / tablePageSize))
+            setPageCount(Math.ceil(common.Teachers?.totalNumberOfEntries / tablePageSize))
         }
     }, [common.Teachers?.teachers])
 
@@ -134,7 +134,7 @@ const Instructors = props => {
                 accessor: data => {
                     return data.firstName + " " + data.lastName;
                 },
-                disableFilters: false
+                disableFilters: true
             },
             {
                 Header: 'Classes',
@@ -162,7 +162,7 @@ const Instructors = props => {
             {
                 Header: 'Profile',
                 id: 'subject',
-                disableFilters: false,
+                disableFilters: true,
                 accessor: data => {
                     const results = data.subjects == null || data.subjects == "" ? [] : data.subjects.split(",");
                     if (results.length > 0) {
@@ -292,7 +292,7 @@ const Instructors = props => {
                     onRowSelect={(rows) => { teacherSelectionOnTable(rows) }}
                     hiddenColumns={hiddenColumns}
                     rowSelection={true}
-                    numberOfRecords={common.Teachers?.teachers?.totalNumberOfEntries}
+                    numberOfRecords={common.Teachers?.totalNumberOfEntries}
                 />
                 {/* <CommonTable columns={columns} data={common.Teachers} onRowSelect={(rows) => { teacherSelectionOnTable(rows)}} hiddenColumns={hiddenColumns} rowSelection={true} /> */}
             </ReactTableFullWidthStyles>

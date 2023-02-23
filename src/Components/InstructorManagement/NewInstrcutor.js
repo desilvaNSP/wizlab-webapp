@@ -117,7 +117,7 @@ export const NewInstrcutor = props => {
             "education": selectedEducationQualification,
             "subjects": selectedSubjects
         }
-        dispatch(StartLoading("Creating New Teacher.."))
+        dispatch(StartLoading("Creating New Teacher..","CreateTeacher"))
         dispatch(CreateTeacher(payload, function (response, success) {
             if (success) {
 
@@ -125,7 +125,7 @@ export const NewInstrcutor = props => {
                 //error handle
             }
             handleClose()
-            dispatch(StopLoading())
+            dispatch(StopLoading("CreateTeacher"))
         }));
     }
 
