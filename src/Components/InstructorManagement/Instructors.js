@@ -139,109 +139,40 @@ const Instructors = props => {
             {
                 Header: 'Course/Program',
                 id: 'course',
+                disableFilters: true,
+                // accessor: data => {
+                //     const results = data.course == null || data.course == "" ? [] : data.course.split(",");
+                //     if (results.length > 0) {
+                //         return results.map(function (each) {
+                //             return (<span className="celltag--valid">{each}</span>)
+                //         })
+                //     } else {
+                //         return (<span className="celltag--invalid">Not Allocated Yet</span>)
+                //     }
+                // },
                 accessor: data => {
-                    const results = data.course == null || data.course == "" ? [] : data.course.split(",");
-                    if (results.length > 0) {
-                        return results.map(function (each) {
-                            return (<span className="celltag--valid">{each}</span>)
-                        })
-                    } else {
-                        return (<span className="celltag--invalid">Not Allocated Yet</span>)
-                    }
-                },
-                disableFilters: true
+                    return data.subject?.level?.course?.name
+                }
             },
             {
                 Header: 'Level/Grade',
                 id: 'level',
+                disableFilters: true,
                 accessor: data => {
-                    const results = data.level == null || data.level == "" ? [] : data.level.split(",");
-                    if (results.length > 0) {
-                        return results.map(function (each) {
-                            return (<span className="celltag--valid">{each}</span>)
-                        })
-                    } else {
-                        return (<span className="celltag--invalid">Not Allocated Yet</span>)
-                    }
-                },
-                disableFilters: true
+                    return data.subject?.level?.course?.name
+                }
             },
             {
                 Header: 'Subject',
                 id: 'subject',
+                disableFilters: false,
                 accessor: data => {
-                    const results = data.subject == null || data.subject == "" ? [] : data.subject.split(",");
-                    if (results.length > 0) {
-                        return results.map(function (each) {
-                            return (<span className="celltag--valid">{each}</span>)
-                        })
-                    } else {
-                        return (<span className="celltag--invalid">Not Allocated Yet</span>)
-                    }
-                },
-                disableFilters: false
+                    return data.subjects
+                }
             }
         ],
         []
     )
-
-    // const columns = React.useMemo(
-    //     () => [
-    //         {
-    //             Header: 'Teacher/Lecturer',
-    //             accessor: data => {
-    //                 return data.teacher?.firstName + " " + data.teacher?.lastName
-    //             },
-    //             disableFilters: false
-    //         },
-    //         {
-    //             Header: 'Course/Program',
-    //             id: 'course',
-    //             accessor: data => {
-    //                 const results = data.course == null || data.course == "" ? [] : data.course.split(",");
-    //                 if (results.length > 0) {
-    //                     return results.map(function (each) {
-    //                         return (<span className="celltag--valid">{each}</span>)
-    //                     })
-    //                 } else {
-    //                     return (<span className="celltag--invalid">Not Allocated Yet</span>)
-    //                 }
-    //             },
-    //             disableFilters: true
-    //         },
-    //         {
-    //             Header: 'Level/Grade',
-    //             id: 'level',
-    //             accessor: data => {
-    //                 const results = data.level == null || data.level == "" ? [] : data.level.split(",");
-    //                 if (results.length > 0) {
-    //                     return results.map(function (each) {
-    //                         return (<span className="celltag--valid">{each}</span>)
-    //                     })
-    //                 } else {
-    //                     return (<span className="celltag--invalid">Not Allocated Yet</span>)
-    //                 }
-    //             },
-    //             disableFilters: true
-    //         },
-    //         {
-    //             Header: 'Subject',
-    //             id: 'subject',
-    //             accessor: data => {
-    //                 const results = data.subject == null || data.subject == "" ? [] : data.subject.split(",");
-    //                 if (results.length > 0) {
-    //                     return results.map(function (each) {
-    //                         return (<span className="celltag--valid">{each}</span>)
-    //                     })
-    //                 } else {
-    //                     return (<span className="celltag--invalid">Not Allocated Yet</span>)
-    //                 }
-    //             },
-    //             disableFilters: false
-    //         }
-    //     ],
-    //     []
-    // )
 
     const getCoursesList = () => {
         let coursesList = [];
