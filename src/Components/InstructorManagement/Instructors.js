@@ -137,37 +137,41 @@ const Instructors = props => {
                 disableFilters: false
             },
             {
-                Header: 'Course/Program',
-                id: 'course',
+                Header: 'Classes',
+                id: 'classes',
                 disableFilters: true,
-                // accessor: data => {
-                //     const results = data.course == null || data.course == "" ? [] : data.course.split(",");
-                //     if (results.length > 0) {
-                //         return results.map(function (each) {
-                //             return (<span className="celltag--valid">{each}</span>)
-                //         })
-                //     } else {
-                //         return (<span className="celltag--invalid">Not Allocated Yet</span>)
-                //     }
-                // },
                 accessor: data => {
-                    return data.subject?.level?.course?.name
+                    const results = data.classes == null || data.classes.length == 0 ? [] : data.classes;
+                    if (results.length > 0) {
+                        return results.map(function (each) {
+                            return (<p className="celltag"><span className="celltag--valid">{each.classIdentifier}</span></p>)
+                        })
+                    } else {
+                        return (<p className="celltag"><span className="celltag--invalid">Not Allocated Yet</span></p>)
+                    }
                 }
             },
             {
-                Header: 'Level/Grade',
+                Header: 'Phone Number',
                 id: 'level',
                 disableFilters: true,
                 accessor: data => {
-                    return data.subject?.level?.course?.name
+                    return data.phoneNumber
                 }
             },
             {
-                Header: 'Subject',
+                Header: 'Profile',
                 id: 'subject',
                 disableFilters: false,
                 accessor: data => {
-                    return data.subjects
+                    const results = data.subjects == null || data.subjects == "" ? [] : data.subjects.split(",");
+                    if (results.length > 0) {
+                        return results.map(function (each) {
+                            return (<span className="celltag--valid">{each}</span>)
+                        })
+                    } else {
+                        return (<span className="celltag--invalid">Not Allocated Yet</span>)
+                    }
                 }
             }
         ],
