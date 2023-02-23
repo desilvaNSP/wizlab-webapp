@@ -123,7 +123,7 @@ export const NewInstitute = props => {
                                     </div>
                                 </div>
                                 <div className='form-column'>
-                                    <div className='item-name'>Education Qualitification</div>
+                                    <div className='item-name'>Education Qualification</div>
                                     <div className='item-dropdown'>
                                         <CustomInput defaultList={[]} onItemChange={(item) => {
                                         }} initValue={1} required={true} editable={true} warningMessage={"Updating course fee is not allowed"} />

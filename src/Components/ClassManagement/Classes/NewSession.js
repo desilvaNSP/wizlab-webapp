@@ -6,7 +6,10 @@ import { ReactTableFullWidthStyles } from '../../Custom/StyleComponents';
 import { CommonTable } from '../../CommonTable/CommonTable';
 import { DateTimePicker } from '../../Custom/DateTimePicker';
 import { useDispatch, useSelector } from 'react-redux';
-import { CreateSession, StartLoading, StopLoading } from '../../../Redux/Features/Common/CommonServicesSlice';
+import { GetClasses, StartLoading, StopLoading } from '../../../Redux/Features/Common/CommonServicesSlice';
+import FilterDropdown from '../../Custom/FilterDropdown';
+import { ClassTable } from './Table/ClassTable';
+import { CreateSession } from '../../../Redux/Features/Sessions/SessionServicesSlice';
 
 export const NewSession = (props) => {
     const { handleClose, show, classId, selectedSession } = props
@@ -21,11 +24,28 @@ export const NewSession = (props) => {
         "content": ""
     });
 
-    const [selectedClass, setSelectedClass] = useState(null);
+    const COURSE_SELECTION = "COURSE_SELECTION";
+    const LEVEL_SELECTION = "LEVEL_SELECTION";
+    const SUBJECT_SELECTION = "SUBJECT_SELECTION";
+    const TEACHER_SELECTION = "TEACHER_SELECTION";
+
+    const [selectedClass, setSelectedClass] = useState(selectedSession != null ? selectedSession.class : null);
+    const [newClass, setNewClass] = useState(null);
     const [startTime, setStartTime] = useState(today);
     const [duration, setDuration] = useState(null);
     const [virtualLink, setVirtualLink] = useState(null);
     const [classRoom, setClassRoom] = useState(null);
+
+    const [selectedCourse, setSelectedCourse] = useState(null);
+    const [selectedLevel, setSelectedLevel] = useState(null);
+    const [selectedSubject, setSelectedSubject] = useState(null);
+    const [selectedTeacher, setSelectedTeacher] = useState(null);
+
+    const [data, setData] = useState([]);
+    const [loading, setLoading] = React.useState(false)
+    const [tablePageIndex, setTablePageIndex] = React.useState(0)
+    const [tablePageSize, setTablePageSize] = React.useState(10)
+    const [pageCount, setPageCount] = React.useState(0)
 
     const hiddenColumns = ["selection"];
     const showHideClassName = show
@@ -41,8 +61,6 @@ export const NewSession = (props) => {
         var filteredClass = common.Classes?.classes?.filter(function (val) {
             return val.id == classId;
         });
-        console.log("filteredClass", common.Classes?.classes)
-        console.log("filteredClass", filteredClass)
         if (filteredClass.length > 0) {
             selectedClass = filteredClass[0]
         }
@@ -56,6 +74,93 @@ export const NewSession = (props) => {
         }
     }, [classId])
 
+
+    useEffect(() => {
+        if (common.Classes != null) {
+            setData(common.Classes?.classes)
+            setPageCount(Math.ceil(common.Classes?.totalNumberOfEntries / tablePageSize))
+        }
+    }, [common.Classes])
+
+    const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
+        if(selectedClass == null){
+            var payload = {
+                "courseId": selectedCourse?.id,
+                "levelId": selectedLevel?.id,
+                "subjectId": selectedSubject?.id,
+                "teacherId": selectedTeacher?.id,
+                "pageSize": pageSize,
+                "pageNumber": pageIndex + 1
+            }
+    
+            setLoading(true)
+            setTablePageSize(pageSize);
+            dispatch(StartLoading("Loading Classes..", "GetClasses"))
+            dispatch(GetClasses(payload, function (response, success) {
+                setLoading(false)
+                dispatch(StopLoading("GetClasses"))
+            }));
+        }
+    }, [selectedClass])
+
+    /**
+     * Event handling for apply filters and retrive class data.
+     */
+    const handleApplyOnClick = () => {
+        var payload = {
+            "courseId": selectedCourse?.id,
+            "levelId": selectedLevel?.id,
+            "subjectId": selectedSubject?.id,
+            "teacherId": selectedTeacher?.id,
+            "pageSize": tablePageSize,
+            "pageNumber": tablePageIndex + 1
+        }
+        dispatch(StartLoading("Loading Classes.."))
+        dispatch(GetClasses(payload, function (response, success) {
+            if (success) {
+                //success handle
+            } else {
+                //error handle
+            }
+            dispatch(StopLoading())
+        }));
+    };
+
+    /**
+ * 
+ * @param {Object} item selected item of the dropdown list
+ * @param {String} key used to selected desired dropdown component
+ */
+    const handleItemChange = (item, selection) => {
+        switch (selection) {
+            case COURSE_SELECTION:
+                var courseObj = null
+                common.Courses?.forEach((course, index) => {
+                    if (course.id == item?.id) {
+                        courseObj = course;
+                    }
+                });
+                setSelectedCourse(courseObj !== null ? courseObj : null);
+                break;
+            case LEVEL_SELECTION:
+                var levelObj = null
+                selectedCourse?.levels.forEach((level, index) => {
+                    if (level.id == item?.id) {
+                        levelObj = level;
+                    }
+                });
+                setSelectedLevel(levelObj !== null ? levelObj : null)
+                break;
+            case SUBJECT_SELECTION:
+                setSelectedSubject(item !== null ? item : null)
+                break;
+            case TEACHER_SELECTION:
+                setSelectedTeacher(item !== null ? item : null)
+                break;
+            default:
+                break;
+        }
+    };
 
     /**
      * Event for close confirm modal
@@ -109,7 +214,7 @@ export const NewSession = (props) => {
         // if any transaction is not set, then set null to selectedTransaction state.
         if (rows.length > 0) {
             var selectedClass = rows[0].original;
-            setSelectedClass(selectedClass)
+            setNewClass(selectedClass)
         }
     }
 
@@ -124,7 +229,7 @@ export const NewSession = (props) => {
     //Trigger create new class service
     const createNewSession = () => {
         var payload = {
-            "classId": selectedClass.id,
+            "classId": newClass.id,
             "startTime": startTime,
             "duration": duration,
             "classRoomId": classRoom?.id,
@@ -138,6 +243,7 @@ export const NewSession = (props) => {
                 //error handle
             }
             dispatch(StopLoading("CreateSession"));
+            handleClose();
         }));
     }
 
@@ -197,6 +303,62 @@ export const NewSession = (props) => {
         []
     )
 
+    const getCoursesList = () => {
+        let coursesList = [];
+        common.Courses?.forEach((course, index) => {
+            let obj = {
+                id: course.id,
+                value: course.name,
+                code: course.id,
+                selected: false
+            };
+            coursesList.push(obj);
+        });
+        return coursesList;
+    }
+
+    const getLevelsByCourse = () => {
+        let levelList = [];
+        selectedCourse?.levels.forEach((level, index) => {
+            let obj = {
+                id: level.id,
+                value: level.desc,
+                code: level.id,
+                selected: false
+            };
+            levelList.push(obj);
+        });
+        return levelList;
+    }
+
+    const getSubjectByCourseAndLevels = () => {
+        let subjectList = [];
+        selectedLevel?.subjects.forEach((subject, index) => {
+            let obj = {
+                id: subject.id,
+                value: subject.title,
+                code: subject.id,
+                selected: false
+            };
+            subjectList.push(obj);
+        });
+        return subjectList;
+    }
+
+    const getTeachersList = () => {
+        let teachersList = [];
+        common.Teachers?.teachers?.forEach((teacher, index) => {
+            let obj = {
+                id: teacher.id,
+                value: teacher.firstName + " " + teacher.lastName,
+                code: teacher.id,
+                selected: false
+            };
+            teachersList.push(obj);
+        });
+        return teachersList;
+    }
+
     const columns = React.useMemo(
         () => [
             {
@@ -251,20 +413,95 @@ export const NewSession = (props) => {
                     {selectedSession == null ? <span>Create Session</span> : <span>Update Session</span>}
                 </div>
                 <div className="modal-detail__content">
-                    {selectedSession !== null ?
-                        <div className='form-group'>
-                            <div className='form-group-col'>
-                                <ReactTableFullWidthStyles>
-                                    <CommonTable columns={classColumns} data={common.Classes?.classes} onRowSelect={selectClassProfile} rowSelection={true} hiddenColumns={hiddenColumns} pagination={false} settings={false} globalsearch={false} downloadcsv={false} />
-                                </ReactTableFullWidthStyles>
-                            </div>
-                        </div>
-                        : <></>}
                     <div className='form-group'>
-                        <div className='form-group-col2'>
+                        <div className='form-group-col'>
+                            {selectedClass == null ? <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
+                                <div className='form-column'>
+                                    <label><span style={{ fontWeight: 'bold' }}>Step 01: </span>First Select The Class</label>
+                                </div>
+                                <div className='form-column'>
+
+                                </div>
+                            </div> : <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
+                                <div className='form-column'>
+                                    <label><span style={{ fontWeight: 'bold' }}>Selected Class: </span>{selectedClass.classIdentifier}</label>
+                                </div>
+                                <div className='form-column'>
+
+                                </div>
+                            </div>
+                            }
+                            {selectedClass == null &&
+                                <><div className='filter-box-row'>
+                                    <div className='filter-box-column'>
+                                        <FilterDropdown
+                                            title="Course"
+                                            selection={COURSE_SELECTION}
+                                            defaultList={getCoursesList()}
+                                            onItemChange={handleItemChange}
+                                            initValue={""}
+                                            editable={true} />
+                                    </div>
+                                    <div className='filter-box-column'>
+                                        <FilterDropdown
+                                            title="Level"
+                                            selection={LEVEL_SELECTION}
+                                            defaultList={getLevelsByCourse()}
+                                            onItemChange={handleItemChange}
+                                            initValue={""}
+                                            editable={true} />
+                                    </div>
+                                    <div className='filter-box-column'>
+                                        <FilterDropdown
+                                            title="Subject"
+                                            selection={SUBJECT_SELECTION}
+                                            defaultList={getSubjectByCourseAndLevels()}
+                                            onItemChange={handleItemChange}
+                                            initValue={""}
+                                            editable={true} />
+                                    </div>
+                                    <div className='filter-box-column'>
+                                        <FilterDropdown
+                                            title="Teacher"
+                                            selection={TEACHER_SELECTION}
+                                            defaultList={getTeachersList()}
+                                            onItemChange={handleItemChange}
+                                            initValue={""}
+                                            editable={true} />
+                                    </div>
+                                    <div className='filter-box-column apply-filter'>
+                                        <button
+                                            onClick={() => handleApplyOnClick()}
+                                            className="btn btn--primary"
+                                            type="submit"
+                                        >
+                                            Apply
+                                        </button>
+                                    </div>
+                                </div>
+                                    <ReactTableFullWidthStyles>
+                                        <ClassTable
+                                            columns={classColumns}
+                                            data={data}
+                                            fetchData={fetchData}
+                                            loading={loading}
+                                            pageCount={pageCount}
+                                            onRowSelect={(rows) => { selectClassProfile(rows) }}
+                                            hiddenColumns={hiddenColumns}
+                                            rowSelection={true}
+                                            numberOfRecords={common.Classes?.totalNumberOfEntries}
+                                        />
+                                    </ReactTableFullWidthStyles>
+                                </>
+                            }
+
+                        </div>
+                    </div>
+                    <div className='form-group'>
+                        <div className='form-group-col2' style={{ border: "1px solid #efefef", background:"#efefef", borderRadius: "10px" }}>
                             <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
                                 <div className='form-column'>
-                                    <label>Basic Information</label>
+                                    <label><span style={{ fontWeight: 'bold' }}>Step 02: </span>Basic Information</label>
                                 </div>
                                 <div className='form-column'>
 
@@ -305,7 +542,17 @@ export const NewSession = (props) => {
                                 </div>
                             </div>
                         </div>
+                    </div>
+                    <div className='form-group'>
                         <div className='form-group-col2'>
+                            <div className='form-row' style={{ fontSize: "18px", fontWeight: 500, marginTop: "10px", marginBottom: "20px", textAlign: "left" }}>
+                                <div className='form-column'>
+                                    <label><span style={{ fontWeight: 'bold' }}>Step 03: </span>Select Auditorium/Class Room</label>
+                                </div>
+                                <div className='form-column'>
+
+                                </div>
+                            </div>
                             <ReactTableFullWidthStyles>
                                 <CommonTable columns={columns} data={common.ClassRooms} onRowSelect={selectClassRoom} rowSelection={true} hiddenColumns={hiddenColumns} pagination={false} settings={false} globalsearch={false} downloadcsv={false} />
                             </ReactTableFullWidthStyles>

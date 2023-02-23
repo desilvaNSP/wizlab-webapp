@@ -61,6 +61,7 @@ export const SearchPayments = (paymentSearchPayload, callback) => (dispatch) => 
                 } else if (HTTP_STATUS_CODE_403_FORBIDDEN === error.response.status) {
                     toast.error(ERROR_MESSAGE_403_FORBIDDEN)
                 } else if (HTTP_STATUS_CODE_404_NOT_FOUND === error.response.status) {
+                    dispatch(UpdateFilteredPayments(error.response.data))
                     toast.warning("Payment records are not found for selected criteria")
                 }else {
                     toast.error("Get payments failed with " + error.response.data.message + " - " + error.response.status);

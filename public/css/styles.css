@@ -1500,11 +1500,11 @@ header .user-welcome-message {
   padding: 8px;
   border-radius: 8px;
   width: 220px;
-  pointer-events:none;
+  pointer-events: none;
   margin-right: 10px;
 }
 
-.page-header .add-record img{
+.page-header .add-record img {
   margin-right: 10px;
 }
 
@@ -1540,7 +1540,7 @@ header .user-welcome-message {
   border-radius: 5px;
 }
 
-.modal-detail__content .table-add-row{
+.modal-detail__content .table-add-row {
   margin: 10px;
 }
 
@@ -1717,14 +1717,13 @@ a.datatable--link:hover {
   margin-left: 200px;
 }
 
-.form-group td input {
+/* .form-group td input {
   height: 38px;
   border-radius: 5px;
   padding: 5px;
   min-width: 150px;
   margin: 0px;
-}
-
+} */
 
 .trasaction-type-component {
   text-align: left;
@@ -1780,12 +1779,11 @@ a.datatable--link:hover {
 }
 
 .form-group .warning-text {
-  color:   #e9b004;
+  color: #e9b004;
 }
 
-.pagination{
-  left: 35%;
-  position: absolute;
+.pagination {
+  text-align: right;
 }
 
 /* Tag input container*/
@@ -1811,9 +1809,9 @@ a.datatable--link:hover {
   margin: 7px 0;
   margin-right: 10px;
   padding: 8px;
-  border: 1px solid  rgb(252, 172, 21);
+  border: 1px solid rgb(252, 172, 21);
   border-radius: 5px;
-  background-color:  rgb(252, 172, 21);
+  background-color: rgb(252, 172, 21);
   white-space: nowrap;
   color: black;
 }
@@ -1835,7 +1833,7 @@ a.datatable--link:hover {
   float: right;
 }
 
-.main-container{
+.main-container {
   min-height: 800px;
   max-height: 850px;
   overflow: scroll;

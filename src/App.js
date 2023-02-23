@@ -20,17 +20,20 @@ const App = props => {
   const dispatch = useDispatch();
   const common = useSelector((state) => state.common);
 
+  console.log("token", token)
   useEffect(() => {
-    dispatch(StartLoading("initializing..", "FetchMetaData"))
-    dispatch(FetchMetaData(function (response, success) {
-      if (success) {
-
-      } else {
-        //error handle
-      }
-      dispatch(StopLoading("FetchMetaData"))
-    }));
-  }, [token?.token])
+    if(!(Object.keys(token).length === 0 || token?.token == null)){
+      dispatch(StartLoading("initializing..", "FetchMetaData"))
+      dispatch(FetchMetaData(function (response, success) {
+        if (success) {
+  
+        } else {
+          //error handle
+        }
+        dispatch(StopLoading("FetchMetaData"))
+      }));
+    }
+  }, [token])
 
 
   const redirectToLoginPage = () => {

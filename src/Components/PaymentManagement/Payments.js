@@ -298,7 +298,7 @@ const Payments = props => {
             case COURSE_SELECTION:
                 var courseObj = null
                 common.Courses?.forEach((course, index) => {
-                    if (course.id == item.id) {
+                    if (course.id == item?.id) {
                         courseObj = course;
                     }
                 });
@@ -307,7 +307,7 @@ const Payments = props => {
             case LEVEL_SELECTION:
                 var levelObj = null
                 selectedCourse?.levels.forEach((level, index) => {
-                    if (level.id == item.id) {
+                    if (level.id == item?.id) {
                         levelObj = level;
                     }
                 });

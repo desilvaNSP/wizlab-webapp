@@ -245,7 +245,7 @@ export const NewInstrcutor = props => {
                             </div>
                             <div className='form-row'>
                                 <div className='form-column'>
-                                    <div className='item-name'>Education Qualitification</div>
+                                    <div className='item-name'>Education Qualification</div>
                                     <div className='item-dropdown'>
                                         <CustomInput initialValue={selectedEducationQualification} type="text" disable={false} updateInput={(value) => {
                                             updateEducationQualification(value)

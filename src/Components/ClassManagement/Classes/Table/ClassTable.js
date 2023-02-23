@@ -30,7 +30,9 @@ export const ClassTable = ({
   pageCount: controlledPageCount,
   numberOfRecords,
   onRowSelect,
-  rowSelection = true
+  rowSelection = true,
+  settings = false,
+  downloadcsv = false
 }) => {
 
   const [showContextMenu, setShowContextMenu] = useState(false);
@@ -164,13 +166,16 @@ export const ClassTable = ({
   // Render the UI for your table
   return (
     <>
-      <div className='' style={{ height: "25px", marginBottom: "10px" }}>
-        <div className="table-setting-icon" onClick={() => showContextMenuEvent()}>
-          <img src='/assets/images/settings-icon.png' />
-        </div>
-        <div className="table-setting-icon" onClick={(e) => exportToCsv(e)}>
-          <img src='/assets/images/download-icon.png' alt='Export' />
-        </div>
+      <div className=''>
+        {settings &&
+          <div className="table-setting-icon" onClick={() => showContextMenuEvent()}>
+            <img src='assets/images/settings-icon.png' />
+          </div>
+        }
+        {downloadcsv &&
+          <div className="table-setting-icon" onClick={(e) => exportToCsv(e)}>
+            <img src='assets/images/download-icon.png' alt='Export' />
+          </div>}
         {showContextMenu && <div className='column-hiding-contextmenu'>
           <div>
             <IndeterminateCheckbox {...getToggleHideAllColumnsProps()} /> Toggle

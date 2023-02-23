@@ -164,27 +164,11 @@ const AllStudents = ({ }) => {
                 }
             },
             {
-                Header: 'First Name',
+                Header: 'Student Name',
                 id: 'firstName',
                 disableFilters: false,
                 accessor: data => {
                     return data.student?.firstName;
-                }
-            },
-            {
-                Header: 'Middle Name',
-                id: 'middleName',
-                disableFilters: false,
-                accessor: data => {
-                    return data.student?.middleName;
-                }
-            },
-            {
-                Header: 'Last Name',
-                id: 'lastName',
-                disableFilters: false,
-                accessor: data => {
-                    return data.student?.lastName;
                 }
             },
             {
@@ -193,14 +177,6 @@ const AllStudents = ({ }) => {
                 disableFilters: false,
                 accessor: data => {
                     return data.student?.studentCode;
-                }
-            },
-            {
-                Header: 'Parent Name',
-                id: 'parentName',
-                disableFilters: false,
-                accessor: data => {
-                    return data.student?.parent?.name;
                 }
             },
             {

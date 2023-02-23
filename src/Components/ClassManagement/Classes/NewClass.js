@@ -57,7 +57,7 @@ export const NewClass = props => {
             case COURSE_SELECTION:
                 var courseObj = null
                 common.Courses?.forEach((course, index) => {
-                    if (course.id == item.id) {
+                    if (course.id == item?.id) {
                         courseObj = course;
                     }
                 });
@@ -70,7 +70,7 @@ export const NewClass = props => {
             case LEVEL_SELECTION:
                 var levelObj = null
                 selectedCourse?.levels.forEach((level, index) => {
-                    if (level.id == item.id) {
+                    if (level.id == item?.id) {
                         levelObj = level;
                     }
                 });
@@ -82,7 +82,7 @@ export const NewClass = props => {
             case SUBJECT_SELECTION:
                 var subjectObj = null
                 selectedLevel?.subjects.forEach((subject, index) => {
-                    if (subject.id == item.id) {
+                    if (subject.id == item?.id) {
                         subjectObj = subject;
                     }
                 });
