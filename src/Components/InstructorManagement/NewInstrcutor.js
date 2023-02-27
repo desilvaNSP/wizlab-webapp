@@ -70,7 +70,11 @@ export const NewInstrcutor = props => {
     useOutsideAlerter(wrapperRef, props);
 
     const instructorFieldValidation = (value, callback) => {
-        callback(true, "");
+        if(value.trim() == ""){
+            callback(false, "This field is required");
+        } else {
+            callback(true, "");
+        }
     }
 
     //First name
@@ -113,7 +117,7 @@ export const NewInstrcutor = props => {
             "education": selectedEducationQualification,
             "subjects": selectedSubjects
         }
-        dispatch(StartLoading("Creating New Teacher.."))
+        dispatch(StartLoading("Creating New Teacher..","CreateTeacher"))
         dispatch(CreateTeacher(payload, function (response, success) {
             if (success) {
 
@@ -121,7 +125,7 @@ export const NewInstrcutor = props => {
                 //error handle
             }
             handleClose()
-            dispatch(StopLoading())
+            dispatch(StopLoading("CreateTeacher"))
         }));
     }
 
@@ -182,7 +186,7 @@ export const NewInstrcutor = props => {
                                     <div className='item-dropdown'>
                                         <CustomInput initialValue={selectedMiddleName} type="text" disable={selectedTeacher == null ? false : true } updateInput={(value) => {
                                             updateMiddleName(value)
-                                        }} fieldValidation={instructorFieldValidation} required={true} placeHolder="Middle Name"></CustomInput>
+                                        }} required={false} placeHolder="Middle Name"></CustomInput>
                                     </div>
                                 </div>
                             </div>
