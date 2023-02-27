@@ -28,12 +28,12 @@ export const CommonServicesSlice = createSlice({
     name: 'common',
     initialState: {
         ClassRooms: [],
-        Classes: [],
+        Classes: {},
         Courses: [],
         InstituteId: "",
         Location: "",
         InstituteName: "",
-        Teachers: [],
+        Teachers: {},
         Users: [],
         PaymentStatus: [],
         UserRoles: [],
@@ -414,7 +414,6 @@ export const GetClasses = (payload, callback) => (dispatch) => {
         callback(response.data, true);
     }).catch(
         error => {
-            console.log(error)
             if (error.response !== undefined) {
                 if (HTTP_STATUS_CODE_401_UNAUTHORIZED === error.response.status) {
                     toast.error(ERROR_MESSAGE_401_UNAUTHORIZED)

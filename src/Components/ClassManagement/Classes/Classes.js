@@ -24,20 +24,20 @@ const Classes = props => {
     const [selectedTeacher, setSelectedTeacher] = useState(null);
 
     const [data, setData] = useState([]);
-    const [loading, setLoading] = React.useState(false)
-    const [tablePageIndex, setTablePageIndex] = React.useState(0)
-    const [tablePageSize, setTablePageSize] = React.useState(10)
-    const [pageCount, setPageCount] = React.useState(0)
+    const [loading, setLoading] = useState(false)
+    const [tablePageIndex, setTablePageIndex] = useState(0)
+    const [tablePageSize, setTablePageSize] = useState(10)
+    const [pageCount, setPageCount] = useState(0)
 
     const dispatch = useDispatch();
     const common = useSelector((state) => state.common);
 
     useEffect(() => {
-        if(common.Classes != null){
+        if (common.Classes?.classes != null) {
             setData(common.Classes?.classes)
             setPageCount(Math.ceil(common.Classes?.totalNumberOfEntries / tablePageSize))
         }
-    }, [common.Classes])
+    }, [common.Classes?.classes])
 
     const fetchData = React.useCallback(({ pageSize, pageIndex }) => {
         var payload = {
@@ -46,9 +46,8 @@ const Classes = props => {
             "subjectId": selectedSubject?.id,
             "teacherId": selectedTeacher?.id,
             "pageSize": pageSize,
-            "pageNumber":  pageIndex + 1
-          }
-
+            "pageNumber": pageIndex + 1
+        }
         setLoading(true)
         setTablePageSize(pageSize);
         dispatch(StartLoading("Loading Classes..", "GetClasses"))
@@ -82,16 +81,13 @@ const Classes = props => {
             "subjectId": selectedSubject?.id,
             "teacherId": selectedTeacher?.id,
             "pageSize": tablePageSize,
-            "pageNumber":  tablePageIndex + 1
+            "pageNumber": tablePageIndex + 1
         }
-        dispatch(StartLoading("Loading Classes.."))
+        setLoading(true)
+        dispatch(StartLoading("Applying Filters", "GetClasses"))
         dispatch(GetClasses(payload, function (response, success) {
-            if (success) {
-                //success handle
-            } else {
-                //error handle
-            }
-            dispatch(StopLoading())
+            setLoading(false)
+            dispatch(StopLoading("GetClasses"))
         }));
     };
 

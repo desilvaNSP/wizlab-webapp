@@ -18,7 +18,7 @@ import { toast } from 'react-toastify';
 export const SessionServicesSlice = createSlice({
     name: 'sessions',
     initialState: {
-        Sessions: []
+        Sessions: {}
     },
     reducers: {
         SetAllSessions: (state, action) => {
@@ -43,12 +43,12 @@ export const SessionServicesSlice = createSlice({
         },
         AddNewSession: (state, action) => {
             let obj = action.payload;
-            var sessionsState = current(state).Sessions;
+            //var sessionsState = current(state).Sessions;
             return {
                 ...state,
                 Sessions:{
-                    sessions: [...sessionsState?.sessions, obj],
-                    totalNumberOfEntries: sessionsState?.totalNumberOfEntries + 1
+                    sessions: [...state.Sessions?.sessions, obj],
+                    totalNumberOfEntries: state.Sessions?.totalNumberOfEntries + 1
                 }, 
             };
         },
@@ -59,7 +59,6 @@ export const { SetAllSessions, AddNewSession , UpdateExistingSession} = SessionS
 
 export const CreateSession = (sessionPayload, callback) => (dispatch) => {
     ServiceEngine.post(CREATE_SESSION_ENDPOINT, sessionPayload).then(response => {
-        //response.data
         dispatch(AddNewSession(response.data))
         callback(response.data, true);
     }).catch(

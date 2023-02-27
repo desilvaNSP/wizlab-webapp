@@ -17,7 +17,6 @@ const Courses = props => {
                 setSelectedCourse(filteredCourses[0])
             }
         }
-        console.log("common.Courses"+ common.Courses)
     }, [common.Courses])
 
     const triggerStartNewCourse = () => {

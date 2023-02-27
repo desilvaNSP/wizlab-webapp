@@ -200,7 +200,7 @@ const ClassRooms = props => {
           </div>
           <div className='form-row' style={{ marginTop: "40px" }}>
             <div className='form-column' style={{ width: "80%" }}>
-              <button className="btn btn--success" onClick={() => { createNewClassRoom() }} disabled={!(formValidation.filter((item) => { return item.validity}).length > 0)}>
+              <button className="btn btn--success" onClick={() => { createNewClassRoom() }} disabled={formValidation.filter((item) => { return !item.validity}).length > 0 ? true: false}>
                 Create Auditoriums
               </button>
             </div>

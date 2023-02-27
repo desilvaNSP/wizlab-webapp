@@ -25,8 +25,6 @@ export const NewSession = (props) => {
         "content": ""
     });
 
-    console.log("selectedSession", selectedSession)
-
     const COURSE_SELECTION = "COURSE_SELECTION";
     const LEVEL_SELECTION = "LEVEL_SELECTION";
     const SUBJECT_SELECTION = "SUBJECT_SELECTION";
@@ -65,7 +63,7 @@ export const NewSession = (props) => {
         var filteredClass = common.Classes?.classes?.filter(function (val) {
             return val.id == classId;
         });
-        if (filteredClass.length > 0) {
+        if (filteredClass?.length > 0) {
             selectedClass = filteredClass[0]
         }
         return selectedClass;
@@ -391,7 +389,6 @@ export const NewSession = (props) => {
 
     const getAuditoriumsList = () => {
         let auditoriumList = [];
-        console.log(common.ClassRooms)
         common.ClassRooms?.forEach((room, index) => {
             if (room != null) {
                 var virtual = room.isVirtual ? "[VIRTUAL]" : "[PHYSICAL]"

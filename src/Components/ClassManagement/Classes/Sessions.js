@@ -28,7 +28,6 @@ const Sessions = ({ classId }) => {
 
     useEffect(() => {
         if(sessions.Sessions?.sessions != null){
-            console.log("sessions.Sessions?.sessions", sessions.Sessions?.sessions)
             setData(sessions.Sessions?.sessions)
             setPageCount(Math.ceil(sessions.Sessions?.totalNumberOfEntries / tablePageSize))
         }

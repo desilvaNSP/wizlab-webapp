@@ -34,7 +34,6 @@ export const NewCourse = props => {
     }, [selectedCourse?.levels])
 
     useEffect(() => {
-        console.log("selectedCourse", selectedCourse)
         if (selectedCourse != null) {
             setCourse(selectedCourse)
             setLevels(selectedCourse?.levels == null ? [] : selectedCourse.levels)

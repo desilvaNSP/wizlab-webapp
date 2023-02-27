@@ -20,7 +20,6 @@ const App = props => {
   const dispatch = useDispatch();
   const common = useSelector((state) => state.common);
 
-  console.log("token", token)
   useEffect(() => {
     if(!(Object.keys(token).length === 0 || token?.token == null)){
       dispatch(StartLoading("initializing..", "FetchMetaData"))
@@ -41,7 +40,6 @@ const App = props => {
   };
 
   const isTokenExists = () => {
-    console.log(tokenExpiry)
     if ((token?.token == "" || token?.token == undefined)) {
       return false;
     } else {
