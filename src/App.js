@@ -16,6 +16,7 @@ const App = props => {
   const [token, setToken, removeToken] = useCookies(['token']);
   const [tokenExpiry, setTokenExpiry] = useCookies(['token_expiry']);
   const [instituteId, setInstituteId] = useCookies(['institute_id']);
+  const [adminUser, setAdminUser] = useCookies(['admin_user']);
 
   const dispatch = useDispatch();
   const common = useSelector((state) => state.common);
@@ -36,7 +37,7 @@ const App = props => {
 
 
   const redirectToLoginPage = () => {
-    return <LoginPage />;
+    return <LoginPage/>;
   };
 
   const isTokenExists = () => {
@@ -66,7 +67,7 @@ const App = props => {
         <Slider handleClose={handleSlideClose} />
       )}
       <Header>
-        <div className="user-welcome-message">Welcome <b>Sandun</b></div>
+        <div className="user-welcome-message">Welcome <b>{adminUser?.admin_user}</b></div>
         <button
           className="btn btn--danger btn-logout"
           onClick={handleLogout}

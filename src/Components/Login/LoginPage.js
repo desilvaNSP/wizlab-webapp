@@ -6,7 +6,7 @@ import { FetchAuthenticationInfo } from "../../Redux/Features/Auth/Authenticatio
 import { HideLoading, StartLoading } from "../../Redux/Features/Common/CommonServicesSlice";
 import "./login.css";
 
-const LoginPage = (props) => {
+const LoginPage = (props,callback) => {
   const [UserName, setUserName] = useState("");
   const [Password, setPassword] = useState("");
 
@@ -34,6 +34,7 @@ const LoginPage = (props) => {
         setTokenExpiry('token_expiry', response.token.expiryDate, { path: '/' });
         setRole('role', response.roleId, { path: '/' });
         setInstituteId('institute_id', response.instituteId, { path: '/' });
+        callback(response.firstName)
       } else {
         //error handle
       }
